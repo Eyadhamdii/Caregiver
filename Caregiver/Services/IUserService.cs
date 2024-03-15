@@ -2,9 +2,12 @@
 
 namespace Caregiver.Services
 {
-    public interface IUserService
-    {
-         Task<UserManagerResponse> RegisterUserAsync(RegisterDTO model);
+	public interface IUserService
+	{
+		Task<UserManagerResponse> RegisterUserAsync(RegisterDTO model);
+		Task<LoginResDTO> Login(LoginReqDTO loginReqDTO);
 
-    }
+
+
+	}
 }
