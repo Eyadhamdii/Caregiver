@@ -23,7 +23,7 @@ namespace Caregiver.Controllers
 			if (LoginRes.User == null || string.IsNullOrEmpty(LoginRes.Token))
 			{
 
-				return BadRequest(new { message = "user or pass are in correct" });
+				return BadRequest(new { message = "Username or Password are Incorrect" });
 
 			}
 
@@ -31,8 +31,8 @@ namespace Caregiver.Controllers
 			return Ok(LoginRes);
 		}
 
-		[HttpPost("Register")]
-		public async Task<IActionResult> RegisterAsync([FromBody] RegisterDTO model)
+		[HttpPost("CustomerRegister")]
+		public async Task<IActionResult> RegisterAsync([FromBody] RegisterCustomerDTO model)
 		{
 
 			if (ModelState.IsValid)
@@ -44,5 +44,22 @@ namespace Caregiver.Controllers
 			}
 			return BadRequest("Some properties are not valid"); // Status code: 400
 		}
-	}
+
+        [HttpPost("CaregiverRegister")]
+
+        public async Task<IActionResult> RegisterAsync([FromForm] RegisterCaregiverDTO model)
+        {
+           
+
+            if (ModelState.IsValid)
+            {
+                var result = await _userService.RegisterCaregiverAsync(model);
+                if (result.IsSuccess)
+                    return Ok(result); // Status Code: 200
+                return BadRequest(result);
+            }
+            return BadRequest("Some properties are not valid"); // Status code: 400
+        }
+
+    }
 }

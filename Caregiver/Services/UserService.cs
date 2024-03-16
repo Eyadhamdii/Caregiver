@@ -1,6 +1,7 @@
 ﻿using Caregiver.Dtos;
 using Caregiver.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,11 +12,11 @@ namespace Caregiver.Services
 {
 	public class UserService : IUserService
 	{
-		private UserManager<IdentityUser> _userManager;
+		private UserManager<User> _userManager;
 		private readonly string secretKey;
 		private readonly ApplicationDBContext _db;
 
-		public UserService(UserManager<IdentityUser> userManager, ApplicationDBContext db, IConfiguration configuration)
+		public UserService(UserManager<User> userManager, ApplicationDBContext db, IConfiguration configuration)
 		{
 			_db = db;
 			_userManager = userManager;
@@ -27,7 +28,7 @@ namespace Caregiver.Services
 		public async Task<LoginResDTO> Login(LoginReqDTO loginReqDTO)
 		{
 
-			var user = await _userManager.FindByEmailAsync(loginReqDTO.Email);
+			var user = await _userManager.FindByEmailAsync(loginReqDTO.UserName);
 			//var user = _db.Users.FirstOrDefault(u => u.UserName.ToLower() == loginReqDTO.UserName.ToLower());
 			bool isValid = await _userManager.CheckPasswordAsync(user, loginReqDTO.Password);
 
@@ -85,7 +86,7 @@ namespace Caregiver.Services
 		}
 
 
-		public async Task<UserManagerResponse> RegisterUserAsync(RegisterDTO model)
+		public async Task<UserManagerResponse> RegisterUserAsync(RegisterCustomerDTO model)
 		{
 			if (model == null)
 				throw new NullReferenceException("Reigster Model is null");
@@ -97,13 +98,21 @@ namespace Caregiver.Services
 					IsSuccess = false,
 				};
 
-			var identityuser = new IdentityUser
+			var user = new User
 			{
-				Email = model.Email,
-				UserName = model.Email,
-			};
+			 FirstName = model.FirstName,
+			 LastName = model.LastName,
+			 Gender = model.Gender,
+			 Birthdate = model.Birthdate,
+			 Nationality = model.Nationality,
+             UserName = model.Email,
+			 Email = model.Email,
+             PhoneNumber = model.PhoneNumber,
+			 Resume = null,
+			 CriminalRecords = null,
+            };
 
-			var result = await _userManager.CreateAsync(identityuser, model.Password);
+			var result = await _userManager.CreateAsync(user, model.Password);
 
 			if (result.Succeeded)
 				return new UserManagerResponse
@@ -118,5 +127,66 @@ namespace Caregiver.Services
 				Errors = result.Errors.Select(e => e.Description)
 			};
 		}
-	}
+
+        public async Task<UserManagerResponse> RegisterCaregiverAsync([FromForm] RegisterCaregiverDTO model)
+        {
+            using var datastream = new MemoryStream();
+
+            await model.Resume.CopyToAsync(datastream);
+
+            await model.CriminalRecords.CopyToAsync(datastream);
+
+
+
+            if (model == null)
+                throw new NullReferenceException("Reigster Model is null");
+
+            if (model.Password != model.ConfirmPassword)
+                return new UserManagerResponse
+                {
+                    Message = "Confirm password doesn't match the password",
+                    IsSuccess = false,
+                };
+
+            var user = new User
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Gender = model.Gender,
+                Birthdate = model.Birthdate,
+                Nationality = model.Nationality,
+                UserName = model.Email,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+				Bio = model.Bio,
+				City = model.City,
+				Country = model.Country,
+				JobTitle = model.JobTitle,
+				PricePerDay = model.PricePerDay,
+				PricePerHour = model.PricePerHour,
+				WhatCanYouDo = model.WhatCanYouDo,
+				YearsOfExperience = model.YearsOfExperience,
+				Resume = datastream.ToArray(),
+				CriminalRecords = datastream.ToArray(),
+
+               
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+                return new UserManagerResponse
+                {
+                    Message = "User created successfully!",
+                    IsSuccess = true,
+                };
+            return new UserManagerResponse
+            {
+                Message = "User did not create",
+                IsSuccess = false,
+                Errors = result.Errors.Select(e => e.Description)
+            };
+        }
+
+    }
 }

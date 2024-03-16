@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Caregiver.Models
 {
-	public class ApplicationDBContext : IdentityDbContext
+	public class ApplicationDBContext : IdentityDbContext<User>
 	{
 
 		public ApplicationDBContext(DbContextOptions options) : base(options)

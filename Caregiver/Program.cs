@@ -22,7 +22,7 @@ namespace Caregiver
                 options.UseSqlServer(connectionString)
             );
 
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
