@@ -1,4 +1,5 @@
 
+using Caregiver.Configurations;
 using Caregiver.Models;
 using Caregiver.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -53,7 +54,10 @@ namespace Caregiver
 
          };
      });
-            builder.Services.AddScoped<IUserService, UserService>();
+			//automapper 
+			builder.Services.AddAutoMapper(typeof(MappingConfiguration));
+
+			builder.Services.AddScoped<IUserService, UserService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

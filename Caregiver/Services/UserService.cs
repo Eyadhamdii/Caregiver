@@ -1,4 +1,5 @@
-﻿using Caregiver.Dtos;
+﻿using AutoMapper;
+using Caregiver.Dtos;
 using Caregiver.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,15 @@ namespace Caregiver.Services
 		private UserManager<User> _userManager;
 		private readonly string secretKey;
 		private readonly ApplicationDBContext _db;
+		private readonly IMapper _mapper;
 
-		public UserService(UserManager<User> userManager, ApplicationDBContext db, IConfiguration configuration)
+
+		public UserService(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration)
 		{
 			_db = db;
 			_userManager = userManager;
 			secretKey = configuration.GetValue<string>("ApiSettings:secret");
+			_mapper = mapper;
 
 		}
 
@@ -28,7 +32,7 @@ namespace Caregiver.Services
 		public async Task<LoginResDTO> Login(LoginReqDTO loginReqDTO)
 		{
 
-			var user = await _userManager.FindByEmailAsync(loginReqDTO.UserName);
+			var user = await _userManager.FindByEmailAsync(loginReqDTO.Email);
 			//var user = _db.Users.FirstOrDefault(u => u.UserName.ToLower() == loginReqDTO.UserName.ToLower());
 			bool isValid = await _userManager.CheckPasswordAsync(user, loginReqDTO.Password);
 
@@ -77,7 +81,7 @@ namespace Caregiver.Services
 				{
 
 					ID = user.Id,
-					UserName = user.UserName
+					Email = user.Email
 
 				}
 			};
@@ -98,18 +102,8 @@ namespace Caregiver.Services
 					IsSuccess = false,
 				};
 
-			var user = new Patient
-			{
-				FirstName = model.FirstName,
-				LastName = model.LastName,
-				Gender = model.Gender,
-				Birthdate = model.Birthdate,
-				Nationality = model.Nationality,
-				UserName = model.Email,
-				Email = model.Email,
-				PhoneNumber = model.PhoneNumber,
 
-			};
+			var user = _mapper.Map<Patient>(model);
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 

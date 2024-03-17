@@ -9,6 +9,7 @@ namespace Caregiver.Models
 	public class User : IdentityUser
 	{
 		// Customer 
+
 		public string FirstName { get; set; } = string.Empty;
 		public string LastName { get; set; } = string.Empty;
 		public Gender Gender { get; set; }

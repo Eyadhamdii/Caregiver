@@ -5,43 +5,45 @@ using System.Globalization;
 namespace Caregiver.Dtos
 {
 
-    public class RegisterCustomerDTO
+	public class RegisterCustomerDTO
 
-    {
-        [Required]
-        [StringLength(50, MinimumLength = 3)]
+	{
+		public string UserName { get; set; } = "no user name";
 
-        public string FirstName { get; set; }
+		[Required]
+		[StringLength(50, MinimumLength = 3)]
 
-        [Required]
-        [StringLength(50, MinimumLength = 3)]
-        public string LastName { get; set; }
+		public string FirstName { get; set; }
 
-        [Required]
+		[Required]
+		[StringLength(50, MinimumLength = 3)]
+		public string LastName { get; set; }
 
-        public Gender Gender { get; set; }
+		[Required]
 
-        [Required]
+		public Gender Gender { get; set; }
 
-        public DateTime Birthdate { get; set; }
+		[Required]
 
-        public string Nationality { get; set; } 
+		public DateTime Birthdate { get; set; }
 
-        [Required]
-        [EmailAddress]
-        [StringLength(50)]
-        public string Email { get; set; }
+		public string Nationality { get; set; }
 
-        [Required]
-        [StringLength(50 , MinimumLength =5)]
-        public string Password { get; set; }
+		[Required]
+		[EmailAddress]
+		[StringLength(50)]
+		public string Email { get; set; }
 
-        [Required]
-        [StringLength(50, MinimumLength = 5)]
-        public string ConfirmPassword { get; set; }
+		[Required]
+		[StringLength(50, MinimumLength = 5)]
+		public string Password { get; set; }
 
-        [Required]
-        public int PhoneNumber { get; set; }
+		[Required]
+		[StringLength(50, MinimumLength = 5)]
+		public string ConfirmPassword { get; set; }
 
-    }
+		[Required]
+		public int PhoneNumber { get; set; }
+
+	}
 }
