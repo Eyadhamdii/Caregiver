@@ -10,9 +10,10 @@ namespace Caregiver.Configurations
 
 		public MappingConfiguration()
 		{
-			CreateMap<RegisterCustomerDTO, Patient>().ReverseMap();
-
+			CreateMap<RegisterPatientDTO, PatientUser>().ReverseMap();
+			CreateMap<RegisterCaregiverDTO, CaregiverUser>().ReverseMap();
 
 		}
+
 	}
 }

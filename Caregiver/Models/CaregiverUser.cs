@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Caregiver.Models
 {
-	public class Caregiver : User
+	public class CaregiverUser : User
 	{
 		// added this
 		public string Bio { get; set; } = string.Empty;

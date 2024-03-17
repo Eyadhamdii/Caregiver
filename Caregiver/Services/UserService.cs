@@ -29,7 +29,7 @@ namespace Caregiver.Services
 		}
 
 
-		public async Task<LoginResDTO> Login(LoginReqDTO loginReqDTO)
+		public async Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO)
 		{
 
 			var user = await _userManager.FindByEmailAsync(loginReqDTO.Email);
@@ -90,7 +90,7 @@ namespace Caregiver.Services
 		}
 
 
-		public async Task<UserManagerResponse> RegisterUserAsync(RegisterCustomerDTO model)
+		public async Task<UserManagerResponse> RegisterUserAsync(RegisterPatientDTO model)
 		{
 			if (model == null)
 				throw new NullReferenceException("Reigster Model is null");
@@ -103,7 +103,7 @@ namespace Caregiver.Services
 				};
 
 
-			var user = _mapper.Map<Patient>(model);
+			var user = _mapper.Map<PatientUser>(model);
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 
@@ -141,7 +141,7 @@ namespace Caregiver.Services
 					IsSuccess = false,
 				};
 
-			var user = new Caregiver.Models.Caregiver
+			var user = new CaregiverUser
 			{
 				FirstName = model.FirstName,
 				LastName = model.LastName,
@@ -164,6 +164,9 @@ namespace Caregiver.Services
 
 
 			};
+
+
+
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 

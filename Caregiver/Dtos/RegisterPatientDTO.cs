@@ -5,7 +5,7 @@ using System.Globalization;
 namespace Caregiver.Dtos
 {
 
-	public class RegisterCustomerDTO
+	public class RegisterPatientDTO
 
 	{
 		public string UserName { get; set; } = "no user name";

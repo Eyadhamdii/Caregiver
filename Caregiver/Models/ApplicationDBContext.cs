@@ -14,6 +14,10 @@ namespace Caregiver.Models
 		}
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
+			//if i want to remove the username from the table..
+			//builder.Entity<ApplicationUser>().Ignore(u => u.UserName);
+
+
 			//composite pk.. 
 			base.OnModelCreating(builder);
 			builder.Entity<CaregiverPatientReservation>()

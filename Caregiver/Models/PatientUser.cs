@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Caregiver.Models
 {
-	public class Patient : User
+	public class PatientUser : User
 	{
 
 		public ICollection<CaregiverPatientReservation> Reservations { get; set; } = null;
