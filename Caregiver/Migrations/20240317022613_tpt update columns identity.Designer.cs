@@ -4,6 +4,7 @@ using Caregiver.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240317022613_tpt update columns identity")]
+    partial class tptupdatecolumnsidentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,6 +63,9 @@ namespace Caregiver.Migrations
 
                     b.Property<string>("ConfirmPassword")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("CriminalRecords")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -113,6 +119,9 @@ namespace Caregiver.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<byte[]>("Resume")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -290,9 +299,6 @@ namespace Caregiver.Migrations
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("CriminalRecords")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<int>("JobLocationLookingFor")
                         .HasColumnType("int");
 
@@ -304,9 +310,6 @@ namespace Caregiver.Migrations
 
                     b.Property<int>("PricePerHour")
                         .HasColumnType("int");
-
-                    b.Property<byte[]>("Resume")
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("WhatCanYouDo")
                         .HasColumnType("nvarchar(max)");

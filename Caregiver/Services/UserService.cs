@@ -98,19 +98,18 @@ namespace Caregiver.Services
 					IsSuccess = false,
 				};
 
-			var user = new User
+			var user = new Patient
 			{
-			 FirstName = model.FirstName,
-			 LastName = model.LastName,
-			 Gender = model.Gender,
-			 Birthdate = model.Birthdate,
-			 Nationality = model.Nationality,
-             UserName = model.Email,
-			 Email = model.Email,
-             PhoneNumber = model.PhoneNumber,
-			 Resume = null,
-			 CriminalRecords = null,
-            };
+				FirstName = model.FirstName,
+				LastName = model.LastName,
+				Gender = model.Gender,
+				Birthdate = model.Birthdate,
+				Nationality = model.Nationality,
+				UserName = model.Email,
+				Email = model.Email,
+				PhoneNumber = model.PhoneNumber,
+
+			};
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 
@@ -128,36 +127,36 @@ namespace Caregiver.Services
 			};
 		}
 
-        public async Task<UserManagerResponse> RegisterCaregiverAsync([FromForm] RegisterCaregiverDTO model)
-        {
-            using var datastream = new MemoryStream();
+		public async Task<UserManagerResponse> RegisterCaregiverAsync([FromForm] RegisterCaregiverDTO model)
+		{
+			using var datastream = new MemoryStream();
 
-            await model.Resume.CopyToAsync(datastream);
+			await model.Resume.CopyToAsync(datastream);
 
-            await model.CriminalRecords.CopyToAsync(datastream);
+			await model.CriminalRecords.CopyToAsync(datastream);
 
 
 
-            if (model == null)
-                throw new NullReferenceException("Reigster Model is null");
+			if (model == null)
+				throw new NullReferenceException("Reigster Model is null");
 
-            if (model.Password != model.ConfirmPassword)
-                return new UserManagerResponse
-                {
-                    Message = "Confirm password doesn't match the password",
-                    IsSuccess = false,
-                };
+			if (model.Password != model.ConfirmPassword)
+				return new UserManagerResponse
+				{
+					Message = "Confirm password doesn't match the password",
+					IsSuccess = false,
+				};
 
-            var user = new User
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Gender = model.Gender,
-                Birthdate = model.Birthdate,
-                Nationality = model.Nationality,
-                UserName = model.Email,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
+			var user = new Caregiver.Models.Caregiver
+			{
+				FirstName = model.FirstName,
+				LastName = model.LastName,
+				Gender = model.Gender,
+				Birthdate = model.Birthdate,
+				Nationality = model.Nationality,
+				UserName = model.Email,
+				Email = model.Email,
+				PhoneNumber = model.PhoneNumber,
 				Bio = model.Bio,
 				City = model.City,
 				Country = model.Country,
@@ -169,24 +168,24 @@ namespace Caregiver.Services
 				Resume = datastream.ToArray(),
 				CriminalRecords = datastream.ToArray(),
 
-               
-            };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+			};
 
-            if (result.Succeeded)
-                return new UserManagerResponse
-                {
-                    Message = "User created successfully!",
-                    IsSuccess = true,
-                };
-            return new UserManagerResponse
-            {
-                Message = "User did not create",
-                IsSuccess = false,
-                Errors = result.Errors.Select(e => e.Description)
-            };
-        }
+			var result = await _userManager.CreateAsync(user, model.Password);
 
-    }
+			if (result.Succeeded)
+				return new UserManagerResponse
+				{
+					Message = "User created successfully!",
+					IsSuccess = true,
+				};
+			return new UserManagerResponse
+			{
+				Message = "User did not create",
+				IsSuccess = false,
+				Errors = result.Errors.Select(e => e.Description)
+			};
+		}
+
+	}
 }
