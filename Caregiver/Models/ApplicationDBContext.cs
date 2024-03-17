@@ -7,6 +7,9 @@ namespace Caregiver.Models
 	public class ApplicationDBContext : IdentityDbContext<User>
 	{
 		public DbSet<CaregiverPatientReservation> Reservations { get; set; }
+		public DbSet<User> Users { get; set; }
+		public DbSet<CaregiverUser> Caregivers { get; set; }
+		public DbSet<PatientUser> Patients { get; set; }
 
 		public ApplicationDBContext(DbContextOptions options) : base(options)
 		{

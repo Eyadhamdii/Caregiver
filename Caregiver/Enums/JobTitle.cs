@@ -1,9 +1,10 @@
-﻿namespace Caregiver.Enums
+﻿
+namespace Caregiver.Enums
 {
-    public enum JobTitle
-    {
-        Nurse,
-        Caregiver,
-        Babysitter
-    }
+	public enum JobTitle
+	{
+		Nurse,
+		Caregiver,
+		Babysitter
+	}
 }
