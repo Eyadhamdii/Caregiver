@@ -10,6 +10,8 @@ namespace Caregiver.Models
 		{
 
 		}
-		public DbSet<User> Users { get; set; }
+
+
+
 	}
 }

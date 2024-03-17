@@ -2,8 +2,8 @@
 {
     public enum CareerLevel
     {
-        Student,
-        FreshGraduate,
-        Experienced
+        Student = 1 ,
+        FreshGraduate = 2 ,
+        Experienced = 3
     }
 }

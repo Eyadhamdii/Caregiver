@@ -131,10 +131,10 @@ namespace Caregiver.Services
         public async Task<UserManagerResponse> RegisterCaregiverAsync([FromForm] RegisterCaregiverDTO model)
         {
             using var datastream = new MemoryStream();
-
             await model.Resume.CopyToAsync(datastream);
 
-            await model.CriminalRecords.CopyToAsync(datastream);
+            var datastream1 = new MemoryStream();
+            await model.CriminalRecords.CopyToAsync(datastream1);
 
 
 
@@ -167,7 +167,7 @@ namespace Caregiver.Services
 				WhatCanYouDo = model.WhatCanYouDo,
 				YearsOfExperience = model.YearsOfExperience,
 				Resume = datastream.ToArray(),
-				CriminalRecords = datastream.ToArray(),
+				CriminalRecords = datastream1.ToArray(),
 
                
             };

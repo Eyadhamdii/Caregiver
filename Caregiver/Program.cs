@@ -33,7 +33,7 @@ namespace Caregiver
             .AddDefaultTokenProviders();
 
             builder.Services.AddAuthentication(
-     options =>
+            options =>
      {
          //install bearer package
          options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

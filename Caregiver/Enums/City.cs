@@ -2,8 +2,8 @@
 {
     public enum City
     {
-        Cairo,
-        Alexandria,
-        AboTesht
+        Cairo = 1,
+        Alexandria = 2,
+        AboTesht = 3
     }
 }
