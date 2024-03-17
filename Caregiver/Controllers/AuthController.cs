@@ -1,17 +1,17 @@
 ﻿using Caregiver.Dtos;
-using Caregiver.Services;
+using Caregiver.Repositories.IRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Caregiver.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class AuthController : ControllerBase
 	{
-		private IUserService _userService;
-		public AuthController(IUserService userService)
+		private IUserRepo _userService;
+		public AuthController(IUserRepo userService)
 		{
 			_userService = userService;
 		}

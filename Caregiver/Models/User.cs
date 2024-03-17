@@ -1,8 +1,8 @@
-﻿using Caregiver.Enums;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Reflection;
+using static Caregiver.Enums.Enums;
 
 namespace Caregiver.Models
 {
@@ -14,7 +14,7 @@ namespace Caregiver.Models
 		public string LastName { get; set; } = string.Empty;
 		public Gender Gender { get; set; }
 
-		public DateTime Birthdate { get; set; }
+		public DateOnly Birthdate { get; set; }
 
 		public string Nationality { get; set; } = string.Empty;
 

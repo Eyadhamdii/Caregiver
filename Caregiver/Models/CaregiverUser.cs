@@ -1,5 +1,5 @@
-﻿using Caregiver.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using static Caregiver.Enums.Enums;
 
 namespace Caregiver.Models
 {

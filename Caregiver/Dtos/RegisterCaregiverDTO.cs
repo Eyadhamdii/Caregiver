@@ -1,5 +1,5 @@
-﻿using Caregiver.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using static Caregiver.Enums.Enums;
 
 namespace Caregiver.Dtos
 {
@@ -20,7 +20,7 @@ namespace Caregiver.Dtos
         public Gender Gender { get; set; }
 
         [Required]
-        public DateTime Birthdate { get; set; }
+        public DateOnly Birthdate { get; set; }
 
         public string Nationality { get; set; }
 
