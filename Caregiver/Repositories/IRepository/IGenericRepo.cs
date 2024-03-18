@@ -1,12 +1,14 @@
 ﻿using Caregiver.Enums;
 using Caregiver.Models;
+using System.Linq.Expressions;
 
 namespace Caregiver.Repositories.IRepository
 {
-	public interface IGenericRepo
+	public interface IGenericRepo<T>
 	{
 
-		Task<List<User>> getUsersByDiscriminatorAsync(string Discriminator = null);
-		Task<List<CaregiverUser>> GetPatients();
+		Task<T> GetAsync(Expression<Func<T, bool>> filter = null);
+		Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null);
+
 	}
 }

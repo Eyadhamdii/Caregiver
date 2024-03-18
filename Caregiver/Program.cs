@@ -1,5 +1,6 @@
 
 using Caregiver.Configurations;
+using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Caregiver.Repositories.Repository;
@@ -12,7 +13,7 @@ using System.Text;
 
 namespace Caregiver
 {
-    public class Program
+	public class Program
 	{
 		public static void Main(string[] args)
 		{
@@ -23,29 +24,29 @@ namespace Caregiver
 
 				options.UseSqlServer(connectionString)
 			);
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy(name: "angularlocalhost",
-                                  policy =>
-                                  {
-                                      policy.AllowAnyHeader();
-                                      //policy.AllowAnyOrigin();
-                                      policy.WithOrigins("http://localhost:4200"); //angular origin 
-                                      policy.AllowAnyMethod();
-                                  });
-            });
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy(name: "angularlocalhost",
+								  policy =>
+								  {
+									  policy.AllowAnyHeader();
+									  //policy.AllowAnyOrigin();
+									  policy.WithOrigins("http://localhost:4200"); //angular origin 
+									  policy.AllowAnyMethod();
+								  });
+			});
 
-            builder.Services.AddIdentity<User, IdentityRole>(options =>
+			builder.Services.AddIdentity<User, IdentityRole>(options =>
 			{
 				options.Password.RequireUppercase = false;
 				options.Password.RequireLowercase = false;
 				options.Password.RequireNonAlphanumeric = false;
-                options.User.RequireUniqueEmail = true;
-                options.Lockout.MaxFailedAccessAttempts = 3;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
+				options.User.RequireUniqueEmail = true;
+				options.Lockout.MaxFailedAccessAttempts = 3;
+				options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
 
 
-            }).AddEntityFrameworkStores<ApplicationDBContext>()
+			}).AddEntityFrameworkStores<ApplicationDBContext>()
 			.AddDefaultTokenProviders();
 
 			builder.Services.AddAuthentication(
@@ -72,9 +73,11 @@ namespace Caregiver
 			//automapper 
 			builder.Services.AddAutoMapper(typeof(MappingConfiguration));
 			//generic repo
-			builder.Services.AddScoped<IGenericRepo, GenericRepo>();
+			builder.Services.AddScoped<ICaregiverRepo, CaregiverRepo>();
 
 			builder.Services.AddScoped<IUserRepo, UserRepo>();
+
+			builder.Services.AddScoped<APIResponse, APIResponse>();
 
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -90,9 +93,9 @@ namespace Caregiver
 				app.UseSwaggerUI();
 			}
 
-            app.UseCors("angularlocalhost");
+			app.UseCors("angularlocalhost");
 
-            app.UseHttpsRedirection();
+			app.UseHttpsRedirection();
 
 			app.UseAuthorization();
 

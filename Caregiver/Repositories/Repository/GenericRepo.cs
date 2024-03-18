@@ -3,33 +3,59 @@ using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Caregiver.Repositories.Repository
 {
-	public class GenericRepo : IGenericRepo
+	public class GenericRepo<T> : IGenericRepo<T> where T : class
 	{
 		private readonly ApplicationDBContext _db;
+		private readonly DbSet<T> _dbSet;
 
 		public GenericRepo(ApplicationDBContext db)
 		{
 			_db = db;
+			_dbSet = _db.Set<T>();
+
 		}
 
-
-		public async Task<List<User>> getUsersByDiscriminatorAsync(string Discriminator = null)
+		public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null)
 		{
-			IQueryable<User> query = _db.Users;
+			IQueryable<T> query = _dbSet;
 
-
-			if (Discriminator != null)
+			if (filter != null)
 			{
-				query = query.Where(e => EF.Property<string>(e, "Discriminator") == Discriminator);
+				query = query.Where(filter);
 			}
-
-			List<User> Users = await query.ToListAsync();
-			return Users;
-
+			return await query.FirstOrDefaultAsync();
 		}
+
+		public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null)
+		{
+			IQueryable<T> query = _dbSet;
+			if (filter != null)
+			{
+				query = query.Where(filter);
+			}
+			return await query.ToListAsync();
+		}
+
+
+
+		//public async Task<List<User>> getUsersByDiscriminatorAsync(string Discriminator = null)
+		//{
+		//	IQueryable<User> query = _db.Users;
+
+
+		//	if (Discriminator != null)
+		//	{
+		//		query = query.Where(e => EF.Property<string>(e, "Discriminator") == Discriminator);
+		//	}
+
+		//	List<User> Users = await query.ToListAsync();
+		//	return Users;
+
+		//}
 
 
 		//public async Task<List<CaregiverUser>> GetPatients()
@@ -41,14 +67,14 @@ namespace Caregiver.Repositories.Repository
 
 		//}
 
-		public async Task<List<CaregiverUser>> GetPatients()
-		{
-			var query = _db.Caregivers.Where(a => a.Nationality == "jkjbh");
+		//public async Task<List<CaregiverUser>> GetPatients()
+		//{
+		//	var query = _db.Caregivers.Where(a => a.Nationality == "jkjbh");
 
-			//List<CaregiverUser> Users = await query.ToListAsync(); ;
-			return query.ToList();
+		//	//List<CaregiverUser> Users = await query.ToListAsync(); ;
+		//	return query.ToList();
 
-		}
+		//}
 
 
 	}
