@@ -31,5 +31,6 @@ namespace Caregiver.Models
 		public byte[] CriminalRecords { get; set; }
 
 		public ICollection<CaregiverPatientReservation> Reservations { get; set; } = null;
-	}
+        public ICollection<CaregiverSchedule> CaregiverSchedules{ get; set; }
+    }
 }

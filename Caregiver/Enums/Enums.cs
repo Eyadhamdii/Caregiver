@@ -28,5 +28,11 @@
             Caregiver = 2,
             Babysitter = 3
         }
+        public enum Status
+        {
+            Available = 1,
+            FullDay = 2,
+            DayOff =3
+        }
     }
 }
