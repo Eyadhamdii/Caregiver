@@ -10,34 +10,53 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Caregiver.Repositories.Repository
 {
-    public class ScheduleRepo : IScheduleRepo
-    {
-        
-        private readonly ApplicationDBContext _db;
-        private UserManager<User> _userManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public ScheduleRepo(ApplicationDBContext db,UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
-        {
-            _db = db;
-            _userManager = userManager;
-            _httpContextAccessor= httpContextAccessor;
-        }
-        public async Task<UserManagerResponse> AddScheduleAsync(ScheduleDTO model)
-        {
-            var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
-            var ayhaga = new CaregiverSchedule
-            {
-                CaregiverId = loggedInUserId,
-                FromTime = model.FromTime,
-                ToTime = model.ToTime,
-                Status = model.Status
+	public class ScheduleRepo : IScheduleRepo
+	{
 
-            };
-            return new UserManagerResponse
-            {
-                Message = "User did not create",
-                IsSuccess = false,
-            };
-        }
-    }
+		private readonly ApplicationDBContext _db;
+		private UserManager<User> _userManager;
+		private readonly IHttpContextAccessor _httpContextAccessor;
+		public ScheduleRepo(ApplicationDBContext db, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
+		{
+			_db = db;
+			_userManager = userManager;
+			_httpContextAccessor = httpContextAccessor;
+		}
+		public async Task<UserManagerResponse> AddScheduleAsync(ScheduleDTO model)
+		{
+			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+			var schedule = new CaregiverSchedule
+			{
+				CaregiverId = loggedInUserId,
+				FromTime = model.FromTime,
+				ToTime = model.ToTime,
+				Status = model.Status
+
+			};
+			try
+			{
+
+
+				_db.CaregiverSchedule.Add(schedule);
+				_db.SaveChanges();
+				return new UserManagerResponse
+				{
+					Message = "ok",
+					IsSuccess = true,
+				};
+
+			}
+			catch
+			{
+				return new UserManagerResponse
+				{
+					Message = "User did not create",
+					IsSuccess = false,
+				};
+			}
+
+
+
+		}
+	}
 }

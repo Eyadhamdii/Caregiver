@@ -6,6 +6,7 @@ namespace Caregiver.Models
 {
 	public class ApplicationDBContext : IdentityDbContext<User>
 	{
+		public DbSet<CaregiverSchedule> CaregiverSchedule { get; set; }
 		public DbSet<CaregiverPatientReservation> Reservations { get; set; }
 		public DbSet<User> Users { get; set; }
 		public DbSet<CaregiverUser> Caregivers { get; set; }
@@ -24,7 +25,7 @@ namespace Caregiver.Models
 			//composite pk.. 
 			base.OnModelCreating(builder);
 			builder.Entity<CaregiverPatientReservation>()
-		    .HasKey(p => new { p.PatientId, p.CaregiverId });
+			.HasKey(p => new { p.PatientId, p.CaregiverId });
 
 
 			builder.Entity<CaregiverPatientReservation>()
