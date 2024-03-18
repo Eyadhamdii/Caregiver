@@ -33,7 +33,9 @@ namespace Caregiver.Controllers
 			try
 			{
 				IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync();
+
 				IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
+
 				_response.Result = CaregiverCards;
 				_response.IsSuccess = true;
 				_response.StatusCode = System.Net.HttpStatusCode.OK;
