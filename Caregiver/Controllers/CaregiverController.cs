@@ -18,57 +18,56 @@ namespace Caregiver.Controllers
 		private readonly ICaregiverRepo _dbCaregiver;
 		private readonly APIResponse _response;
 		private readonly IMapper _mapper;
-		private readonly ApplicationDBContext _db;
 		private readonly UserManager<User> _m;
 
-		public CaregiverController(ICaregiverRepo dbCaregiver, APIResponse response, IMapper mapper, ApplicationDBContext db, UserManager<User> m)
+		public CaregiverController(ICaregiverRepo dbCaregiver, APIResponse response, IMapper mapper, UserManager<User> m)
 		{
 			_dbCaregiver = dbCaregiver;
 			_response = response;
 			_mapper = mapper;
-			_db = db;
 			_m = m;
 		}
 
-		[HttpPut]
-		public async Task<IActionResult> Update(string id, [FromBody] CaregiverUpdateDTO caregiverUpdate)
+		[HttpPut("{id}")]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<APIResponse>> Update(string id, [FromBody] CaregiverUpdateDTO caregiverUpdate)
 		{
-			CaregiverUser caregiverToUpdate = await _dbCaregiver.GetAsync(a => a.Id == id);
-			if (caregiverToUpdate == null)
+			try
+			{
+				CaregiverUser caregiverToUpdate = await _dbCaregiver.GetAsync(a => a.Id == id);
+				if (caregiverToUpdate == null)
+				{
+					_response.IsSuccess = false;
+					_response.ErrorMessages = new List<string> { " Can't find the user by this id " };
+					_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+					return NotFound(_response);
+				}
+				//It is used for updating the properties of an existing CaregiverUser object (caregiverToUpdate) with the values provided in the caregiverUpdate DTO.
+				_mapper.Map(caregiverUpdate, caregiverToUpdate);
+
+				var result = await _m.UpdateAsync(caregiverToUpdate);
+				//db.save changes could work but usermanager is better for 
+				if (result.Succeeded)
+				{
+					_response.IsSuccess = true;
+					_response.StatusCode = System.Net.HttpStatusCode.OK;
+					_response.Result = _mapper.Map<CaregiverUpdateDTO>(_mapper.Map(caregiverUpdate, caregiverToUpdate));
+					return Ok(_response);
+				}
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { " Can't update" };
+				_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+				return BadRequest(_response);
+			}
+			catch (Exception e)
 			{
 				_response.IsSuccess = false;
-				_response.ErrorMessages = new List<string> { " Can't find the user by this id" };
-				_response.StatusCode = System.Net.HttpStatusCode.NotFound;
-				return NotFound(_response);
+				_response.ErrorMessages = new List<string> { e.Message };
+
 			}
-
-			//caregiverToUpdate.Country = caregiverUpdate.Country;
-			//caregiverToUpdate.City = caregiverUpdate.City;
-			//caregiverToUpdate.Gender = caregiverUpdate.Gender;
-			//caregiverToUpdate.Bio = caregiverUpdate.Bio;
-			//caregiverToUpdate.Birthdate = caregiverUpdate.Birthdate;
-			//caregiverToUpdate.Email = caregiverUpdate.Email;
-			//caregiverToUpdate.Nationality = caregiverUpdate.Nationality;
-			//caregiverToUpdate.PhoneNumber = caregiverUpdate.PhoneNumber;
-			//caregiverToUpdate.PricePerDay = caregiverUpdate.PricePerDay;
-			//caregiverToUpdate.PricePerHour = caregiverUpdate.PricePerHour;
-			//caregiverToUpdate.JobTitle = caregiverUpdate.JobTitle;
-			//caregiverToUpdate.YearsOfExperience = caregiverUpdate.YearsOfExperience;
-			//caregiverToUpdate.CareerLevel = caregiverUpdate.CareerLevel;
-			_mapper.Map(caregiverUpdate, caregiverToUpdate);
-
-			//var result = await _m.UpdateAsync(caregiverToUpdate);
-
-			if (_db.SaveChanges() > 0)
-			{
-				_response.IsSuccess = true;
-				_response.StatusCode = System.Net.HttpStatusCode.OK;
-				return Ok(_response);
-			}
-			_response.IsSuccess = false;
-			_response.ErrorMessages = new List<string> { " Can't update" };
-			_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
-			return BadRequest(_response);
+			return _response;
 
 
 		}
@@ -139,8 +138,9 @@ namespace Caregiver.Controllers
 				return NotFound(_response);
 			}
 
-			//	return Ok(caregiver);
-			return Ok(_mapper.Map<CaregiverUpdateDTO>(caregiver));
+			return Ok(caregiver);
+			//testing the update function
+			//return Ok(_mapper.Map<CaregiverUpdateDTO>(caregiver));
 		}
 
 
