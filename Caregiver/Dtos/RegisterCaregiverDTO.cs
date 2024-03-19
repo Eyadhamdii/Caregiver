@@ -75,5 +75,8 @@ namespace Caregiver.Dtos
         public IFormFile Resume { get; set; }
         [Required]
         public IFormFile CriminalRecords { get; set; }
-    }
+
+		[Required]
+		public IFormFile Photo { get; set; }
+	}
 }

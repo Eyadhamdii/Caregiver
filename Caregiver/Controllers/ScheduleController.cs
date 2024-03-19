@@ -28,5 +28,11 @@ namespace Caregiver.Controllers
             }
             return BadRequest("Some properties are not valid"); // Status code: 400
         }
-    }
+
+		//[HttpGet("AddSchedule")]
+		//public async Task<IActionResult> GetScheduleAsync(string id)
+  //      {
+
+  //      }
+	}
 }

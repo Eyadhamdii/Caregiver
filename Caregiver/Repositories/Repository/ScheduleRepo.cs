@@ -10,13 +10,13 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Caregiver.Repositories.Repository
 {
-	public class ScheduleRepo : IScheduleRepo
+	public class ScheduleRepo : GenericRepo<CaregiverSchedule>, IScheduleRepo
 	{
 
 		private readonly ApplicationDBContext _db;
 		private UserManager<User> _userManager;
 		private readonly IHttpContextAccessor _httpContextAccessor;
-		public ScheduleRepo(ApplicationDBContext db, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
+		public ScheduleRepo(ApplicationDBContext db, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor) :base(db)
 		{
 			_db = db;
 			_userManager = userManager;
@@ -28,23 +28,25 @@ namespace Caregiver.Repositories.Repository
 			var schedule = new CaregiverSchedule
 			{
 				CaregiverId = loggedInUserId,
-				FromTime = model.FromTime,
-				ToTime = model.ToTime,
+				Day=model.Day,
 				Status = model.Status
-
 			};
+
+			if (model.Status != Status.FullDay && model.Status != Status.DayOff)
+			{
+				schedule.FromTime = model.FromTime;
+				schedule.ToTime = model.ToTime;
+			}
+
 			try
 			{
-
-
-				_db.CaregiverSchedule.Add(schedule);
+				_db.CaregiverSchedules.Add(schedule);
 				_db.SaveChanges();
 				return new UserManagerResponse
 				{
 					Message = "ok",
 					IsSuccess = true,
 				};
-
 			}
 			catch
 			{

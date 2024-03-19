@@ -134,10 +134,12 @@ namespace Caregiver.Repositories.Repository
             using var datastream1 = new MemoryStream();
 
             await model.CriminalRecords.CopyToAsync(datastream1);
+			using var datastream2 = new MemoryStream();
+
+			await model.Photo.CopyToAsync(datastream2);
 
 
-
-            if (model == null)
+			if (model == null)
                 throw new NullReferenceException("Reigster Model is null");
 
             if (model.Password != model.ConfirmPassword)
@@ -167,6 +169,7 @@ namespace Caregiver.Repositories.Repository
                 YearsOfExperience = model.YearsOfExperience,
                 Resume = datastream.ToArray(),
                 CriminalRecords = datastream1.ToArray(),
+                Photo = datastream2.ToArray()
 
 
             };
