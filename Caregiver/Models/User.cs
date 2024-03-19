@@ -26,6 +26,7 @@ namespace Caregiver.Models
 
 		public int PhoneNumber { get; set; }
 
+		public bool IsDeleted { get; set; } = false;
 
 
 
