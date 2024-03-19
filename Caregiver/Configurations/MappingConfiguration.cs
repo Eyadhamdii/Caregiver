@@ -2,6 +2,7 @@
 using Caregiver.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Caregiver.Dtos.UpdateDTOs;
 
 
 namespace Caregiver.Configurations
@@ -14,6 +15,7 @@ namespace Caregiver.Configurations
 			CreateMap<RegisterPatientDTO, PatientUser>().ReverseMap();
 			CreateMap<RegisterCaregiverDTO, CaregiverUser>().ReverseMap();
 			CreateMap<CaregiverUser, CaregiverCardDTO>().ReverseMap();
+			CreateMap<CaregiverUser, CaregiverUpdateDTO>().ReverseMap();
 
 		}
 

@@ -7,7 +7,6 @@
 		public string Token { get; set; }
 
 
-
 		//disscrimator -- type of user .. 
 	}
 }
