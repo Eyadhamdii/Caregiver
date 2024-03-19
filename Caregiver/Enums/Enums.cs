@@ -28,6 +28,13 @@
             Caregiver = 2,
             Babysitter = 3
         }
+
+        public enum ReservationStatus
+        {
+            OnProgress ,
+            Done ,
+            Cancelled 
+        }
         public enum Status
         {
             Available = 1,

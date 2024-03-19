@@ -1,10 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Policy;
+using static Caregiver.Enums.Enums;
 
 namespace Caregiver.Models
 {
 	public class CaregiverPatientReservation
 	{
-		[ForeignKey("Caregiver")]
+		[Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int OrderId { get; set; }
+
+        [ForeignKey("Caregiver")]
 		public string CaregiverId { get; set; }
 		public CaregiverUser Caregiver { get; set; }
 
@@ -15,5 +21,11 @@ namespace Caregiver.Models
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 
-	}
+        public ReservationStatus Status { get; set; }
+
+		public int totalPrice { get; set; }
+
+
+
+    }
 }

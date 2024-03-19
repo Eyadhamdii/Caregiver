@@ -24,7 +24,9 @@ namespace Caregiver.Models
 
 			//composite pk.. 
 			base.OnModelCreating(builder);
+			/*
 			builder.Entity<CaregiverPatientReservation>()
+		    .HasKey(p => new { p.PatientId, p.CaregiverId });*/
 			.HasKey(p => new { p.PatientId, p.CaregiverId });
 
 
