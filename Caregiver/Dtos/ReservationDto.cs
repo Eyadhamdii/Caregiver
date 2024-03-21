@@ -13,14 +13,16 @@ namespace Caregiver.Dtos
         public string PatientLastName { get; set; } = string.Empty;
         public Gender Gender { get; set; }
 
-        public string EmailAddress { get; set; } = string.Empty;
+        public string CaregiverEmailAddress { get; set; } = string.Empty;
+        public string PatientEmailAddress { get; set; } = string.Empty;
 
         public int PhoneNumber { get; set; }
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-
+        public string PatientId { get; set; }
         public ReservationStatus Status { get; set; }
         public int OrderId { get; set; }
+        public int TotalPrice { get; set; }
     }
 }

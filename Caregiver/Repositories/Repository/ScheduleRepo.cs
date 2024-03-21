@@ -23,8 +23,9 @@ namespace Caregiver.Repositories.Repository
 			_httpContextAccessor = httpContextAccessor;
 		}
 		public async Task<UserManagerResponse> AddScheduleAsync(ScheduleDTO model)
-		{
+		{  //Take it ya soso
 			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
 			var schedule = new CaregiverSchedule
 			{
 				CaregiverId = loggedInUserId,

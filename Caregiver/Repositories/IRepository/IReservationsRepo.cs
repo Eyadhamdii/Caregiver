@@ -1,4 +1,5 @@
-﻿using Caregiver.Models;
+﻿using Caregiver.Dtos;
+using Caregiver.Models;
 
 namespace Caregiver.Repositories.IRepository
 {
@@ -6,7 +7,10 @@ namespace Caregiver.Repositories.IRepository
     {
         Task<IEnumerable<CaregiverPatientReservation>> GetAll();
 
+        Task<IEnumerable<PatientsGetAllReservationDto>> GetPatientAllReservations();
+
         Task<CaregiverPatientReservation> GetReservationById(int id);
+        Task<CaregiverPatientReservation> GetPatientReservationById(int id);
 
     }
 }
