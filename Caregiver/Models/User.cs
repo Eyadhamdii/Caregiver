@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Reflection;
+using System.Threading.Tasks.Dataflow;
 using static Caregiver.Enums.Enums;
 
 namespace Caregiver.Models
@@ -28,8 +29,7 @@ namespace Caregiver.Models
 
 		public bool IsDeleted { get; set; } = false;
 
-
-
+		//public DateTime JoinedDate { get; } = DateTime.Now;
 
 
 	}

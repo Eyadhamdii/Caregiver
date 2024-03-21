@@ -30,6 +30,8 @@ namespace Caregiver.Models
 
 		public byte[] CriminalRecords { get; set; }
 
+		//public bool IsAccepted { get; set; } = false;
+
 		public ICollection<CaregiverPatientReservation> Reservations { get; set; } = null;
 	}
 }

@@ -28,6 +28,7 @@ namespace Caregiver.Repositories.Repository
 				query = query.Where(filter);
 			}
 			return await query.FirstOrDefaultAsync();
+
 		}
 
 		public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null)
