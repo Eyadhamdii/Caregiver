@@ -151,22 +151,23 @@ namespace Caregiver.Repositories.Repository
 			{
 				FirstName = model.FirstName,
 				LastName = model.LastName,
-				Gender = model.Gender,
+				Gender = model.Gender.ToString(),
 				Birthdate = model.Birthdate,
 				Nationality = model.Nationality,
 				UserName = model.Email,
 				Email = model.Email,
 				PhoneNumber = model.PhoneNumber,
 				Bio = model.Bio,
-				City = model.City,
+				City = model.City.ToString(),
 				Country = model.Country,
-				JobTitle = model.JobTitle,
+				JobTitle = model.JobTitle.ToString(),
 				PricePerDay = model.PricePerDay,
 				PricePerHour = model.PricePerHour,
 				WhatCanYouDo = model.WhatCanYouDo,
 				YearsOfExperience = model.YearsOfExperience,
 				Resume = datastream.ToArray(),
 				CriminalRecords = datastream1.ToArray(),
+				WhatCanCaregiverDo = model.WhatCanCaregiverDo
 
 
 			};

@@ -203,23 +203,42 @@ namespace Caregiver.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult> GetAllCaregiverByType(string Role)
 		{
-			if (Enum.TryParse<JobTitle>(Role, out JobTitle jobTitle))
+			try
 			{
-				IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync(a => a.JobTitle == jobTitle && a.IsDeleted == false);
+				IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync(a => a.JobTitle == Role && a.IsDeleted == false);
 				IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
 				_response.Result = CaregiverCards;
 				_response.IsSuccess = true;
 				_response.StatusCode = System.Net.HttpStatusCode.OK;
 				return Ok(_response);
 			}
-			else
+			catch (Exception e)
 			{
 				_response.IsSuccess = false;
-				_response.ErrorMessages = new List<string> { " invalid Role" };
+				_response.ErrorMessages = new List<string> { " invalid Role", e.Message };
 				_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
 				return BadRequest(_response);
 			}
 		}
+		//public async Task<ActionResult> GetAllCaregiverByType(string Role)
+		//{
+		//	if (Enum.TryParse<JobTitle>(Role, out JobTitle jobTitle))
+		//	{
+		//		IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync(a => a.JobTitle == jobTitle && a.IsDeleted == false);
+		//		IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
+		//		_response.Result = CaregiverCards;
+		//		_response.IsSuccess = true;
+		//		_response.StatusCode = System.Net.HttpStatusCode.OK;
+		//		return Ok(_response);
+		//	}
+		//	else
+		//	{
+		//		_response.IsSuccess = false;
+		//		_response.ErrorMessages = new List<string> { " invalid Role" };
+		//		_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+		//		return BadRequest(_response);
+		//	}
+		//}
 
 
 
@@ -238,7 +257,8 @@ namespace Caregiver.Controllers
 				return NotFound(_response);
 			}
 
-			return Ok(caregiver);
+			caregiver.JobTitle.ToString();
+			; return Ok(caregiver);
 			//testing the update function
 			//return Ok(_mapper.Map<CaregiverUpdateDTO>(caregiver));
 		}

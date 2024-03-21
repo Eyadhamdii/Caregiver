@@ -13,7 +13,8 @@ namespace Caregiver.Models
 
 		public string FirstName { get; set; } = string.Empty;
 		public string LastName { get; set; } = string.Empty;
-		public Gender Gender { get; set; }
+		//public Gender Gender { get; set; }
+		public string Gender { get; set; }
 
 		public DateOnly Birthdate { get; set; }
 
