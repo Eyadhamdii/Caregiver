@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240322185847_check props")]
+    [Migration("20240322190727_check props")]
     partial class checkprops
     {
         /// <inheritdoc />
@@ -315,9 +315,6 @@ namespace Caregiver.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("WhatCanCaregiverDo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WhatCanYouDo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("YearsOfExperience")

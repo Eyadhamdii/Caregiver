@@ -52,7 +52,6 @@ namespace Caregiver.Dtos
 
 		public City JobLocationLookingFor { get; set; }
 
-		//public string WhatCanYouDo { get; set; } = string.Empty;
 
 		public int PricePerHour { get; set; }
 
@@ -60,6 +59,5 @@ namespace Caregiver.Dtos
 		public IFormFile Resume { get; set; }
 		public IFormFile CriminalRecords { get; set; }
 
-		public string[] WhatCanCaregiverDo { get; set; }
 	}
 }

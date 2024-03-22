@@ -314,9 +314,6 @@ namespace Caregiver.Migrations
                     b.Property<string>("WhatCanCaregiverDo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WhatCanYouDo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("YearsOfExperience")
                         .HasColumnType("int");
 

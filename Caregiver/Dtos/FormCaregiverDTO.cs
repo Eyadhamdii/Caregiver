@@ -27,9 +27,6 @@ namespace Caregiver.Dtos
 		[Required]
 
 		public City JobLocationLookingFor { get; set; }
-		//[Required]
-
-		//public string WhatCanYouDo { get; set; } = string.Empty;
 		[Required]
 
 		public int PricePerHour { get; set; }
