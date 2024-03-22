@@ -257,8 +257,7 @@ namespace Caregiver.Controllers
 				return NotFound(_response);
 			}
 
-			caregiver.JobTitle.ToString();
-			; return Ok(caregiver);
+			return Ok(caregiver);
 			//testing the update function
 			//return Ok(_mapper.Map<CaregiverUpdateDTO>(caregiver));
 		}
