@@ -198,7 +198,7 @@ namespace Caregiver.Repositories.Repository
 				caregiverUser.JobTitle = model.JobTitle.ToString();
 				caregiverUser.PricePerDay = model.PricePerDay;
 				caregiverUser.PricePerHour = model.PricePerHour;
-				caregiverUser.WhatCanYouDo = model.WhatCanYouDo;
+				//caregiverUser.WhatCanYouDo = model.WhatCanYouDo;
 				caregiverUser.YearsOfExperience = model.YearsOfExperience;
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();

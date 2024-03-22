@@ -5,8 +5,8 @@ namespace Caregiver.Dtos
 {
 	public class FormCaregiverDTO
 	{
-		public string[] WhatCanCaregiverDo { get; set; }
 		[Required]
+		public string[] WhatCanCaregiverDo { get; set; }
 
 		public string Country { get; set; }
 
@@ -27,9 +27,9 @@ namespace Caregiver.Dtos
 		[Required]
 
 		public City JobLocationLookingFor { get; set; }
-		[Required]
+		//[Required]
 
-		public string WhatCanYouDo { get; set; } = string.Empty;
+		//public string WhatCanYouDo { get; set; } = string.Empty;
 		[Required]
 
 		public int PricePerHour { get; set; }

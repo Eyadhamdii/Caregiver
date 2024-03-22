@@ -52,7 +52,7 @@ namespace Caregiver.Dtos
 
 		public City JobLocationLookingFor { get; set; }
 
-		public string WhatCanYouDo { get; set; } = string.Empty;
+		//public string WhatCanYouDo { get; set; } = string.Empty;
 
 		public int PricePerHour { get; set; }
 
