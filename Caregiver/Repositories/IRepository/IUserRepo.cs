@@ -2,15 +2,17 @@
 
 namespace Caregiver.Repositories.IRepository
 {
-    public interface IUserRepo
-    {
-        Task<UserManagerResponse> RegisterUserAsync(RegisterPatientDTO model);
+	public interface IUserRepo
+	{
+		Task<UserManagerResponse> RegisterUserAsync(RegisterPatientDTO model);
 
-        Task<UserManagerResponse> RegisterCaregiverAsync(RegisterCaregiverDTO model);
+		Task<UserManagerResponse> RegisterCaregiverAsync(RegisterCaregiverDTO model);
 
-        Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO);
+		Task<UserManagerResponse> FormCaregiverAsync(FormCaregiverDTO model);
+
+		Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO);
 
 
 
-    }
+	}
 }

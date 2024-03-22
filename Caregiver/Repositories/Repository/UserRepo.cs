@@ -18,17 +18,18 @@ namespace Caregiver.Repositories.Repository
 		private readonly string secretKey;
 		private readonly ApplicationDBContext _db;
 		private readonly IMapper _mapper;
+		private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration)
+		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
 		{
 			_db = db;
 			_userManager = userManager;
 			secretKey = configuration.GetValue<string>("ApiSettings:secret");
 			_mapper = mapper;
+			_httpContextAccessor = httpContextAccessor;
 
 		}
-
 
 		public async Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO)
 		{
@@ -125,16 +126,9 @@ namespace Caregiver.Repositories.Repository
 			};
 		}
 
-		public async Task<UserManagerResponse> RegisterCaregiverAsync([FromForm] RegisterCaregiverDTO model)
+
+		public async Task<UserManagerResponse> RegisterCaregiverAsync([FromBody] RegisterCaregiverDTO model)
 		{
-			using var datastream = new MemoryStream();
-
-			await model.Resume.CopyToAsync(datastream);
-
-			using var datastream1 = new MemoryStream();
-
-			await model.CriminalRecords.CopyToAsync(datastream1);
-
 
 
 			if (model == null)
@@ -157,17 +151,6 @@ namespace Caregiver.Repositories.Repository
 				UserName = model.Email,
 				Email = model.Email,
 				PhoneNumber = model.PhoneNumber,
-				Bio = model.Bio,
-				City = model.City.ToString(),
-				Country = model.Country,
-				JobTitle = model.JobTitle.ToString(),
-				PricePerDay = model.PricePerDay,
-				PricePerHour = model.PricePerHour,
-				WhatCanYouDo = model.WhatCanYouDo,
-				YearsOfExperience = model.YearsOfExperience,
-				Resume = datastream.ToArray(),
-				CriminalRecords = datastream1.ToArray(),
-				WhatCanCaregiverDo = model.WhatCanCaregiverDo
 
 
 			};
@@ -191,5 +174,67 @@ namespace Caregiver.Repositories.Repository
 			};
 		}
 
+
+		public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model)
+		{
+			using var datastream = new MemoryStream();
+
+			await model.Resume.CopyToAsync(datastream);
+
+			using var datastream1 = new MemoryStream();
+
+			await model.CriminalRecords.CopyToAsync(datastream1);
+
+			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
+			if (model == null)
+				throw new NullReferenceException("Register Model is null");
+
+			var user = await _userManager.FindByIdAsync(loggedInUserId);
+			if (user != null && user is CaregiverUser caregiverUser)
+			{
+				caregiverUser.City = model.City.ToString();
+				caregiverUser.Country = model.Country;
+				caregiverUser.JobTitle = model.JobTitle.ToString();
+				caregiverUser.PricePerDay = model.PricePerDay;
+				caregiverUser.PricePerHour = model.PricePerHour;
+				caregiverUser.WhatCanYouDo = model.WhatCanYouDo;
+				caregiverUser.YearsOfExperience = model.YearsOfExperience;
+				caregiverUser.Resume = datastream.ToArray();
+				caregiverUser.CriminalRecords = datastream1.ToArray();
+
+				var result = await _userManager.UpdateAsync(caregiverUser);
+
+				if (result.Succeeded)
+				{
+					// Update successful, return success response
+					return new UserManagerResponse
+					{
+						IsSuccess = true,
+						Message = "Additional data updated successfully."
+					};
+				}
+				else
+				{
+					// Update failed, return error response
+					return new UserManagerResponse
+					{
+						IsSuccess = false,
+						Message = "Failed to update additional data.",
+						Errors = result.Errors.Select(e => e.Description)
+					};
+				}
+			}
+			else
+			{
+				// User not found, return error response
+				return new UserManagerResponse
+				{
+					IsSuccess = false,
+					Message = "User not found."
+				};
+
+			}
+		}
 	}
 }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Caregiver.Controllers
 {
-    [Route("api/[controller]")]
+	[Route("api/[controller]")]
 	[ApiController]
 	public class AuthController : ControllerBase
 	{
@@ -45,15 +45,32 @@ namespace Caregiver.Controllers
 			return BadRequest("Some properties are not valid"); // Status code: 400
 		}
 
+
 		[HttpPost("CaregiverRegister")]
 
-		public async Task<IActionResult> RegisterAsync([FromForm] RegisterCaregiverDTO model)
+		public async Task<IActionResult> RegisterAsync([FromBody] RegisterCaregiverDTO model)
 		{
 
 
 			if (ModelState.IsValid)
 			{
 				var result = await _userService.RegisterCaregiverAsync(model);
+				if (result.IsSuccess)
+					return Ok(result); // Status Code: 200
+				return BadRequest(result);
+			}
+			return BadRequest("Some properties are not valid"); // Status code: 400
+		}
+
+		[HttpPost("CaregiverForm")]
+
+		public async Task<IActionResult> FormAsync([FromForm] FormCaregiverDTO model)
+		{
+
+
+			if (ModelState.IsValid)
+			{
+				var result = await _userService.FormCaregiverAsync(model);
 				if (result.IsSuccess)
 					return Ok(result); // Status Code: 200
 				return BadRequest(result);
