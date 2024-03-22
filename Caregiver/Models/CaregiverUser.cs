@@ -28,6 +28,7 @@ namespace Caregiver.Models
 
 		public byte[] Resume { get; set; }
 
+		public byte[] Photo { get; set; }
 		public byte[] CriminalRecords { get; set; }
 
 		public ICollection<CaregiverPatientReservation> Reservations { get; set; } = null;

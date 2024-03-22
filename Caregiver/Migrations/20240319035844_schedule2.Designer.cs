@@ -4,6 +4,7 @@ using Caregiver.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240319035844_schedule2")]
+    partial class schedule2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,17 +57,14 @@ namespace Caregiver.Migrations
                     b.Property<string>("CaregiverId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateOnly>("Day")
-                        .HasColumnType("date");
-
-                    b.Property<int>("FromTime")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("FromTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("ToTime")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("ToTime")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -328,9 +328,6 @@ namespace Caregiver.Migrations
 
                     b.Property<int>("JobTitle")
                         .HasColumnType("int");
-
-                    b.Property<byte[]>("Photo")
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("PricePerDay")
                         .HasColumnType("int");
