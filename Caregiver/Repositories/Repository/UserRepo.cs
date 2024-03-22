@@ -202,6 +202,7 @@ namespace Caregiver.Repositories.Repository
 				caregiverUser.YearsOfExperience = model.YearsOfExperience;
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();
+				caregiverUser.WhatCanCaregiverDo = model.WhatCanCaregiverDo;
 
 				var result = await _userManager.UpdateAsync(caregiverUser);
 
