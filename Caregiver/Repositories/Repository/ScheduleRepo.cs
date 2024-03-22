@@ -25,38 +25,69 @@ namespace Caregiver.Repositories.Repository
 		public async Task<UserManagerResponse> AddScheduleAsync(ScheduleDTO model)
 		{
 			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
-			var schedule = new CaregiverSchedule
-			{
-				CaregiverId = loggedInUserId,
-				FromTime = model.FromTime,
-				ToTime = model.ToTime,
-				Status = model.Status
-
-			};
-			try
-			{
 
 
-				_db.CaregiverSchedule.Add(schedule);
-				_db.SaveChanges();
-				return new UserManagerResponse
-				{
-					Message = "ok",
-					IsSuccess = true,
-				};
+            //var schedule = new CaregiverSchedule
+            //{
+            //	CaregiverId = loggedInUserId,
+            //	FromTime = model.FromTime,
+            //	ToTime = model.ToTime,
+            //	Status = model.Status
 
-			}
-			catch
-			{
-				return new UserManagerResponse
-				{
-					Message = "User did not create",
-					IsSuccess = false,
-				};
-			}
+            //};
+            //try
+            //{
 
 
+            //	_db.CaregiverSchedule.Add(schedule);
+            //	_db.SaveChanges();
+            //	return new UserManagerResponse
+            //	{
+            //		Message = "ok",
+            //		IsSuccess = true,
+            //	};
 
-		}
+            //}
+            //catch
+            //{
+            //	return new UserManagerResponse
+            //	{
+            //		Message = "User did not create",
+            //		IsSuccess = false,
+            //	};
+            //}
+            var schedule = new CaregiverSchedule
+            {
+                CaregiverId = loggedInUserId,
+                Status = model.Status
+            };
+
+            if (model.Status != Status.FullDay || model.Status != Status.DayOff)
+            {
+                schedule.FromTime = model.FromTime;
+                schedule.ToTime = model.ToTime;
+            }
+
+            try
+            {
+                _db.CaregiverSchedules.Add(schedule);
+                _db.SaveChanges();
+                return new UserManagerResponse
+                {
+                    Message = "ok",
+                    IsSuccess = true,
+                };
+            }
+            catch
+            {
+                return new UserManagerResponse
+                {
+                    Message = "User did not create",
+                    IsSuccess = false,
+                };
+            }
+
+
+        }
 	}
 }

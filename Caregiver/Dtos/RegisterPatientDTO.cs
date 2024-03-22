@@ -11,19 +11,18 @@ namespace Caregiver.Dtos
 		public string UserName { get; set; } = "no user name";
 
 		[Required]
-		[StringLength(50, MinimumLength = 3)]
+		[StringLength(40, MinimumLength = 3)]
 
 		public string FirstName { get; set; }
 
 		[Required]
-		[StringLength(50, MinimumLength = 3)]
+		[StringLength(40, MinimumLength = 3)]
 		public string LastName { get; set; }
 
 		[Required]
 
 		public Gender Gender { get; set; }
 
-		[Required]
 
 		public DateOnly Birthdate { get; set; }
 
@@ -35,11 +34,11 @@ namespace Caregiver.Dtos
 		public string Email { get; set; }
 
 		[Required]
-		[StringLength(50, MinimumLength = 5)]
+
 		public string Password { get; set; }
 
 		[Required]
-		[StringLength(50, MinimumLength = 5)]
+
 		public string ConfirmPassword { get; set; }
 
 		[Required]

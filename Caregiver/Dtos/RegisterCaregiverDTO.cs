@@ -30,50 +30,35 @@ namespace Caregiver.Dtos
         public string Email { get; set; }
 
         [Required]
-        [StringLength(50, MinimumLength = 5)]
+        [StringLength(40, MinimumLength = 5)]
         public string Password { get; set; }
 
         [Required]
-        [StringLength(50, MinimumLength = 5)]
+        [StringLength(40, MinimumLength = 5)]
         public string ConfirmPassword { get; set; }
 
         [Required]
         public int PhoneNumber { get; set; }
-
-        [Required]
-
-        public string Country {  get; set; }
-
-        [Required]
+        public string Country { get; set; }
 
         public City City { get; set; }
 
-        [Required]
 
         public CareerLevel CareerLevel { get; set; }
 
-        [Required]
-
         public int YearsOfExperience { get; set; }
-        [Required]
 
         public JobTitle JobTitle { get; set; }
-        [Required]
 
         public City JobLocationLookingFor { get; set; }
-        [Required]
 
         public string WhatCanYouDo { get; set; } = string.Empty;
-        [Required]
 
         public int PricePerHour { get; set; }
-        [Required]
 
         public int PricePerDay { get; set; }
-        [Required]
-
         public IFormFile Resume { get; set; }
-        [Required]
         public IFormFile CriminalRecords { get; set; }
+
     }
 }

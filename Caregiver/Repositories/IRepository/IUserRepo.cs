@@ -8,6 +8,8 @@ namespace Caregiver.Repositories.IRepository
 
         Task<UserManagerResponse> RegisterCaregiverAsync(RegisterCaregiverDTO model);
 
+        Task<UserManagerResponse> FormCaregiverAsync(FormCaregiverDTO model);
+
         Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO);
 
 
