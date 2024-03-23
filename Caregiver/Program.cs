@@ -83,6 +83,8 @@ namespace Caregiver
 
 			builder.Services.AddScoped<APIResponse, APIResponse>();
 
+			builder.Services.AddTransient<IEmailService, EmailService>();
+
 			builder.Services.AddControllers().AddJsonOptions(options =>
 			{
 				options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;

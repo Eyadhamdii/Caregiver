@@ -15,13 +15,14 @@ namespace Caregiver.Controllers
 	{
 
 		[HttpPost]
-		public async Task<IActionResult> SendEmail(string body)
+		public async Task<IActionResult> SendEmail(string resetLink, string emailAddress)
 		{
+
 			var email = new MimeMessage();
 			email.From.Add(new MailboxAddress("Caregiver Website", "emykhodary2019@gmail.com"));
-			email.To.Add(MailboxAddress.Parse("emanalaakhodary@gmail.com"));
+			email.To.Add(MailboxAddress.Parse(emailAddress));
 			email.Subject = "Your Reset Password Link";
-			email.Body = new TextPart(TextFormat.Html) { Text = body };
+			email.Body = new TextPart(TextFormat.Html) { Text = $"<h3> Click on the link and will direct you to the page to enter a new password<h3/>  {resetLink}" };
 
 			using var smtp = new SmtpClient();
 			//can't in production

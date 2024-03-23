@@ -19,33 +19,31 @@ namespace Caregiver.Repositories.Repository
 		private readonly ApplicationDBContext _db;
 		private readonly IMapper _mapper;
 		private readonly IHttpContextAccessor _httpContextAccessor;
+		private readonly IEmailService _emailService;
 
 
-		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+
+
+		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService emailService)
 		{
 			_db = db;
 			_userManager = userManager;
 			secretKey = configuration.GetValue<string>("ApiSettings:secret");
 			_mapper = mapper;
 			_httpContextAccessor = httpContextAccessor;
-
+			_emailService = emailService;
 		}
 
 		public async Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO)
 		{
 
 			var user = await _userManager.FindByEmailAsync(loginReqDTO.Email);
-			//var user = _db.Users.FirstOrDefault(u => u.UserName.ToLower() == loginReqDTO.UserName.ToLower());
 			bool isValid = await _userManager.CheckPasswordAsync(user, loginReqDTO.Password);
 
-			//if ( await _userManager.IsLockedOutAsync(user))
-
-			//     return BadRequest("Try again");
 
 
 			if (user == null || isValid == false)
 			{
-				//return null;
 				return new LoginResDTO()
 				{
 					Token = "",
@@ -93,6 +91,42 @@ namespace Caregiver.Repositories.Repository
 			};
 			return loginResDTO;
 		}
+
+
+		public async Task<string> ForgotPassword(string id, string email)
+		{
+			User user = await _userManager.FindByIdAsync(id);
+			if (user == null)
+			{
+				return null;
+			}
+
+			if (email == user.Email)
+			{
+				string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+				var result = await _emailService.SendEmail(resetToken, email);
+				if (result == "Success")
+				{
+					return resetToken;
+				}
+				else return null;
+			}
+			return null;
+
+		}
+		public async Task<string> UpdateForgottenPassword(string email, string resetToken, string newPassword)
+		{
+			User user = await _userManager.FindByEmailAsync(email);
+			IdentityResult passwordChangeResult = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+			if (passwordChangeResult.Succeeded)
+			{
+				return "success";
+			}
+			return "Failed";
+		}
+
+
 
 
 		public async Task<UserManagerResponse> RegisterUserAsync(RegisterPatientDTO model)
