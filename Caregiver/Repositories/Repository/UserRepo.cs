@@ -2,8 +2,10 @@
 using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -19,9 +21,11 @@ namespace Caregiver.Repositories.Repository
 		private readonly ApplicationDBContext _db;
 		private readonly IMapper _mapper;
 		private readonly IHttpContextAccessor _httpContextAccessor;
+        private new List<string> _allowedExt = new List<string> { ".jpg", ".png", ".pdf" };
 
 
-		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+
+        public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
 		{
 			_db = db;
 			_userManager = userManager;
@@ -173,11 +177,19 @@ namespace Caregiver.Repositories.Repository
 				Errors = result.Errors.Select(e => e.Description)
 			};
 		}
+                
 
-
-		public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model)
+        public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model)
 		{
-			using var datastream = new MemoryStream();
+			if (!_allowedExt.Contains(Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
+
+                return new UserManagerResponse
+                {
+                    IsSuccess = false,
+                    Message = "return only valid ext"
+                };
+
+            using var datastream = new MemoryStream();
 
 			await model.Resume.CopyToAsync(datastream);
 
