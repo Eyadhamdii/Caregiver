@@ -7,6 +7,7 @@ using Caregiver.Repositories.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -56,20 +57,23 @@ namespace Caregiver
 		 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 		 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 	 }
-	 ).AddJwtBearer(options =>
-	 {
+			).AddJwtBearer(options =>
+			{
+
+				var secretKey = builder.Configuration.GetValue<string>("ApiSettings:secret");
+				var secretKeyInBytes = Encoding.ASCII.GetBytes(secretKey);
+				var key = new SymmetricSecurityKey(secretKeyInBytes);
 
 
+				options.TokenValidationParameters = new TokenValidationParameters
+				{
+					ValidateIssuerSigningKey = true, //??
+					IssuerSigningKey = key,
+					ValidateIssuer = false,
+					ValidateAudience = false
 
-		 options.TokenValidationParameters = new TokenValidationParameters
-		 {
-			 ValidateIssuerSigningKey = true, //??
-			 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Encryption Key")),
-			 ValidateIssuer = false,
-			 ValidateAudience = false
-
-		 };
-	 });
+				};
+			});
 			//automapper 
 			builder.Services.AddAutoMapper(typeof(MappingConfiguration));
 			//generic repo
