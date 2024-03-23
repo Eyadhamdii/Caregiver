@@ -39,5 +39,8 @@ namespace Caregiver.Dtos
 		[Required]
 		public IFormFile CriminalRecords { get; set; }
 
-	}
+        [Required]
+        public IFormFile UploadPhoto { get; set; }
+
+    }
 }

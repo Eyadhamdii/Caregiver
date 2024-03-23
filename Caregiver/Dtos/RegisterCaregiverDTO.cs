@@ -39,26 +39,8 @@ namespace Caregiver.Dtos
 
         [Required]
         public int PhoneNumber { get; set; }
-        public string Country { get; set; }
 
-        public City City { get; set; }
-
-
-        public CareerLevel CareerLevel { get; set; }
-
-        public int YearsOfExperience { get; set; }
-
-        public JobTitle JobTitle { get; set; }
-
-        public City JobLocationLookingFor { get; set; }
-
-        public string WhatCanYouDo { get; set; } = string.Empty;
-
-        public int PricePerHour { get; set; }
-
-        public int PricePerDay { get; set; }
-        public IFormFile Resume { get; set; }
-        public IFormFile CriminalRecords { get; set; }
+       
 
 	}
 }

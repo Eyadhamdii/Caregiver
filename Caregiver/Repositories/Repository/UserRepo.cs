@@ -185,7 +185,11 @@ namespace Caregiver.Repositories.Repository
 
 			await model.CriminalRecords.CopyToAsync(datastream1);
 
-			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+            using var datastream2 = new MemoryStream();
+
+            await model.UploadPhoto.CopyToAsync(datastream2);
+
+            var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
 			if (model == null)
 				throw new NullReferenceException("Register Model is null");
@@ -202,7 +206,9 @@ namespace Caregiver.Repositories.Repository
 				caregiverUser.YearsOfExperience = model.YearsOfExperience;
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();
-				caregiverUser.WhatCanCaregiverDo = model.WhatCanCaregiverDo;
+				caregiverUser.Photo = datastream2.ToArray();
+
+                caregiverUser.WhatCanCaregiverDo = model.WhatCanCaregiverDo;
 
 				var result = await _userManager.UpdateAsync(caregiverUser);
 
