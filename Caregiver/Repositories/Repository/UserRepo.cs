@@ -58,6 +58,7 @@ namespace Caregiver.Repositories.Repository
 			//if found
 			//var roles = await _userManager.GetRolesAsync(user);
 			//var Role = roles.FirstOrDefault();
+			//var userClaims = await _userManager.GetClaimsAsync(user);
 
 			//if found generate token... 
 
@@ -67,14 +68,18 @@ namespace Caregiver.Repositories.Repository
 
 			var tokenDescriptor = new SecurityTokenDescriptor
 			{
+				
 				Subject = new ClaimsIdentity(new Claim[]
 			{
 				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-				//new Claim(ClaimTypes.Role, Role),
+				new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1))
+				
 			}),
 				Expires = DateTime.UtcNow.AddDays(7),
 				SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
 			};
+
+
 
 			var TokenHandler = new JwtSecurityTokenHandler();
 			var token = TokenHandler.CreateToken(tokenDescriptor);
@@ -85,7 +90,7 @@ namespace Caregiver.Repositories.Repository
 				//Role = Role,
 				User = new UserDTO
 				{
-
+					
 					ID = user.Id,
 					Email = user.Email,
 					Type = user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)
@@ -149,17 +154,19 @@ namespace Caregiver.Repositories.Repository
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 
-			if (result.Succeeded)
+			if (!result.Succeeded)
 				return new UserManagerResponse
 				{
-					Message = "User created successfully!",
-					IsSuccess = true,
+					Message = "User did not create",
+					IsSuccess = false,
+					Errors = result.Errors.Select(e => e.Description)
 				};
+			
 			return new UserManagerResponse
 			{
-				Message = "User did not create",
-				IsSuccess = false,
-				Errors = result.Errors.Select(e => e.Description)
+				Message = "User created successfully!",
+				IsSuccess = true,
+				
 			};
 		}
 
@@ -197,15 +204,20 @@ namespace Caregiver.Repositories.Repository
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 
+	
 			if (result.Succeeded)
 				return new UserManagerResponse
 				{
-					Message = "User created successfully!",
+					
+
+			Message = "User created successfully!",
 					IsSuccess = true,
 				};
 			return new UserManagerResponse
 			{
-				Message = "User did not create",
+
+
+			Message = "User did not create",
 				IsSuccess = false,
 				Errors = result.Errors.Select(e => e.Description)
 			};
