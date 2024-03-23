@@ -161,7 +161,14 @@ namespace Caregiver.Repositories.Repository
 					IsSuccess = false,
 					Errors = result.Errors.Select(e => e.Description)
 				};
-			
+			var userClaims = new List<Claim>
+{
+	
+	new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)),
+};
+
+
+			await _userManager.AddClaimsAsync(user, userClaims);
 			return new UserManagerResponse
 			{
 				Message = "User created successfully!",
@@ -205,21 +212,28 @@ namespace Caregiver.Repositories.Repository
 			var result = await _userManager.CreateAsync(user, model.Password);
 
 	
-			if (result.Succeeded)
+			if (!result.Succeeded)
 				return new UserManagerResponse
 				{
-					
-
-			Message = "User created successfully!",
-					IsSuccess = true,
+				Message = "User did not create",
+				IsSuccess = false,
+				Errors = result.Errors.Select(e => e.Description)
+			
 				};
+
+			var userClaims = new List<Claim>
+{
+
+	new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)),
+};
+
+			await _userManager.AddClaimsAsync(user, userClaims);
 			return new UserManagerResponse
 			{
 
-
-			Message = "User did not create",
-				IsSuccess = false,
-				Errors = result.Errors.Select(e => e.Description)
+Message = "User created successfully!",
+					IsSuccess = true,
+			
 			};
 		}
                 

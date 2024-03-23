@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 namespace Caregiver
@@ -73,6 +74,18 @@ namespace Caregiver
 					ValidateAudience = false
 
 				};
+			});
+
+
+			builder.Services.AddAuthorization(options =>
+			{
+				options.AddPolicy("Caregiver", policy =>
+					policy
+					.RequireClaim(ClaimTypes.Role, "CaregiverUser"));
+
+				options.AddPolicy("RegularUser", policy =>
+					policy
+					.RequireClaim(ClaimTypes.Role, "PatientUser"));
 			});
 			//automapper 
 			builder.Services.AddAutoMapper(typeof(MappingConfiguration));

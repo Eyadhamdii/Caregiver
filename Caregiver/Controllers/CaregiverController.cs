@@ -3,6 +3,7 @@ using Caregiver.Dtos;
 using Caregiver.Dtos.UpdateDTOs;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -148,7 +149,7 @@ namespace Caregiver.Controllers
 
 
 
-
+		[Authorize(Policy = "Caregiver")]
 		[HttpGet("AllCurrentCaregivers")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<APIResponse>> GetAllCurrentCaregiver()
