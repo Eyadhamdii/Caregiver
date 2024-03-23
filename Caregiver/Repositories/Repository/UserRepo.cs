@@ -2,8 +2,10 @@
 using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -19,6 +21,7 @@ namespace Caregiver.Repositories.Repository
 		private readonly ApplicationDBContext _db;
 		private readonly IMapper _mapper;
 		private readonly IHttpContextAccessor _httpContextAccessor;
+        private new List<string> _allowedExt = new List<string> { ".jpg", ".png", ".pdf" };
 		private readonly IEmailService _emailService;
 
 
@@ -207,11 +210,19 @@ namespace Caregiver.Repositories.Repository
 				Errors = result.Errors.Select(e => e.Description)
 			};
 		}
+                
 
-
-		public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model)
+        public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model)
 		{
-			using var datastream = new MemoryStream();
+			if (!_allowedExt.Contains(Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
+
+                return new UserManagerResponse
+                {
+                    IsSuccess = false,
+                    Message = "return only valid ext"
+                };
+
+            using var datastream = new MemoryStream();
 
 			await model.Resume.CopyToAsync(datastream);
 
@@ -219,7 +230,11 @@ namespace Caregiver.Repositories.Repository
 
 			await model.CriminalRecords.CopyToAsync(datastream1);
 
-			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+            using var datastream2 = new MemoryStream();
+
+            await model.UploadPhoto.CopyToAsync(datastream2);
+
+            var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
 			if (model == null)
 				throw new NullReferenceException("Register Model is null");
@@ -236,7 +251,9 @@ namespace Caregiver.Repositories.Repository
 				caregiverUser.YearsOfExperience = model.YearsOfExperience;
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();
-				caregiverUser.WhatCanCaregiverDo = model.WhatCanCaregiverDo;
+				caregiverUser.Photo = datastream2.ToArray();
+
+                caregiverUser.WhatCanCaregiverDo = model.WhatCanCaregiverDo;
 
 				var result = await _userManager.UpdateAsync(caregiverUser);
 

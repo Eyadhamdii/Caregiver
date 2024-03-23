@@ -33,8 +33,10 @@ namespace Caregiver.Models
 		public int PricePerDay { get; set; }
 
 		public byte[] Resume { get; set; }
+        public byte[] Photo { get; set; }
 
-		public byte[] CriminalRecords { get; set; }
+
+        public byte[] CriminalRecords { get; set; }
 
 		//public bool IsAccepted { get; set; } = false;
 		public string[] WhatCanCaregiverDo { get; set; } = Array.Empty<string>();
