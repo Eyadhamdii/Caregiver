@@ -2,6 +2,7 @@
 using Caregiver.Configurations;
 using Caregiver.Dtos;
 using Caregiver.Models;
+using Caregiver.Models.Payment;
 using Caregiver.Repositories.IRepository;
 using Caregiver.Repositories.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 using System.Security.Claims;
 using System.Text;
 
@@ -100,7 +102,15 @@ namespace Caregiver
 
 			builder.Services.AddTransient<IEmailRepo, EmailRepo>();
 
-			builder.Services.AddControllers().AddJsonOptions(options =>
+            builder.Services.AddScoped<TokenService>();
+            builder.Services.AddScoped<CustomerService>();
+            builder.Services.AddScoped<ChargeService>();
+
+            StripeConfiguration.ApiKey = builder.Configuration.GetValue<string>("StripeOptions:SecretKey");
+
+            builder.Services.AddScoped<IStripeRepo, StripeRepo>();
+
+            builder.Services.AddControllers().AddJsonOptions(options =>
 			{
 				options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 			});
