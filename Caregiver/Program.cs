@@ -92,6 +92,8 @@ namespace Caregiver
 			//generic repo
 			builder.Services.AddScoped<ICaregiverRepo, CaregiverRepo>();
 
+			builder.Services.AddScoped<IGenericRepo<CaregiverUser>, GenericRepo<CaregiverUser>>();
+
 			builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 			builder.Services.AddScoped<APIResponse, APIResponse>();

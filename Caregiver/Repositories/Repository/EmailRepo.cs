@@ -10,7 +10,7 @@ namespace Caregiver.Repositories.Repository
 {
 	public class EmailRepo : IEmailRepo
 	{
-		public async Task<string> SendEmail(string body, string emailAddress)
+		public async Task<string> SendEmail(string body, string header ,string emailAddress)
 		{
 			try
 			{
@@ -18,7 +18,7 @@ namespace Caregiver.Repositories.Repository
 				var email = new MimeMessage();
 				email.From.Add(new MailboxAddress("Caregiver Website", "emykhodary2019@gmail.com"));
 				email.To.Add(MailboxAddress.Parse(emailAddress));
-				email.Subject = "Your Reset Password Link";
+				email.Subject = header;
 
 				//string resetUrl = $"http://localhost:5248/api/Auth/UpdatePassword?email={Uri.EscapeDataString(emailAddress)}&token={Uri.EscapeDataString(token)}";
 

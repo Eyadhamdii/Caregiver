@@ -156,7 +156,9 @@ namespace Caregiver.Controllers
 		{
 			try
 			{
+				//services
 				IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync(a => a.IsDeleted == false);
+				//services
 
 				IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
 
@@ -221,6 +223,9 @@ namespace Caregiver.Controllers
 				return BadRequest(_response);
 			}
 		}
+
+
+
 		//public async Task<ActionResult> GetAllCaregiverByType(string Role)
 		//{
 		//	if (Enum.TryParse<JobTitle>(Role, out JobTitle jobTitle))
@@ -244,6 +249,9 @@ namespace Caregiver.Controllers
 
 
 		//i can add to check if isdeleted == false.. but i think it won't be necessary now
+
+
+
 		[HttpGet("{id}", Name = "GetCaregiverById")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]

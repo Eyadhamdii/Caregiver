@@ -109,8 +109,8 @@ namespace Caregiver.Repositories.Repository
 
 				string resetUrl = $"http://localhost:5248/api/Auth/UpdatePassword?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
 				var message = $"<h3> Click on the link and will direct you to the page to enter a new password</h3>  <a href=\"{resetUrl}\">Click Here</a>";
-
-				var result = await _emailService.SendEmail(message, email);
+				string header = "Your Reset Password Link";
+				var result = await _emailService.SendEmail(message,header, email);
 				if (result == "Success")
 				{
 					return resetToken;
