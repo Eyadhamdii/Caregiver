@@ -40,7 +40,7 @@ namespace Caregiver.Migrations
 
                     b.HasIndex("CaregiverId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("Caregiver.Models.User", b =>
