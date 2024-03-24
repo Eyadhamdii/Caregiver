@@ -22,34 +22,31 @@ namespace Caregiver.Repositories.Repository
 		private readonly IMapper _mapper;
 		private readonly IHttpContextAccessor _httpContextAccessor;
         private new List<string> _allowedExt = new List<string> { ".jpg", ".png", ".pdf" };
+		private readonly IEmailRepo _emailService;
 
 
 
-        public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+
+		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailRepo emailService)
 		{
 			_db = db;
 			_userManager = userManager;
 			secretKey = configuration.GetValue<string>("ApiSettings:secret");
 			_mapper = mapper;
 			_httpContextAccessor = httpContextAccessor;
-
+			_emailService = emailService;
 		}
 
 		public async Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO)
 		{
 
 			var user = await _userManager.FindByEmailAsync(loginReqDTO.Email);
-			//var user = _db.Users.FirstOrDefault(u => u.UserName.ToLower() == loginReqDTO.UserName.ToLower());
 			bool isValid = await _userManager.CheckPasswordAsync(user, loginReqDTO.Password);
 
-			//if ( await _userManager.IsLockedOutAsync(user))
-
-			//     return BadRequest("Try again");
 
 
 			if (user == null || isValid == false)
 			{
-				//return null;
 				return new LoginResDTO()
 				{
 					Token = "",
@@ -58,26 +55,25 @@ namespace Caregiver.Repositories.Repository
 				};
 			}
 
-			//if found
-			//var roles = await _userManager.GetRolesAsync(user);
-			//var Role = roles.FirstOrDefault();
-
-			//if found generate token... 
-
+		
 			//key 
 			var secretKeyInBytes = Encoding.ASCII.GetBytes(secretKey);
 			var key = new SymmetricSecurityKey(secretKeyInBytes);
 
 			var tokenDescriptor = new SecurityTokenDescriptor
 			{
+				
 				Subject = new ClaimsIdentity(new Claim[]
 			{
 				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-				//new Claim(ClaimTypes.Role, Role),
+				new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1))
+				
 			}),
 				Expires = DateTime.UtcNow.AddDays(7),
 				SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
 			};
+
+
 
 			var TokenHandler = new JwtSecurityTokenHandler();
 			var token = TokenHandler.CreateToken(tokenDescriptor);
@@ -88,7 +84,7 @@ namespace Caregiver.Repositories.Repository
 				//Role = Role,
 				User = new UserDTO
 				{
-
+					
 					ID = user.Id,
 					Email = user.Email,
 					Type = user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)
@@ -97,6 +93,45 @@ namespace Caregiver.Repositories.Repository
 			};
 			return loginResDTO;
 		}
+
+
+		public async Task<string> ForgotPassword(string id, string email)
+		{
+			User user = await _userManager.FindByIdAsync(id);
+			if (user == null)
+			{
+				return null;
+			}
+
+			if (email == user.Email)
+			{
+				string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+				string resetUrl = $"http://localhost:5248/api/Auth/UpdatePassword?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
+				var message = $"<h3> Click on the link and will direct you to the page to enter a new password</h3>  <a href=\"{resetUrl}\">Click Here</a>";
+				string header = "Your Reset Password Link";
+				var result = await _emailService.SendEmail(message,header, email);
+				if (result == "Success")
+				{
+					return resetToken;
+				}
+				else return null;
+			}
+			return null;
+
+		}
+		public async Task<string> UpdateForgottenPassword(string email, string resetToken, string newPassword)
+		{
+			User user = await _userManager.FindByEmailAsync(email);
+			IdentityResult passwordChangeResult = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+			if (passwordChangeResult.Succeeded)
+			{
+				return "success";
+			}
+			return "Failed";
+		}
+
+
 
 
 		public async Task<UserManagerResponse> RegisterUserAsync(RegisterPatientDTO model)
@@ -116,17 +151,26 @@ namespace Caregiver.Repositories.Repository
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 
-			if (result.Succeeded)
+			if (!result.Succeeded)
 				return new UserManagerResponse
 				{
-					Message = "User created successfully!",
-					IsSuccess = true,
+					Message = "User did not create",
+					IsSuccess = false,
+					Errors = result.Errors.Select(e => e.Description)
 				};
+			var userClaims = new List<Claim>
+{
+	
+	new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)),
+};
+
+
+			await _userManager.AddClaimsAsync(user, userClaims);
 			return new UserManagerResponse
 			{
-				Message = "User did not create",
-				IsSuccess = false,
-				Errors = result.Errors.Select(e => e.Description)
+				Message = "User created successfully!",
+				IsSuccess = true,
+				
 			};
 		}
 
@@ -164,17 +208,29 @@ namespace Caregiver.Repositories.Repository
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 
-			if (result.Succeeded)
+	
+			if (!result.Succeeded)
 				return new UserManagerResponse
 				{
-					Message = "User created successfully!",
-					IsSuccess = true,
-				};
-			return new UserManagerResponse
-			{
 				Message = "User did not create",
 				IsSuccess = false,
 				Errors = result.Errors.Select(e => e.Description)
+			
+				};
+
+			var userClaims = new List<Claim>
+{
+
+	new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)),
+};
+
+			await _userManager.AddClaimsAsync(user, userClaims);
+			return new UserManagerResponse
+			{
+
+Message = "User created successfully!",
+					IsSuccess = true,
+			
 			};
 		}
                 

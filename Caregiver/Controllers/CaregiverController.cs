@@ -3,6 +3,7 @@ using Caregiver.Dtos;
 using Caregiver.Dtos.UpdateDTOs;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -148,14 +149,16 @@ namespace Caregiver.Controllers
 
 
 
-
+		//[Authorize(Policy = "Caregiver")]
 		[HttpGet("AllCurrentCaregivers")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<APIResponse>> GetAllCurrentCaregiver()
 		{
 			try
 			{
+				//services
 				IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync(a => a.IsDeleted == false);
+				//services
 
 				IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
 
@@ -220,6 +223,9 @@ namespace Caregiver.Controllers
 				return BadRequest(_response);
 			}
 		}
+
+
+
 		//public async Task<ActionResult> GetAllCaregiverByType(string Role)
 		//{
 		//	if (Enum.TryParse<JobTitle>(Role, out JobTitle jobTitle))
@@ -243,6 +249,9 @@ namespace Caregiver.Controllers
 
 
 		//i can add to check if isdeleted == false.. but i think it won't be necessary now
+
+
+
 		[HttpGet("{id}", Name = "GetCaregiverById")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]

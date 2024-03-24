@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 namespace Caregiver
@@ -74,14 +75,30 @@ namespace Caregiver
 
 				};
 			});
+
+
+			builder.Services.AddAuthorization(options =>
+			{
+				options.AddPolicy("Caregiver", policy =>
+					policy
+					.RequireClaim(ClaimTypes.Role, "CaregiverUser"));
+
+				options.AddPolicy("RegularUser", policy =>
+					policy
+					.RequireClaim(ClaimTypes.Role, "PatientUser"));
+			});
 			//automapper 
 			builder.Services.AddAutoMapper(typeof(MappingConfiguration));
 			//generic repo
 			builder.Services.AddScoped<ICaregiverRepo, CaregiverRepo>();
 
+			builder.Services.AddScoped<IGenericRepo<CaregiverUser>, GenericRepo<CaregiverUser>>();
+
 			builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 			builder.Services.AddScoped<APIResponse, APIResponse>();
+
+			builder.Services.AddTransient<IEmailRepo, EmailRepo>();
 
 			builder.Services.AddControllers().AddJsonOptions(options =>
 			{
