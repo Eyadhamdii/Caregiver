@@ -311,5 +311,62 @@ Message = "User created successfully!",
 
 			}
 		}
-	}
+
+        public async Task<UserManagerResponse> PersonalDetailsAsync(PersonalDetailsDTO model)
+        {
+			var loggedInUserId = "777ab200-3f98-4f4c-a0f6-83d892a5b9bd";
+				// _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
+            if (model == null)
+                throw new NullReferenceException("Please Fill The Form");
+
+            var user = await _userManager.FindByIdAsync(loggedInUserId);
+            if (user != null && user is PatientUser PatientUser)
+            {
+                PatientUser.FirstName = model.FirstName;
+                PatientUser.LastName = model.LastName;
+                PatientUser.Age = model.Age;
+				PatientUser.Gender = model.Gender.ToString();
+				PatientUser.EmailAddress = model.EmailAddress;
+				PatientUser.Location = model.Location;
+				PatientUser.PhoneNumber = model.PhoneNumber;
+				PatientUser.ReservationNotes = model.ReservationNotes;
+
+
+                var result = await _userManager.UpdateAsync(PatientUser);
+
+                if (result.Succeeded)
+                {
+                    // Update successful, return success response
+                    return new UserManagerResponse
+                    {
+                        IsSuccess = true,
+                        Message = "Additional data updated successfully."
+                    };
+                }
+                else
+                {
+                    // Update failed, return error response
+                    return new UserManagerResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Failed to update additional data.",
+                        Errors = result.Errors.Select(e => e.Description)
+                    };
+                }
+            }
+            else
+            {
+                // User not found, return error response
+                return new UserManagerResponse
+                {
+                    IsSuccess = false,
+                    Message = "User not found."
+                };
+
+            }
+        }
+
+    }
+    
 }

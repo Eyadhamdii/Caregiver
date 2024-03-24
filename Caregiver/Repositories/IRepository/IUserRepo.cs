@@ -14,7 +14,9 @@ namespace Caregiver.Repositories.IRepository
 
 		Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO);
 
+        Task<UserManagerResponse> PersonalDetailsAsync(PersonalDetailsDTO model);
 
 
-	}
+
+    }
 }
