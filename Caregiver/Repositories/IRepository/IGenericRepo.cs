@@ -10,5 +10,8 @@ namespace Caregiver.Repositories.IRepository
 		Task<T> GetAsync(Expression<Func<T, bool>> filter = null);
 		Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null);
 
+		Task<bool> SoftDeleteUser(User user);
+
+		Task<User> UpdateUserAsync(User user);
 	}
 }

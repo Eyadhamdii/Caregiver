@@ -4,6 +4,8 @@ using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Caregiver.Repositories.Repository;
+using Caregiver.Services.IService;
+using Caregiver.Services.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -90,9 +92,10 @@ namespace Caregiver
 			//automapper 
 			builder.Services.AddAutoMapper(typeof(MappingConfiguration));
 			//generic repo
-			builder.Services.AddScoped<ICaregiverRepo, CaregiverRepo>();
 
 			builder.Services.AddScoped<IGenericRepo<CaregiverUser>, GenericRepo<CaregiverUser>>();
+
+			builder.Services.AddScoped<ICaregiverService, CaregiverService>();
 
 			builder.Services.AddScoped<IUserRepo, UserRepo>();
 
