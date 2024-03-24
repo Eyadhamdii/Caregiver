@@ -1,6 +1,6 @@
 ﻿namespace Caregiver.Repositories.IRepository
 {
-	public interface IEmailService
+	public interface IEmailRepo
 	{
 		Task<string> SendEmail(string resetLink, string emailAddress);
 	}

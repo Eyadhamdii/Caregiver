@@ -96,7 +96,7 @@ namespace Caregiver
 
 			builder.Services.AddScoped<APIResponse, APIResponse>();
 
-			builder.Services.AddTransient<IEmailService, EmailService>();
+			builder.Services.AddTransient<IEmailRepo, EmailRepo>();
 
 			builder.Services.AddControllers().AddJsonOptions(options =>
 			{

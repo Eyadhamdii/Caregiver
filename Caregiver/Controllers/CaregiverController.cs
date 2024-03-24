@@ -149,7 +149,7 @@ namespace Caregiver.Controllers
 
 
 
-		[Authorize(Policy = "Caregiver")]
+		//[Authorize(Policy = "Caregiver")]
 		[HttpGet("AllCurrentCaregivers")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<APIResponse>> GetAllCurrentCaregiver()

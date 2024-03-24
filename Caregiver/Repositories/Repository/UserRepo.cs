@@ -22,12 +22,12 @@ namespace Caregiver.Repositories.Repository
 		private readonly IMapper _mapper;
 		private readonly IHttpContextAccessor _httpContextAccessor;
         private new List<string> _allowedExt = new List<string> { ".jpg", ".png", ".pdf" };
-		private readonly IEmailService _emailService;
+		private readonly IEmailRepo _emailService;
 
 
 
 
-		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService emailService)
+		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailRepo emailService)
 		{
 			_db = db;
 			_userManager = userManager;
@@ -55,13 +55,7 @@ namespace Caregiver.Repositories.Repository
 				};
 			}
 
-			//if found
-			//var roles = await _userManager.GetRolesAsync(user);
-			//var Role = roles.FirstOrDefault();
-			//var userClaims = await _userManager.GetClaimsAsync(user);
-
-			//if found generate token... 
-
+		
 			//key 
 			var secretKeyInBytes = Encoding.ASCII.GetBytes(secretKey);
 			var key = new SymmetricSecurityKey(secretKeyInBytes);
@@ -113,7 +107,10 @@ namespace Caregiver.Repositories.Repository
 			{
 				string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-				var result = await _emailService.SendEmail(resetToken, email);
+				string resetUrl = $"http://localhost:5248/api/Auth/UpdatePassword?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
+				var message = $"<h3> Click on the link and will direct you to the page to enter a new password</h3>  <a href=\"{resetUrl}\">Click Here</a>";
+
+				var result = await _emailService.SendEmail(message, email);
 				if (result == "Success")
 				{
 					return resetToken;

@@ -11,10 +11,10 @@ namespace Caregiver.Controllers
 	public class AuthController : ControllerBase
 	{
 		private readonly IUserRepo _userService;
-		private readonly IEmailService _emailService;
+		private readonly IEmailRepo _emailService;
 		private readonly APIResponse _response;
 
-		public AuthController(IUserRepo userService, IEmailService emailService, APIResponse response)
+		public AuthController(IUserRepo userService, IEmailRepo emailService, APIResponse response)
 		{
 			_userService = userService;
 			_emailService = emailService;

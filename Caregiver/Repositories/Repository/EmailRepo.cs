@@ -8,9 +8,9 @@ using System.Security.Policy;
 
 namespace Caregiver.Repositories.Repository
 {
-	public class EmailService : IEmailService
+	public class EmailRepo : IEmailRepo
 	{
-		public async Task<string> SendEmail(string token, string emailAddress)
+		public async Task<string> SendEmail(string body, string emailAddress)
 		{
 			try
 			{
@@ -19,13 +19,10 @@ namespace Caregiver.Repositories.Repository
 				email.From.Add(new MailboxAddress("Caregiver Website", "emykhodary2019@gmail.com"));
 				email.To.Add(MailboxAddress.Parse(emailAddress));
 				email.Subject = "Your Reset Password Link";
+
 				//string resetUrl = $"http://localhost:5248/api/Auth/UpdatePassword?email={Uri.EscapeDataString(emailAddress)}&token={Uri.EscapeDataString(token)}";
 
-
-				//email.Body = new TextPart(TextFormat.Html) { Text = $"<h3> Click on the link and will direct you to the page to enter a new password<h3/>  <a{resetUrl}>Click Here<a/>" };
-				string resetUrl = $"http://localhost:5248/api/Auth/UpdatePassword?email={Uri.EscapeDataString(emailAddress)}&token={Uri.EscapeDataString(token)}";
-
-				email.Body = new TextPart(TextFormat.Html) { Text = $"<h3> Click on the link and will direct you to the page to enter a new password</h3>  <a href=\"{resetUrl}\">Click Here</a>" };
+				email.Body = new TextPart(TextFormat.Html) { Text =body};
 
 
 				using var smtp = new SmtpClient();
@@ -38,7 +35,7 @@ namespace Caregiver.Repositories.Repository
 				smtp.Disconnect(true);
 				return "Success";
 			}
-			catch (Exception ex)
+			catch
 			{
 				return "Failed";
 			}
