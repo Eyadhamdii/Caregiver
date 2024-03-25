@@ -1,7 +1,5 @@
 ﻿using Caregiver.Dtos;
 using Caregiver.Repositories.IRepository;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Caregiver.Controllers
