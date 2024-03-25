@@ -4,7 +4,12 @@ namespace Caregiver.Models
 {
 	public class CaregiverPatientReservation
 	{
-		[ForeignKey("Caregiver")]
+		//
+		[Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int OrderId { get; set; }
+
+        [ForeignKey("Caregiver")]
 		public string CaregiverId { get; set; }
 		public CaregiverUser Caregiver { get; set; }
 		//
