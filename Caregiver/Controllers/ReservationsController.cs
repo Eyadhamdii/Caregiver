@@ -19,10 +19,12 @@ namespace Caregiver.Controllers
         private readonly IReservationsRepo reservationsRepo;
         private UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ICaregiverRepo _dbCaregiver;
+		//  private readonly ICaregiverRepo _dbCaregiver;
+		private readonly IGenericRepo<CaregiverUser> _dbCaregiver;
 
 
-        public ReservationsController(ApplicationDBContext context, IReservationsRepo _reservationsRepo, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, ICaregiverRepo dbCaregiver)
+
+		public ReservationsController(ApplicationDBContext context, IReservationsRepo _reservationsRepo, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, /*ICaregiverRepo dbCaregiver*/   IGenericRepo<CaregiverUser> dbCaregiver)
         {
             reservationsRepo= _reservationsRepo;
             _context = context;
@@ -174,6 +176,7 @@ namespace Caregiver.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateReservationsAsync([FromForm] PostReservationDto  dto, [FromQuery] string CaregiverId)
         {
+            //edits to use generic 
             var caregiver = await _dbCaregiver.GetAsync(a => a.Id == CaregiverId);
             var pricePerDay = caregiver.PricePerDay;
             ReservationStatus reservationStatus = ReservationStatus.OnProgress;

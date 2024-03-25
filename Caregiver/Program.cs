@@ -100,8 +100,7 @@ namespace Caregiver
 
 			builder.Services.AddScoped<ICaregiverService, CaregiverService>();
 
-			builder.Services.AddScoped<ICaregiverRepo, CaregiverRepo>();
-			builder.Services.AddScoped<IScheduleRepo, ScheduleRepo>();
+		//	builder.Services.AddScoped<ICaregiverRepo, CaregiverRepo>();
 			builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 			builder.Services.AddScoped<APIResponse, APIResponse>();

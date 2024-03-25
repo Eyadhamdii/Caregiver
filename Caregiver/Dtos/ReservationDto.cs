@@ -12,9 +12,10 @@ namespace Caregiver.Dtos
 
         public string PatientFirstName { get; set; } = string.Empty; 
         public string PatientLastName { get; set; } = string.Empty;
-        public Gender Gender { get; set; }
+		//    public Gender Gender { get; set; }
+		public string Gender { get; set; }
 
-        public string CaregiverEmailAddress { get; set; } = string.Empty;
+		public string CaregiverEmailAddress { get; set; } = string.Empty;
         public string PatientEmailAddress { get; set; } = string.Empty;
         public int CaregiverPhoneNumber { get; set; }
         public int PatientPhoneNumber { get; set; }

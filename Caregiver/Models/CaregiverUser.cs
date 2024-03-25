@@ -41,6 +41,5 @@ namespace Caregiver.Models
 		//public bool IsAccepted { get; set; } = false;
 		public string[] WhatCanCaregiverDo { get; set; } = Array.Empty<string>();
 		public ICollection<CaregiverPatientReservation> Reservations { get; set; } = null;
-		public ICollection<CaregiverSchedule> CaregiverSchedules { get; set; } = null;
 	}
 }

@@ -6,7 +6,6 @@ namespace Caregiver.Models
 {
 	public class ApplicationDBContext : IdentityDbContext<User>
 	{
-		public DbSet<CaregiverSchedule> CaregiverSchedules { get; set; }
 		public DbSet<CaregiverPatientReservation> Reservations { get; set; }
 		public DbSet<User> Users { get; set; }
 		public DbSet<CaregiverUser> Caregivers { get; set; }
