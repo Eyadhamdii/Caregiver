@@ -46,7 +46,7 @@ namespace Caregiver.Controllers
             
             var reservation = await _dbContext.Reservations.FirstOrDefaultAsync(a=>a.PatientId==loggedInUserId);
           
-            var amount = reservation.totalPrice * 100;
+            var amount = reservation.TotalPrice * 100;
             
            
             var options = new Stripe.Checkout.SessionCreateOptions
