@@ -13,7 +13,7 @@ namespace Caregiver.Models
 
 		public ApplicationDBContext(DbContextOptions options) : base(options)
 		{
-
+			//
 		}
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
