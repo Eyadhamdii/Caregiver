@@ -4,15 +4,6 @@ using System.Reflection.Emit;
 
 namespace Caregiver.Models
 {
-    public class ApplicationDBContext : IdentityDbContext<User>
-    {
-        public DbSet<CaregiverPatientReservation> Reservations { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<CaregiverUser> Caregivers { get; set; }
-        public DbSet<PatientUser> Patients { get; set; }
-        public DbSet<ReservationDates> ReservationDates { get; set; }
-        public ApplicationDBContext(DbContextOptions options) : base(options)
-        {
 	public class ApplicationDBContext : IdentityDbContext<User>
 	{
 		public DbSet<CaregiverPatientReservation> Reservations { get; set; }
@@ -20,8 +11,9 @@ namespace Caregiver.Models
 		public DbSet<CaregiverUser> Caregivers { get; set; }
 		public DbSet<PatientUser> Patients { get; set; }
         public DbSet<Dependant> Dependants { get; set; }
+        public DbSet<ReservationDates> ReservationDates { get; set; }
 
-        public ApplicationDBContext(DbContextOptions options) : base(options)
+            public ApplicationDBContext(DbContextOptions options) : base(options)
 		{
 
         }
