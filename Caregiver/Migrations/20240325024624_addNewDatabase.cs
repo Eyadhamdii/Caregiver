@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Caregiver.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class addNewDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

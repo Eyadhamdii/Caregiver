@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240325022727_FirstMigration")]
-    partial class FirstMigration
+    [Migration("20240325024624_addNewDatabase")]
+    partial class addNewDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
