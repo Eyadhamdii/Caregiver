@@ -31,9 +31,10 @@
 
         public enum ReservationStatus
         {
-            OnProgress ,
-            Done ,
-            Cancelled 
+            OnProgress =1 ,
+            Done =2 ,
+            Cancelled =3,
+            CannotProceed=4
         }
         public enum Status
         {
