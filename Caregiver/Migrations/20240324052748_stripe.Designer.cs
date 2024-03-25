@@ -4,6 +4,7 @@ using Caregiver.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240324052748_stripe")]
+    partial class stripe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,11 +27,8 @@ namespace Caregiver.Migrations
 
             modelBuilder.Entity("Caregiver.Models.CaregiverPatientReservation", b =>
                 {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+                    b.Property<string>("PatientId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CaregiverId")
                         .HasColumnType("nvarchar(450)");
@@ -36,86 +36,14 @@ namespace Caregiver.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Fees")
-                        .HasColumnType("float");
-
-                    b.Property<string>("PatientId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TotalPrice")
-                        .HasColumnType("int");
-
-                    b.Property<double>("TotalPriceWithfees")
-                        .HasColumnType("float");
-
-                    b.HasKey("OrderId");
+                    b.HasKey("PatientId", "CaregiverId");
 
                     b.HasIndex("CaregiverId");
 
-                    b.HasIndex("PatientId");
-
                     b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.ReservationDates", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ReservationDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("OrderId", "ReservationDate");
-
-                    b.ToTable("ReservationDates");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.Dependant", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EmailAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PatientId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("PhoneNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ReservationNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("Dependants");
                 });
 
             modelBuilder.Entity("Caregiver.Models.User", b =>
@@ -402,15 +330,6 @@ namespace Caregiver.Migrations
                 {
                     b.HasBaseType("Caregiver.Models.User");
 
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReservationNotes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasDiscriminator().HasValue("PatientUser");
                 });
 
@@ -418,33 +337,17 @@ namespace Caregiver.Migrations
                 {
                     b.HasOne("Caregiver.Models.CaregiverUser", "Caregiver")
                         .WithMany("Reservations")
-                        .HasForeignKey("CaregiverId");
-
-                    b.HasOne("Caregiver.Models.PatientUser", "Patient")
-                        .WithMany("Reservations")
-                        .HasForeignKey("PatientId");
-
-                    b.Navigation("Caregiver");
-
-                    b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.ReservationDates", b =>
-                {
-                    b.HasOne("Caregiver.Models.CaregiverPatientReservation", "CaregiverPatientReservation")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
+                        .HasForeignKey("CaregiverId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CaregiverPatientReservation");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.Dependant", b =>
-                {
                     b.HasOne("Caregiver.Models.PatientUser", "Patient")
-                        .WithMany("Dependants")
-                        .HasForeignKey("PatientId");
+                        .WithMany("Reservations")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Caregiver");
 
                     b.Navigation("Patient");
                 });
@@ -507,8 +410,6 @@ namespace Caregiver.Migrations
 
             modelBuilder.Entity("Caregiver.Models.PatientUser", b =>
                 {
-                    b.Navigation("Dependants");
-
                     b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618

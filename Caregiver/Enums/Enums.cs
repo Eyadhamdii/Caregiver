@@ -22,6 +22,12 @@
 			Female = 2
 		}
 
+        public enum JobTitle
+        {
+            Nurse = 1,
+            Caregiver = 2,
+            Babysitter = 3
+        }
 		public enum JobTitle
 		{
 			Nurse = 1,
@@ -35,6 +41,21 @@
             
         }
 
+        public enum ReservationStatus
+        {
+            OnProgress  ,
+            Confirmed  ,
+            Cancelled ,
+            CannotProceed
+        }
+        public enum Status
+        {
+            Available = 1,
+            FullDay = 2,
+            DayOff =3
+        }
+        //
+    }
 
     }
 }
