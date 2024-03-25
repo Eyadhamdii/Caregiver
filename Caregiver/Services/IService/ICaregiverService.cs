@@ -11,8 +11,6 @@ namespace Caregiver.Services.IService
 		Task<CaregiverUser> GetCaregiverById(string id);
 		Task<CaregiverUpdateDTO> UpdateCaregiverAsync(string id, CaregiverUpdateDTO caregiverUpdate);
 		Task<bool> SoftDeleteCaregiver(string id);
-		//
-		//
 
 	}
 }

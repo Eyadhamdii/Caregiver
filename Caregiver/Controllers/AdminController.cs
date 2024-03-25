@@ -185,5 +185,103 @@ namespace Caregiver.Controllers
 		//	//return Ok(_mapper.Map<CaregiverUpdateDTO>(caregiver));
 		//}
 
+
+
+		//[HttpDelete("hardDelete/{id}")]
+		//[ProducesResponseType(StatusCodes.Status404NotFound)]
+		//[ProducesResponseType(StatusCodes.Status200OK)]
+		//public async Task<ActionResult<APIResponse>> HardDeleteCaregiver(string id)
+		//{
+		//	try
+		//	{
+		//		CaregiverUser caregiver = await _dbCaregiver.GetAsync(a => a.Id == id);
+		//		if (caregiver == null)
+		//		{
+		//			_response.IsSuccess = false;
+		//			_response.ErrorMessages = new List<string> { " Can't find the user by this id" };
+		//			_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+		//			return NotFound(_response);
+		//		}
+
+		//		var result = await _userManager.DeleteAsync(caregiver);
+		//		if (result.Succeeded)
+		//		{
+		//			_response.IsSuccess = true;
+		//			_response.StatusCode = System.Net.HttpStatusCode.NoContent;
+		//			return Ok(_response);
+
+		//		}
+		//	}
+		//	catch (Exception e)
+		//	{
+		//		_response.IsSuccess = false;
+		//		_response.ErrorMessages = new List<string> { e.Message };
+
+		//	}
+		//	return _response;
+		//}
+
+
+
+		//[Authorize(Policy = "Caregiver")]
+
+
+
+
+
+
+		//[HttpGet("AllTimeCaregivers")]
+		//[ProducesResponseType(StatusCodes.Status200OK)]
+		//public async Task<ActionResult<APIResponse>> GetAllCaregiverInAllTimes()
+		//{
+		//	try
+		//	{
+		//		IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync();
+
+		//		IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
+
+		//		_response.Result = CaregiverCards;
+		//		_response.IsSuccess = true;
+		//		_response.StatusCode = System.Net.HttpStatusCode.OK;
+		//		return Ok(_response);
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		_response.IsSuccess = false;
+		//		_response.ErrorMessages = new List<string> { ex.Message };
+
+		//	}
+		//	return _response;
+		//}
+
+
+
+
+
+
+		//public async Task<ActionResult> GetAllCaregiverByType(string Role)
+		//{
+		//	if (Enum.TryParse<JobTitle>(Role, out JobTitle jobTitle))
+		//	{
+		//		IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync(a => a.JobTitle == jobTitle && a.IsDeleted == false);
+		//		IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
+		//		_response.Result = CaregiverCards;
+		//		_response.IsSuccess = true;
+		//		_response.StatusCode = System.Net.HttpStatusCode.OK;
+		//		return Ok(_response);
+		//	}
+		//	else
+		//	{
+		//		_response.IsSuccess = false;
+		//		_response.ErrorMessages = new List<string> { " invalid Role" };
+		//		_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+		//		return BadRequest(_response);
+		//	}
+		//}
+
+
+
+		//i can add to check if isdeleted == false.. but i think it won't be necessary now
+
 	}
 }
