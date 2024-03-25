@@ -21,16 +21,17 @@ namespace Caregiver.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 		//  private readonly ICaregiverRepo _dbCaregiver;
 		private readonly IGenericRepo<CaregiverUser> _dbCaregiver;
+        private readonly IEmailRepo _IEmailRepo;
 
-        // hamo
 
-		public ReservationsController(ApplicationDBContext context, IReservationsRepo _reservationsRepo, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, /*ICaregiverRepo dbCaregiver*/   IGenericRepo<CaregiverUser> dbCaregiver)
+        public ReservationsController(ApplicationDBContext context, IReservationsRepo _reservationsRepo, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, /*ICaregiverRepo dbCaregiver*/   IGenericRepo<CaregiverUser> dbCaregiver, IEmailRepo iEmailRepo)
         {
-            reservationsRepo= _reservationsRepo;
+            reservationsRepo = _reservationsRepo;
             _context = context;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _dbCaregiver = dbCaregiver;
+            _IEmailRepo = iEmailRepo;
         }
 
 
@@ -40,6 +41,14 @@ namespace Caregiver.Controllers
         {
             var reservations = await reservationsRepo.GetAll();
             if (reservations == null) return BadRequest();
+            else
+            {
+
+                _IEmailRepo.SendEmail("Hello Eman","Trying this function","sohilaafify23@gmail.com");
+                return Ok(reservations);
+
+            }
+
             return Ok(reservations);
         }
         #endregion
@@ -93,13 +102,13 @@ namespace Caregiver.Controllers
                     CaregiverPhoneNumber = reservation.Caregiver.PhoneNumber,
                     PatientEmailAddress = reservation.Patient.Email,
                     PatientPhoneNumber = reservation.Patient.PhoneNumber,
-                    StartDate = (DateTime)reservation.StartDate,
-                    EndDate = (DateTime)reservation.EndDate,
+                    StartDate = reservation.StartDate,
+                    EndDate = reservation.EndDate,
                     Photo= reservation.Caregiver.Photo,
                     Country=reservation.Caregiver.Country,
                     OrderId = reservation.OrderId,
                     Gender = reservation.Caregiver.Gender,
-                    Status = reservation.Status,
+                    Status = reservation.Status.ToString(),
                     TotalPrice= reservation.totalPrice
                 };
 
@@ -179,7 +188,7 @@ namespace Caregiver.Controllers
             //edits to use generic 
             var caregiver = await _dbCaregiver.GetAsync(a => a.Id == CaregiverId);
             var pricePerDay = caregiver.PricePerDay;
-            ReservationStatus reservationStatus = ReservationStatus.OnProgress;
+            string reservationStatus = ReservationStatus.OnProgress.ToString();
             var calculatedValue = CalculateTotalPrice(pricePerDay, dto.EndDate, dto.StartDate);
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
@@ -193,7 +202,7 @@ namespace Caregiver.Controllers
             {
             CaregiverId= CaregiverId,
             PatientId=loggedInUserId,
-            Status = reservationStatus,
+            Status = reservationStatus.ToString(),
             StartDate = dto.StartDate,
             EndDate = dto.EndDate,
             totalPrice = calculatedValue,
@@ -222,9 +231,9 @@ namespace Caregiver.Controllers
 
             if (reservation == null) return NotFound($"No reservation was found with ID: {id}");
 
-            if (dto.Status == ReservationStatus.Done)
+            if (dto.Status == ReservationStatus.Confirmed)
             {
-                reservation.Status = dto.Status;
+                reservation.Status = dto.Status.ToString();
               if(reservationsRepo.CheckReservationDatesExists(reservation.OrderId)) { return BadRequest(); }
               else { AddDatesToDatabase(reservation); }
                    
@@ -232,13 +241,14 @@ namespace Caregiver.Controllers
             }
             else if (dto.Status == ReservationStatus.CannotProceed || dto.Status == ReservationStatus.Cancelled)
             {
-                reservation.Status = dto.Status;
+                reservation.Status = dto.Status.ToString()  ;
                 await reservationsRepo.DeleteReservationStatus(id);
             }
             reservationsRepo.UpdateReservationStatus(reservation);
-            return Ok(reservation);
+            return Ok(dto);
         }
         #endregion
+
 
         #region Add dates to database
         protected async void AddDatesToDatabase(CaregiverPatientReservation reservation)
