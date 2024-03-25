@@ -10,8 +10,8 @@ namespace Caregiver.Models
 		public DbSet<User> Users { get; set; }
 		public DbSet<CaregiverUser> Caregivers { get; set; }
 		public DbSet<PatientUser> Patients { get; set; }
-
-		public ApplicationDBContext(DbContextOptions options) : base(options)
+        public DbSet<ReservationDates> ReservationDates { get; set; }
+        public ApplicationDBContext(DbContextOptions options) : base(options)
 		{
 
 		}
@@ -38,8 +38,11 @@ namespace Caregiver.Models
 	   .WithMany(p => p.Reservations)
 	   .HasForeignKey(pn => pn.CaregiverId);
 
+			builder.Entity<ReservationDates>()
+		  .HasKey(rd => new { rd.OrderId, rd.ReservationDate });
 
-		}
+
+        }
 		//public DbSet<User> Users { get; set; }
 	}
 }

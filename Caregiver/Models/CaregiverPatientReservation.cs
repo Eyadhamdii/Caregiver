@@ -12,8 +12,13 @@ namespace Caregiver.Models
 		[ForeignKey("Patient")]
 		public string PatientId { get; set; }
 		public PatientUser Patient { get; set; }
-		public DateTime StartDate { get; set; }
-		public DateTime EndDate { get; set; }
+
+		[Required]
+        [DataType(DataType.DateTime)]
+        public DateTime StartDate { get; set; }
+        [Required]
+        [DataType(DataType.DateTime)]
+        public DateTime EndDate { get; set; }
 
 	}
 }
