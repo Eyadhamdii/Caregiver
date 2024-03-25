@@ -2,6 +2,7 @@
 using Caregiver.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Stripe;
 
 namespace Caregiver.Controllers
@@ -13,11 +14,13 @@ namespace Caregiver.Controllers
 
         private IConfiguration _configuration;
         private UserManager<User> _userManager;
+        private ApplicationDBContext _dbContext;
 
-        public CheckoutController(IConfiguration configuration, UserManager<User> userManager)
+        public CheckoutController(IConfiguration configuration, UserManager<User> userManager , ApplicationDBContext dbContext)
         {
             _configuration = configuration;
             _userManager = userManager;
+            _dbContext = dbContext;
         }
 
         [HttpGet("Products")]
@@ -33,15 +36,19 @@ namespace Caregiver.Controllers
         }
 
         [HttpPost("Create Checkout")]
-        public async Task<IActionResult> CreateCheckoutSession([FromBody] CheckoutSessionDTO model)
+        public async Task<IActionResult> CreateCheckoutSession()
         {
             StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
 
-            var user = await _userManager.FindByIdAsync(model.CustomerId);
-
+            var loggedInUserId = _userManager.GetUserId(HttpContext.User);
+            var user = await _userManager.FindByIdAsync(loggedInUserId);
             var email = user.Email;
-            var amount = model.ReservationFee * 100;
-
+            
+            var reservation = await _dbContext.Reservations.FirstOrDefaultAsync(a=>a.PatientId==loggedInUserId);
+          
+            var amount = reservation.totalPrice * 100;
+            
+           
             var options = new Stripe.Checkout.SessionCreateOptions
             {
                 SuccessUrl = "http://localhost:3000/booking-success",

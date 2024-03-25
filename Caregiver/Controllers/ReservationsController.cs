@@ -42,7 +42,14 @@ namespace Caregiver.Controllers
         {
             var reservations = await reservationsRepo.GetAll();
             if (reservations == null) return BadRequest();
-              
+            else
+            {
+
+                _IEmailRepo.SendEmail("Hello Eman","Trying this function","sohilaafify23@gmail.com");
+            return Ok(reservations);
+
+        }
+
             return Ok(reservations);
         }
         #endregion
