@@ -100,7 +100,9 @@ namespace Caregiver
 
 			builder.Services.AddScoped<APIResponse, APIResponse>();
 
+
 			builder.Services.AddTransient<IEmailRepo, EmailRepo>();
+            builder.Services.AddTransient<IReservationsRepo, ReservationsRepo>();
 
             builder.Services.AddScoped<TokenService>();
             builder.Services.AddScoped<CustomerService>();

@@ -29,7 +29,9 @@ namespace Caregiver.Models
 
         public string Status { get; set; }
 
-        public int totalPrice { get; set; }
+        public int TotalPrice { get; set; }
+        public double TotalPriceWithfees { get; set;}
+        public double Fees { get; set; }
 
 
 

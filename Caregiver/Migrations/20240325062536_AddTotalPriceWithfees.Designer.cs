@@ -4,6 +4,7 @@ using Caregiver.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240325062536_AddTotalPriceWithfees")]
+    partial class AddTotalPriceWithfees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,9 +39,6 @@ namespace Caregiver.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Fees")
-                        .HasColumnType("float");
-
                     b.Property<string>("PatientId")
                         .HasColumnType("nvarchar(450)");
 
@@ -48,10 +48,10 @@ namespace Caregiver.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TotalPrice")
+                    b.Property<int>("totalPrice")
                         .HasColumnType("int");
 
-                    b.Property<double>("TotalPriceWithfees")
+                    b.Property<double>("totalPriceWithfees")
                         .HasColumnType("float");
 
                     b.HasKey("OrderId");

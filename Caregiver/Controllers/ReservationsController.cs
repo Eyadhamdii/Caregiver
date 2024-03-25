@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using static Caregiver.Enums.Enums;
 
 namespace Caregiver.Controllers
@@ -41,14 +42,7 @@ namespace Caregiver.Controllers
         {
             var reservations = await reservationsRepo.GetAll();
             if (reservations == null) return BadRequest();
-            else
-            {
-
-                _IEmailRepo.SendEmail("Hello Eman","Trying this function","sohilaafify23@gmail.com");
-                return Ok(reservations);
-
-            }
-
+              
             return Ok(reservations);
         }
         #endregion
@@ -109,7 +103,9 @@ namespace Caregiver.Controllers
                     OrderId = reservation.OrderId,
                     Gender = reservation.Caregiver.Gender,
                     Status = reservation.Status.ToString(),
-                    TotalPrice= reservation.totalPrice
+                    TotalPrice= reservation.TotalPrice,
+                    TotalPriceWithfees = reservation.TotalPriceWithfees,
+                    Fees = reservation.Fees
                 };
 
                 return Ok(dto);
@@ -173,7 +169,9 @@ namespace Caregiver.Controllers
                 OrderId = reservation.OrderId,
                 Gender = reservation.Caregiver.Gender,
                 Status = reservation.Status,
-                TotalPrice = reservation.totalPrice
+                TotalPrice = reservation.TotalPrice,
+                TotalPriceWithfees = reservation.TotalPriceWithfees,
+                Fees = reservation.Fees
             };
 
             return Ok(dto);
@@ -205,14 +203,17 @@ namespace Caregiver.Controllers
             Status = reservationStatus.ToString(),
             StartDate = dto.StartDate,
             EndDate = dto.EndDate,
-            totalPrice = calculatedValue,
+            TotalPrice = calculatedValue,
+            TotalPriceWithfees = calculatedValue+ (calculatedValue * 0.1),
+            Fees = calculatedValue * 0.1
             };
 
             #region Email section
-            var r = "sohilaafify23@gmail.com";
-            var s = "Test subject";
-            var m = "Your Reservation is confirmed!";
-            await reservationsRepo.SendEmailAsync(r, s, m);
+            // Caregiver
+            await _IEmailRepo.SendEmail("Your Caregiver Reservation is Confirmed!", $"Dear {caregiver.FirstName}, Thank you for choosing our caregiver services. We are excited to confirm your reservation", caregiver.Email);
+
+            // Patient
+            await _IEmailRepo.SendEmail("Your Caregiver Reservation is Confirmed!", $"Dear {caregiver.FirstName}, Thank you for choosing our caregiver services. We are excited to confirm your reservation", caregiver.Email);
             #endregion
 
             await reservationsRepo.AddReservarion(caregiverPatientReservation);
@@ -235,9 +236,19 @@ namespace Caregiver.Controllers
             {
                 reservation.Status = dto.Status.ToString();
               if(reservationsRepo.CheckReservationDatesExists(reservation.OrderId)) { return BadRequest(); }
-              else { AddDatesToDatabase(reservation); }
-                   
-                
+              else { 
+                    AddDatesToDatabase(reservation);
+
+                    #region Email section
+                    // Caregiver
+                    await _IEmailRepo.SendEmail("Your Caregiver Reservation is Confirmed!", $"Dear {reservation.Caregiver.FirstName}, Thank you for choosing our caregiver services. We are excited to confirm your reservation", reservation.Caregiver.Email);
+
+                    // Patient
+                    await _IEmailRepo.SendEmail("You confirmed your reservation!", $"Dear {reservation.Patient.FirstName}, Thank you for choosing our caregiver services. We are excited to confirm your reservation", reservation.Patient.Email);
+                    #endregion
+                }
+
+
             }
             else if (dto.Status == ReservationStatus.CannotProceed || dto.Status == ReservationStatus.Cancelled)
             {

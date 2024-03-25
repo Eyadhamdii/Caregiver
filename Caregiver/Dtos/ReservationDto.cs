@@ -33,6 +33,9 @@ namespace Caregiver.Dtos
         public City City { get; set; }
         public DateOnly Birthdate { get; set; }
 
+        public double TotalPriceWithfees { get; set; }
+        public double Fees { get; set; }
+
 
     }
 }
