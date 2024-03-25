@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Reflection;
+using System.Threading.Tasks.Dataflow;
 using static Caregiver.Enums.Enums;
 
 namespace Caregiver.Models
@@ -12,7 +13,8 @@ namespace Caregiver.Models
 
 		public string FirstName { get; set; } = string.Empty;
 		public string LastName { get; set; } = string.Empty;
-		public Gender Gender { get; set; }
+		//public Gender Gender { get; set; }
+		public string Gender { get; set; }
 
 		public DateOnly Birthdate { get; set; }
 
@@ -26,9 +28,9 @@ namespace Caregiver.Models
 
 		public int PhoneNumber { get; set; }
 
+		public bool IsDeleted { get; set; } = false;
 
-
-
+		//public DateTime JoinedDate { get; } = DateTime.Now;
 
 
 	}

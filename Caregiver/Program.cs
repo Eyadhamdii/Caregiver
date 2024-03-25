@@ -4,12 +4,15 @@ using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Caregiver.Repositories.Repository;
+using Caregiver.Services.IService;
+using Caregiver.Services.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 namespace Caregiver
@@ -67,6 +70,7 @@ namespace Caregiver
 				var secretKeyInBytes = Encoding.ASCII.GetBytes(secretKey);
 				var key = new SymmetricSecurityKey(secretKeyInBytes);
 
+
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					ValidateIssuerSigningKey = true, //??
@@ -76,9 +80,26 @@ namespace Caregiver
 
 				};
 			});
+
+
+			builder.Services.AddAuthorization(options =>
+			{
+				options.AddPolicy("Caregiver", policy =>
+					policy
+					.RequireClaim(ClaimTypes.Role, "CaregiverUser"));
+
+				options.AddPolicy("RegularUser", policy =>
+					policy
+					.RequireClaim(ClaimTypes.Role, "PatientUser"));
+			});
 			//automapper 
 			builder.Services.AddAutoMapper(typeof(MappingConfiguration));
 			//generic repo
+
+			builder.Services.AddScoped<IGenericRepo<CaregiverUser>, GenericRepo<CaregiverUser>>();
+
+			builder.Services.AddScoped<ICaregiverService, CaregiverService>();
+
 			builder.Services.AddScoped<ICaregiverRepo, CaregiverRepo>();
 			builder.Services.AddScoped<IScheduleRepo, ScheduleRepo>();
 			builder.Services.AddScoped<IUserRepo, UserRepo>();
@@ -88,6 +109,12 @@ namespace Caregiver
 			builder.Services.AddTransient<IReservationsRepo, ReservationsRepo>();
 
 			builder.Services.AddControllers();
+			builder.Services.AddTransient<IEmailRepo, EmailRepo>();
+
+			builder.Services.AddControllers().AddJsonOptions(options =>
+			{
+				options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+			});
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();

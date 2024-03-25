@@ -4,6 +4,7 @@ using Caregiver.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240321181754_what can u do")]
+    partial class whatcanudo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,11 +27,8 @@ namespace Caregiver.Migrations
 
             modelBuilder.Entity("Caregiver.Models.CaregiverPatientReservation", b =>
                 {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+                    b.Property<string>("PatientId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CaregiverId")
                         .HasColumnType("nvarchar(450)");
@@ -36,68 +36,14 @@ namespace Caregiver.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PatientId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("totalPrice")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderId");
+                    b.HasKey("PatientId", "CaregiverId");
 
                     b.HasIndex("CaregiverId");
-
-                    b.HasIndex("PatientId");
 
                     b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.CaregiverSchedule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CaregiverId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateOnly>("Day")
-                        .HasColumnType("date");
-
-                    b.Property<int>("FromTime")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ToTime")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CaregiverId");
-
-                    b.ToTable("CaregiverSchedules");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.ReservationDates", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ReservationDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("OrderId", "ReservationDate");
-
-                    b.ToTable("ReservationDates");
                 });
 
             modelBuilder.Entity("Caregiver.Models.User", b =>
@@ -136,8 +82,8 @@ namespace Caregiver.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -341,11 +287,11 @@ namespace Caregiver.Migrations
                     b.Property<string>("Bio")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CareerLevel")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CareerLevel")
+                        .HasColumnType("int");
 
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("City")
+                        .HasColumnType("int");
 
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
@@ -353,17 +299,11 @@ namespace Caregiver.Migrations
                     b.Property<byte[]>("CriminalRecords")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("JobLocationLookingFor")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("JobLocationLookingFor")
+                        .HasColumnType("int");
 
-                    b.Property<string>("JobTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("Photo")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("Photo")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<int>("JobTitle")
+                        .HasColumnType("int");
 
                     b.Property<int>("PricePerDay")
                         .HasColumnType("int");
@@ -375,6 +315,9 @@ namespace Caregiver.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("WhatCanCaregiverDo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WhatCanYouDo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("YearsOfExperience")
@@ -394,35 +337,19 @@ namespace Caregiver.Migrations
                 {
                     b.HasOne("Caregiver.Models.CaregiverUser", "Caregiver")
                         .WithMany("Reservations")
-                        .HasForeignKey("CaregiverId");
+                        .HasForeignKey("CaregiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Caregiver.Models.PatientUser", "Patient")
                         .WithMany("Reservations")
-                        .HasForeignKey("PatientId");
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Caregiver");
 
                     b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.CaregiverSchedule", b =>
-                {
-                    b.HasOne("Caregiver.Models.CaregiverUser", "CaregiverUser")
-                        .WithMany("CaregiverSchedules")
-                        .HasForeignKey("CaregiverId");
-
-                    b.Navigation("CaregiverUser");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.ReservationDates", b =>
-                {
-                    b.HasOne("Caregiver.Models.CaregiverPatientReservation", "CaregiverPatientReservation")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CaregiverPatientReservation");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -478,8 +405,6 @@ namespace Caregiver.Migrations
 
             modelBuilder.Entity("Caregiver.Models.CaregiverUser", b =>
                 {
-                    b.Navigation("CaregiverSchedules");
-
                     b.Navigation("Reservations");
                 });
 
