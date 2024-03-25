@@ -7,7 +7,7 @@ namespace Caregiver.Models
 		[ForeignKey("Caregiver")]
 		public string CaregiverId { get; set; }
 		public CaregiverUser Caregiver { get; set; }
-		
+		//
 
 		[ForeignKey("Patient")]
 		public string PatientId { get; set; }
