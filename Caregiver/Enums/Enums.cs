@@ -31,10 +31,10 @@
 
         public enum ReservationStatus
         {
-            OnProgress  ,
-            Confirmed  ,
-            Cancelled ,
-            CannotProceed
+            OnProgress =1 ,
+            Done =2 ,
+            Cancelled =3,
+            CannotProceed=4
         }
         public enum Status
         {
@@ -42,6 +42,5 @@
             FullDay = 2,
             DayOff =3
         }
-        //
     }
 }

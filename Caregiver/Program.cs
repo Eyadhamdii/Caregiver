@@ -27,7 +27,10 @@ namespace Caregiver
 
 				options.UseSqlServer(connectionString)
 			);
-			builder.Services.AddCors(options =>
+
+			builder.Services.AddControllers().AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles; });
+
+            builder.Services.AddCors(options =>
 			{
 				options.AddPolicy(name: "angularlocalhost",
 								  policy =>
@@ -96,10 +99,14 @@ namespace Caregiver
 
 			builder.Services.AddScoped<ICaregiverService, CaregiverService>();
 
+		//	builder.Services.AddScoped<ICaregiverRepo, CaregiverRepo>();
 			builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 			builder.Services.AddScoped<APIResponse, APIResponse>();
 
+			builder.Services.AddTransient<IReservationsRepo, ReservationsRepo>();
+
+			builder.Services.AddControllers();
 			builder.Services.AddTransient<IEmailRepo, EmailRepo>();
 
             builder.Services.AddScoped<TokenService>();

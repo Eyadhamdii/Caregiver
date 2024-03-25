@@ -45,9 +45,9 @@ namespace Caregiver.Controllers
             {
 
                 _IEmailRepo.SendEmail("Hello Eman","Trying this function","sohilaafify23@gmail.com");
-                return Ok(reservations);
+            return Ok(reservations);
 
-            }
+        }
 
             return Ok(reservations);
         }

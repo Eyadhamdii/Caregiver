@@ -15,7 +15,7 @@ namespace Caregiver.Repositories.Repository
         private UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        //
+
 
         public ReservationsRepo(ApplicationDBContext _db, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
         {
