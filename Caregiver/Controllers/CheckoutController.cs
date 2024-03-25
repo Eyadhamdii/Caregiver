@@ -77,7 +77,12 @@ namespace Caregiver.Controllers
             try
             {
                 var session = service.Create(options);
-                return Ok(new { sessionId = session.Id });
+                return Ok(new
+                {
+                    sessionId = session.Id,
+                    sessionlink = session.Url,
+                   
+                }) ;
 
             }
             catch (StripeException e)
