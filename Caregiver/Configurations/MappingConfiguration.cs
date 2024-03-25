@@ -12,11 +12,13 @@ namespace Caregiver.Configurations
 		public MappingConfiguration()
 		{
 			CreateMap<RegisterPatientDTO, PatientUser>().ReverseMap();
+			CreateMap<GetCustomerDTO, PatientUser>().ReverseMap();
 			CreateMap<RegisterCaregiverDTO, CaregiverUser>().ReverseMap();
 			CreateMap<CaregiverUser, CaregiverCardDTO>().ReverseMap();
 			CreateMap<CaregiverUser, CaregiverUpdateDTO>().ReverseMap();
 
-		}
+
+        }
 
 	}
 }

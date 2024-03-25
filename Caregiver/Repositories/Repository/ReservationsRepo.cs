@@ -15,7 +15,7 @@ namespace Caregiver.Repositories.Repository
         private UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        //
+
 
         public ReservationsRepo(ApplicationDBContext _db, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
         {
@@ -38,7 +38,9 @@ namespace Caregiver.Repositories.Repository
                 OrderId = source.OrderId,
                 Status = source.Status,
                 Gender = source.Caregiver.Gender,
-                TotalPrice = source.totalPrice,
+                TotalPrice = source.TotalPrice,
+                TotalPriceWithfees = source.TotalPriceWithfees,
+                Fees = source.Fees,
                 StartDate = (DateTime)source.StartDate,
                 PatientId = source.PatientId
 
@@ -59,10 +61,12 @@ namespace Caregiver.Repositories.Repository
                 OrderId=source.OrderId,
                 Status = source.Status,
                 Gender = source.Caregiver.Gender,
-                TotalPrice=source.totalPrice,
+                TotalPrice=source.TotalPrice,
                 StartDate = (DateTime)source.StartDate,
-                PatientId=source.PatientId
-                
+                PatientId=source.PatientId,
+                TotalPriceWithfees = source.TotalPriceWithfees,
+                Fees = source.Fees
+
             }).ToListAsync();
            
         }
@@ -91,9 +95,11 @@ namespace Caregiver.Repositories.Repository
                 OrderId = source.OrderId,
                 Status = source.Status,
                 Gender = source.Caregiver.Gender,
-                TotalPrice = source.totalPrice,
+                TotalPrice = source.TotalPrice,
                 StartDate = (DateTime)source.StartDate,
-                PatientId = source.PatientId
+                PatientId = source.PatientId,
+                TotalPriceWithfees = source.TotalPriceWithfees,
+                Fees = source.Fees
 
             }).ToListAsync();
 

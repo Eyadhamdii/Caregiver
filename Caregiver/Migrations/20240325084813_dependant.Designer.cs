@@ -4,6 +4,7 @@ using Caregiver.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240325084813_dependant")]
+    partial class dependant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,11 +27,8 @@ namespace Caregiver.Migrations
 
             modelBuilder.Entity("Caregiver.Models.CaregiverPatientReservation", b =>
                 {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+                    b.Property<string>("PatientId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CaregiverId")
                         .HasColumnType("nvarchar(450)");
@@ -36,44 +36,14 @@ namespace Caregiver.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Fees")
-                        .HasColumnType("float");
-
-                    b.Property<string>("PatientId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TotalPrice")
-                        .HasColumnType("int");
-
-                    b.Property<double>("TotalPriceWithfees")
-                        .HasColumnType("float");
-
-                    b.HasKey("OrderId");
+                    b.HasKey("PatientId", "CaregiverId");
 
                     b.HasIndex("CaregiverId");
 
-                    b.HasIndex("PatientId");
-
                     b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.ReservationDates", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ReservationDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("OrderId", "ReservationDate");
-
-                    b.ToTable("ReservationDates");
                 });
 
             modelBuilder.Entity("Caregiver.Models.Dependant", b =>
@@ -418,26 +388,19 @@ namespace Caregiver.Migrations
                 {
                     b.HasOne("Caregiver.Models.CaregiverUser", "Caregiver")
                         .WithMany("Reservations")
-                        .HasForeignKey("CaregiverId");
+                        .HasForeignKey("CaregiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Caregiver.Models.PatientUser", "Patient")
                         .WithMany("Reservations")
-                        .HasForeignKey("PatientId");
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Caregiver");
 
                     b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.ReservationDates", b =>
-                {
-                    b.HasOne("Caregiver.Models.CaregiverPatientReservation", "CaregiverPatientReservation")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CaregiverPatientReservation");
                 });
 
             modelBuilder.Entity("Caregiver.Models.Dependant", b =>

@@ -15,8 +15,8 @@ namespace Caregiver.Repositories.Repository
 			try
 			{
 
-				var email = new MimeMessage();
-				email.From.Add(new MailboxAddress("Caregiver Website", "emykhodary2019@gmail.com"));
+				var email = new MimeMessage(); 
+				email.From.Add(new MailboxAddress("Caregiver Website", "caregiverteam23@gmail.com"));
 				email.To.Add(MailboxAddress.Parse(emailAddress));
 				email.Subject = header;
 
@@ -30,7 +30,7 @@ namespace Caregiver.Repositories.Repository
 				ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 				//smtp.gmail.com
 				smtp.Connect("smtp.gmail.com", 587);
-				smtp.Authenticate("emykhodary2019@gmail.com", "wqdw wtdc vwct qvbj");
+				smtp.Authenticate("caregiverteam23@gmail.com", "jrzg jygk lbkv reqg"); 
 				await smtp.SendAsync(email);
 				smtp.Disconnect(true);
 				return "Success";

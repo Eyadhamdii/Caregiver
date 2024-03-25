@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using static Caregiver.Enums.Enums;
 
 namespace Caregiver.Controllers
@@ -21,16 +22,17 @@ namespace Caregiver.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
 		//  private readonly ICaregiverRepo _dbCaregiver;
 		private readonly IGenericRepo<CaregiverUser> _dbCaregiver;
+        private readonly IEmailRepo _IEmailRepo;
 
-        // hamo
 
-		public ReservationsController(ApplicationDBContext context, IReservationsRepo _reservationsRepo, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, /*ICaregiverRepo dbCaregiver*/   IGenericRepo<CaregiverUser> dbCaregiver)
+        public ReservationsController(ApplicationDBContext context, IReservationsRepo _reservationsRepo, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, /*ICaregiverRepo dbCaregiver*/   IGenericRepo<CaregiverUser> dbCaregiver, IEmailRepo iEmailRepo)
         {
-            reservationsRepo= _reservationsRepo;
+            reservationsRepo = _reservationsRepo;
             _context = context;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _dbCaregiver = dbCaregiver;
+            _IEmailRepo = iEmailRepo;
         }
 
 
@@ -40,6 +42,14 @@ namespace Caregiver.Controllers
         {
             var reservations = await reservationsRepo.GetAll();
             if (reservations == null) return BadRequest();
+            else
+            {
+
+                _IEmailRepo.SendEmail("Hello Eman","Trying this function","sohilaafify23@gmail.com");
+            return Ok(reservations);
+
+        }
+
             return Ok(reservations);
         }
         #endregion
@@ -93,14 +103,16 @@ namespace Caregiver.Controllers
                     CaregiverPhoneNumber = reservation.Caregiver.PhoneNumber,
                     PatientEmailAddress = reservation.Patient.Email,
                     PatientPhoneNumber = reservation.Patient.PhoneNumber,
-                    StartDate = (DateTime)reservation.StartDate,
-                    EndDate = (DateTime)reservation.EndDate,
+                    StartDate = reservation.StartDate,
+                    EndDate = reservation.EndDate,
                     Photo= reservation.Caregiver.Photo,
                     Country=reservation.Caregiver.Country,
                     OrderId = reservation.OrderId,
                     Gender = reservation.Caregiver.Gender,
-                    Status = reservation.Status,
-                    TotalPrice= reservation.totalPrice
+                    Status = reservation.Status.ToString(),
+                    TotalPrice= reservation.TotalPrice,
+                    TotalPriceWithfees = reservation.TotalPriceWithfees,
+                    Fees = reservation.Fees
                 };
 
                 return Ok(dto);
@@ -164,7 +176,9 @@ namespace Caregiver.Controllers
                 OrderId = reservation.OrderId,
                 Gender = reservation.Caregiver.Gender,
                 Status = reservation.Status,
-                TotalPrice = reservation.totalPrice
+                TotalPrice = reservation.TotalPrice,
+                TotalPriceWithfees = reservation.TotalPriceWithfees,
+                Fees = reservation.Fees
             };
 
             return Ok(dto);
@@ -179,7 +193,7 @@ namespace Caregiver.Controllers
             //edits to use generic 
             var caregiver = await _dbCaregiver.GetAsync(a => a.Id == CaregiverId);
             var pricePerDay = caregiver.PricePerDay;
-            ReservationStatus reservationStatus = ReservationStatus.OnProgress;
+            string reservationStatus = ReservationStatus.OnProgress.ToString();
             var calculatedValue = CalculateTotalPrice(pricePerDay, dto.EndDate, dto.StartDate);
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
@@ -193,17 +207,20 @@ namespace Caregiver.Controllers
             {
             CaregiverId= CaregiverId,
             PatientId=loggedInUserId,
-            Status = reservationStatus,
+            Status = reservationStatus.ToString(),
             StartDate = dto.StartDate,
             EndDate = dto.EndDate,
-            totalPrice = calculatedValue,
+            TotalPrice = calculatedValue,
+            TotalPriceWithfees = calculatedValue+ (calculatedValue * 0.1),
+            Fees = calculatedValue * 0.1
             };
 
             #region Email section
-            var r = "sohilaafify23@gmail.com";
-            var s = "Test subject";
-            var m = "Your Reservation is confirmed!";
-            await reservationsRepo.SendEmailAsync(r, s, m);
+            // Caregiver
+            await _IEmailRepo.SendEmail("Your Caregiver Reservation is Confirmed!", $"Dear {caregiver.FirstName}, Thank you for choosing our caregiver services. We are excited to confirm your reservation", caregiver.Email);
+
+            // Patient
+            await _IEmailRepo.SendEmail("Your Caregiver Reservation is Confirmed!", $"Dear {caregiver.FirstName}, Thank you for choosing our caregiver services. We are excited to confirm your reservation", caregiver.Email);
             #endregion
 
             await reservationsRepo.AddReservarion(caregiverPatientReservation);
@@ -222,23 +239,34 @@ namespace Caregiver.Controllers
 
             if (reservation == null) return NotFound($"No reservation was found with ID: {id}");
 
-            if (dto.Status == ReservationStatus.Done)
+            if (dto.Status == ReservationStatus.Confirmed)
             {
-                reservation.Status = dto.Status;
+                reservation.Status = dto.Status.ToString();
               if(reservationsRepo.CheckReservationDatesExists(reservation.OrderId)) { return BadRequest(); }
-              else { AddDatesToDatabase(reservation); }
-                   
-                
+              else { 
+                    AddDatesToDatabase(reservation);
+
+                    #region Email section
+                    // Caregiver
+                    await _IEmailRepo.SendEmail("Your Caregiver Reservation is Confirmed!", $"Dear {reservation.Caregiver.FirstName}, Thank you for choosing our caregiver services. We are excited to confirm your reservation", reservation.Caregiver.Email);
+
+                    // Patient
+                    await _IEmailRepo.SendEmail("You confirmed your reservation!", $"Dear {reservation.Patient.FirstName}, Thank you for choosing our caregiver services. We are excited to confirm your reservation", reservation.Patient.Email);
+                    #endregion
+                }
+
+
             }
             else if (dto.Status == ReservationStatus.CannotProceed || dto.Status == ReservationStatus.Cancelled)
             {
-                reservation.Status = dto.Status;
+                reservation.Status = dto.Status.ToString()  ;
                 await reservationsRepo.DeleteReservationStatus(id);
             }
             reservationsRepo.UpdateReservationStatus(reservation);
-            return Ok(reservation);
+            return Ok(dto);
         }
         #endregion
+
 
         #region Add dates to database
         protected async void AddDatesToDatabase(CaregiverPatientReservation reservation)

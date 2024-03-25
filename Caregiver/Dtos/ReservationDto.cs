@@ -14,7 +14,7 @@ namespace Caregiver.Dtos
         public string PatientLastName { get; set; } = string.Empty;
 		//    public Gender Gender { get; set; }
 		public string Gender { get; set; }
-        //
+
 		public string CaregiverEmailAddress { get; set; } = string.Empty;
         public string PatientEmailAddress { get; set; } = string.Empty;
         public int CaregiverPhoneNumber { get; set; }
@@ -22,7 +22,7 @@ namespace Caregiver.Dtos
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string PatientId { get; set; }
-        public ReservationStatus Status { get; set; }
+        public string Status { get; set; }
 
         public int TotalPrice { get; set; }
         public byte[] Photo { get; set; }
@@ -32,6 +32,9 @@ namespace Caregiver.Dtos
 
         public City City { get; set; }
         public DateOnly Birthdate { get; set; }
+
+        public double TotalPriceWithfees { get; set; }
+        public double Fees { get; set; }
 
 
     }
