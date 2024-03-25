@@ -27,7 +27,6 @@ namespace Caregiver.Models
 		public string ConfirmPassword { get; set; } = string.Empty;
 
 		public int PhoneNumber { get; set; }
-
 		public bool IsDeleted { get; set; } = false;
 
 		//public DateTime JoinedDate { get; } = DateTime.Now;
