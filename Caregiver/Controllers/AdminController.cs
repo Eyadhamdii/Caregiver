@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using Caregiver.Dtos.UpdateDTOs;
 using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
+using Caregiver.Services.IService;
+using Caregiver.Services.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,19 +15,25 @@ namespace Caregiver.Controllers
 	[ApiController]
 	public class AdminController : ControllerBase
 	{
-		//private readonly ICaregiverRepo _dbCaregiver;
-		//private readonly APIResponse _response;
-		//private readonly IMapper _mapper;
-		//private readonly UserManager<User> _userManager;
+		private readonly ICaregiverService _caregiverService;
+		private readonly APIResponse _response;
+		private readonly AdminService s;
 
-		//public AdminController(ICaregiverRepo dbCaregiver, APIResponse response, IMapper mapper, UserManager<User> userManager)
-		//{
-		//	_dbCaregiver = dbCaregiver;
-		//	_response = response;
-		//	_mapper = mapper;
-		//	_userManager = userManager;
-		//}
+		public AdminController(ICaregiverService caregiverService, APIResponse response, AdminService s)
+		{
+			_caregiverService = caregiverService;
+			_response = response;
+			this.s = s;
+		}
 
+
+		[HttpGet]
+		public async Task<IActionResult> getAll()
+		{
+
+			var ss = await s.AllCaregiver();
+			return Ok(ss);
+		}
 
 		////get all (nurses or baby sitters or caregivers ) which  thier request still didn't accept
 		////seperate the caregiver based on the ui page.. 

@@ -1,10 +1,9 @@
 ﻿using Caregiver.Dtos;
-using Caregiver.Dtos.UpdateDTOs;
 using Caregiver.Models;
 
 namespace Caregiver.Services.IService
 {
-	public interface ICaregiverService
+    public interface ICaregiverService
 	{
 		 Task<IEnumerable<CaregiverCardDTO>> GetAllCurrentCaregiver();
 		Task<IEnumerable<CaregiverCardDTO>> GetAllCaregiverByType(string Role);

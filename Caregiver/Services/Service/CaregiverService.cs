@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using Caregiver.Dtos;
-using Caregiver.Dtos.UpdateDTOs;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Caregiver.Services.IService;
 
 namespace Caregiver.Services.Service
 {
-	public class CaregiverService  : ICaregiverService
+    public class CaregiverService  : ICaregiverService
 	{
 		private readonly IGenericRepo<CaregiverUser> _careGenericRepo;
 		private readonly IMapper _mapper;

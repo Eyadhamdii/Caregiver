@@ -30,8 +30,7 @@ namespace Caregiver.Models
 
 		public bool IsDeleted { get; set; } = false;
 
-		//public DateTime JoinedDate { get; } = DateTime.Now;
-
+		//public DateTime JoinedDate { get; set; } = DateTime.Today;
 
 	}
 }

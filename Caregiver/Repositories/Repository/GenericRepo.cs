@@ -1,10 +1,6 @@
-﻿using Azure;
-using Caregiver.Dtos.UpdateDTOs;
-using Caregiver.Enums;
-using Caregiver.Models;
+﻿using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -45,6 +41,8 @@ namespace Caregiver.Repositories.Repository
 			return await query.ToListAsync();
 		}
 
+
+
 		public async Task<bool> SoftDeleteUser(User user)
 		{
 			user.IsDeleted = true;
@@ -66,6 +64,24 @@ namespace Caregiver.Repositories.Repository
 			return null;
 		}
 
+		public async Task<List<T>> GetAllWithNavAsync(
+				 string[] includes, Expression<Func<T, bool>> filter = null)
+		{
+			
+			IQueryable<T> query = _dbSet;
+			if (filter != null)
+			{
+				query = query.Where(filter);
+			}
+
+			// Include navigation properties
+			foreach (var include in includes)
+			{
+				query = query.Include(include);
+			}
+
+			return await query.ToListAsync();
+		}
 
 
 
