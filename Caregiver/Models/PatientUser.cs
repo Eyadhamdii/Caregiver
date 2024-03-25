@@ -9,6 +9,7 @@ namespace Caregiver.Models
         public string Location { get; set; }
         public string ReservationNotes { get; set; }
         public ICollection<CaregiverPatientReservation> Reservations { get; set; } = null;
+        public ICollection<Dependant> Dependants { get; set; } = null;
 
-	}
+    }
 }

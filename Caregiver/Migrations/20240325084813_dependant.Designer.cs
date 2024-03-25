@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240324053621_r1")]
-    partial class r1
+    [Migration("20240325084813_dependant")]
+    partial class dependant
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,48 @@ namespace Caregiver.Migrations
                     b.HasIndex("CaregiverId");
 
                     b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("Caregiver.Models.Dependant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmailAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PatientId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PhoneNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReservationNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("Dependants");
                 });
 
             modelBuilder.Entity("Caregiver.Models.User", b =>
@@ -361,6 +403,15 @@ namespace Caregiver.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("Caregiver.Models.Dependant", b =>
+                {
+                    b.HasOne("Caregiver.Models.PatientUser", "Patient")
+                        .WithMany("Dependants")
+                        .HasForeignKey("PatientId");
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -419,6 +470,8 @@ namespace Caregiver.Migrations
 
             modelBuilder.Entity("Caregiver.Models.PatientUser", b =>
                 {
+                    b.Navigation("Dependants");
+
                     b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618

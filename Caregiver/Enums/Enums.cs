@@ -28,7 +28,13 @@
 			Caregiver = 2,
 			Babysitter = 3
 		}
+        public enum ReservationType
+        {
+            Me = 1,
+            SomeOneElse = 2
+            
+        }
 
 
-	}
+    }
 }

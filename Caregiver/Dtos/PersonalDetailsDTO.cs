@@ -12,5 +12,7 @@ namespace Caregiver.Dtos
         public string EmailAddress { get; set; }
         public Gender Gender { get; set; }
         public string ReservationNotes { get; set; }
+
+        public ReservationType ReservationType { get; set; }
     }
 }

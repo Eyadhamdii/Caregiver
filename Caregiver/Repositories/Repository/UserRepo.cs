@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static Caregiver.Enums.Enums;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Caregiver.Repositories.Repository
@@ -312,28 +313,96 @@ Message = "User created successfully!",
 			}
 		}
 
+        //     public async Task<UserManagerResponse> PersonalDetailsAsync(PersonalDetailsDTO model)
+        //     {
+        //var loggedInUserId = "777ab200-3f98-4f4c-a0f6-83d892a5b9bd";
+        //	// _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
+        //         if (model == null)
+        //             throw new NullReferenceException("Please Fill The Form");
+
+        //         var user = await _userManager.FindByIdAsync(loggedInUserId);
+        //         if (user != null && user is PatientUser PatientUser && model.ReservationType == "Me")
+        //         {
+        //             PatientUser.FirstName = model.FirstName;
+        //             PatientUser.LastName = model.LastName;
+        //             PatientUser.Age = model.Age;
+        //	PatientUser.Gender = model.Gender.ToString();
+        //	PatientUser.EmailAddress = model.EmailAddress;
+        //	PatientUser.Location = model.Location;
+        //	PatientUser.PhoneNumber = model.PhoneNumber;
+        //	PatientUser.ReservationNotes = model.ReservationNotes;
+
+
+        //             var result = await _userManager.UpdateAsync(PatientUser);
+
+        //             if (result.Succeeded)
+        //             {
+        //                 // Update successful, return success response
+        //                 return new UserManagerResponse
+        //                 {
+        //                     IsSuccess = true,
+        //                     Message = "Additional data updated successfully."
+        //                 };
+        //             }
+        //             else
+        //             {
+        //                 // Update failed, return error response
+        //                 return new UserManagerResponse
+        //                 {
+        //                     IsSuccess = false,
+        //                     Message = "Failed to update additional data.",
+        //                     Errors = result.Errors.Select(e => e.Description)
+        //                 };
+        //             }
+        //         }
+        //         else
+        //         {
+        //	// User not found, return error response
+
+
+        //	//return new UserManagerResponse
+        //	//{
+        //	//    IsSuccess = false,
+        //	//    Message = "User not found."
+        //	//};
+        //	var relevant = new Dependant
+        //	{
+        //                 PatientId = loggedInUserId,
+        //                 FirstName = model.FirstName,
+        //                 LastName = model.LastName,
+        //                 PhoneNumber = model.PhoneNumber,
+        //                 Age = model.Age,
+        //                 Location = model.Location,
+        //                 EmailAddress = model.EmailAddress,
+        //                 Gender = model.Gender,
+        //                 ReservationNotes = model.ReservationNotes
+        //             };
+
+
+        //         }
+        //     }
         public async Task<UserManagerResponse> PersonalDetailsAsync(PersonalDetailsDTO model)
         {
-			var loggedInUserId = "777ab200-3f98-4f4c-a0f6-83d892a5b9bd";
-				// _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+            var loggedInUserId = "777ab200-3f98-4f4c-a0f6-83d892a5b9bd";
+            // _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
             if (model == null)
                 throw new NullReferenceException("Please Fill The Form");
 
             var user = await _userManager.FindByIdAsync(loggedInUserId);
-            if (user != null && user is PatientUser PatientUser)
+            if (user != null && user is PatientUser patientUser && model.ReservationType == Enum.Parse<ReservationType>("Me"))
             {
-                PatientUser.FirstName = model.FirstName;
-                PatientUser.LastName = model.LastName;
-                PatientUser.Age = model.Age;
-				PatientUser.Gender = model.Gender.ToString();
-				PatientUser.EmailAddress = model.EmailAddress;
-				PatientUser.Location = model.Location;
-				PatientUser.PhoneNumber = model.PhoneNumber;
-				PatientUser.ReservationNotes = model.ReservationNotes;
+                patientUser.FirstName = model.FirstName;
+                patientUser.LastName = model.LastName;
+                patientUser.Age = model.Age;
+                patientUser.Gender = model.Gender.ToString();
+                patientUser.EmailAddress = model.EmailAddress;
+                patientUser.Location = model.Location;
+                patientUser.PhoneNumber = model.PhoneNumber;
+                patientUser.ReservationNotes = model.ReservationNotes;
 
-
-                var result = await _userManager.UpdateAsync(PatientUser);
+                var result = await _userManager.UpdateAsync(patientUser);
 
                 if (result.Succeeded)
                 {
@@ -357,16 +426,37 @@ Message = "User created successfully!",
             }
             else
             {
-                // User not found, return error response
+                // ReservationType is not "Me" or user is not found, add logic for Dependant here
+
+                var relevant = new Dependant
+                {
+                    PatientId = loggedInUserId,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    PhoneNumber = model.PhoneNumber,
+                    Age = model.Age,
+                    Location = model.Location,
+                    EmailAddress = model.EmailAddress,
+                    Gender = model.Gender.ToString(),
+                    ReservationNotes = model.ReservationNotes
+                };
+				 await _db.Dependants.AddAsync(relevant);
+				 _db.SaveChanges();
+                // Now you should add code to handle saving Dependant to your data store
+
+                // For example, if you have a repository method to save a Dependant:
+                // await _dependantRepository.AddAsync(relevant);
+
+                // Return appropriate response
                 return new UserManagerResponse
                 {
-                    IsSuccess = false,
-                    Message = "User not found."
+                    IsSuccess = true,
+                    Message = "Dependant details added successfully."
                 };
-
             }
         }
 
+
     }
-    
+
 }
