@@ -1,6 +1,7 @@
 ﻿using Caregiver.Dtos;
 using Caregiver.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 
 namespace Caregiver.Controllers
 {
@@ -47,10 +48,14 @@ namespace Caregiver.Controllers
 		{
 			try
 			{
-				string email = HttpContext.Request.Query["email"];
-				string token = HttpContext.Request.Query["token"];
 
-				var result = await _userService.UpdateForgottenPassword(email, token, model.NewPassword);
+				string decodedToken = HttpUtility.UrlDecode(model.Token);
+				string decodedEmail = Uri.UnescapeDataString(model.Email);
+
+				//string email = HttpContext.Request.Query["email"];
+				//string token = HttpContext.Request.Query["token"];
+
+				var result = await _userService.UpdateForgottenPassword(decodedEmail, decodedToken, model.NewPassword);
 				if (result == "success")
 				{
 					_response.StatusCode = System.Net.HttpStatusCode.OK;
