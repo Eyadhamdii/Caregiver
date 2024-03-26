@@ -20,11 +20,11 @@ namespace Caregiver.Controllers
 		}
 
 		[HttpPost("ForgotPassword")]
-		public async Task<ActionResult<APIResponse>> ForgotPassword(string id, [FromBody] string email)
-		{
+		public async Task<ActionResult<APIResponse>> ForgotPassword( [FromBody] string email)
+	{
 			try
 			{
-				var result = await _userService.ForgotPassword(id, email);
+				var result = await _userService.ForgotPassword(email);
 				if (result != null)
 				{
 					_response.StatusCode = System.Net.HttpStatusCode.OK;

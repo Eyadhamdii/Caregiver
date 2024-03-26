@@ -4,7 +4,7 @@ namespace Caregiver.Repositories.IRepository
 {
 	public interface IUserRepo
 	{
-		Task<string> ForgotPassword(string id, string email);
+		Task<string> ForgotPassword( string email);
 		Task<string> UpdateForgottenPassword(string id, string resetToken, string newPassword);
 		Task<UserManagerResponse> RegisterUserAsync(RegisterPatientDTO model);
 
