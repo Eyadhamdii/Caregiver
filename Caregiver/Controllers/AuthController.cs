@@ -43,14 +43,14 @@ namespace Caregiver.Controllers
 		}
 
 		[HttpPut("UpdatePassword")]
-		public async Task<ActionResult<APIResponse>> UpdatePassword([FromBody] string NewPassword)
+		public async Task<ActionResult<APIResponse>> UpdatePassword([FromBody] UpdatePasswordDTO model)
 		{
 			try
 			{
 				string email = HttpContext.Request.Query["email"];
 				string token = HttpContext.Request.Query["token"];
 
-				var result = await _userService.UpdateForgottenPassword(email, token, NewPassword);
+				var result = await _userService.UpdateForgottenPassword(email, token, model.NewPassword);
 				if (result == "success")
 				{
 					_response.StatusCode = System.Net.HttpStatusCode.OK;
