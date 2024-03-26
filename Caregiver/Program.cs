@@ -102,12 +102,12 @@ namespace Caregiver
 			builder.Services.AddScoped<ICaregiverService, CaregiverService>();
 			builder.Services.AddScoped<ICustomerService, CustomerServices>();
 
-			builder.Services.AddScoped<AdminService, AdminService>();
+			builder.Services.AddScoped<IAdminService,AdminService>();
+			builder.Services.AddScoped<IAdminRepo, AdminRepo>();
 
 			builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 			builder.Services.AddScoped<APIResponse, APIResponse>();
-
 
 			
 

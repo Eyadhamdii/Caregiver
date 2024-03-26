@@ -64,24 +64,38 @@ namespace Caregiver.Repositories.Repository
 			return null;
 		}
 
-		public async Task<List<T>> GetAllWithNavAsync(
-				 string[] includes, Expression<Func<T, bool>> filter = null)
+		public  List<T> GetAllWithNavAsync(
+				 string includes, Expression<Func<T, bool>> filter = null)
 		{
 			
 			IQueryable<T> query = _dbSet;
+			
+
+			// Include navigation properties
+			if (includes!= null)
+			{
+				query = query.Include(includes);
+			}
 			if (filter != null)
 			{
 				query = query.Where(filter);
 			}
 
-			// Include navigation properties
-			foreach (var include in includes)
-			{
-				query = query.Include(include);
-			}
-
-			return await query.ToListAsync();
+			return  query.ToList();
 		}
+
+
+		public async Task<bool> HardDeleteUser(User user)
+		{
+
+			var result = await _userManager.DeleteAsync(user);
+			if (result.Succeeded)
+			{
+				return true;
+			}
+			return false;
+		}
+
 
 
 

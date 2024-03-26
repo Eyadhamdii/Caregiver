@@ -14,7 +14,9 @@ namespace Caregiver.Repositories.IRepository
 
 		Task<User> UpdateUserAsync(User user);
 		//admin
-		Task<List<T>> GetAllWithNavAsync(
-				 string[] includes, Expression<Func<T, bool>> filter = null);
+		List<T> GetAllWithNavAsync(
+				 string includes, Expression<Func<T, bool>> filter = null);
+
+		Task<bool> HardDeleteUser(User user);
 	}
 }

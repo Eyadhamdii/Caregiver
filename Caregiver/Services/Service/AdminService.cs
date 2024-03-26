@@ -2,69 +2,85 @@
 using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
+using Caregiver.Repositories.Repository;
+using Caregiver.Services.IService;
 
 namespace Caregiver.Services.Service
 {
-	public class AdminService
+	public class AdminService : IAdminService
 	{
 
 		private readonly IGenericRepo<CaregiverUser> _careGenericRepo;
 		private readonly IMapper _mapper;
-		public AdminService(IGenericRepo<CaregiverUser> genericRepo, IMapper mapper)
+		private readonly IAdminRepo _adminRepo;
+
+		public AdminService(IGenericRepo<CaregiverUser> careGenericRepo, IMapper mapper, IAdminRepo adminRepo)
 		{
-			_careGenericRepo = genericRepo;
+			_careGenericRepo = careGenericRepo;
 			_mapper = mapper;
+			_adminRepo = adminRepo;
 		}
-
-
-		//current + past Caregivers
-		public async Task<IEnumerable<CaregiverCardDTO>> GetAllCurrentAndPastCaregiver()
+		
+		
+		public async Task<List<AdminCaregiverDTO>> GetAllCaregivers()
 		{
+			var caregivers =  _careGenericRepo.GetAllWithNavAsync("Reservations");
 
-			//services
-			IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync();
-			//services
-			if (caregivers != null)
-			{
-				return _mapper.Map<List<CaregiverCardDTO>>(caregivers);
-
-
-			}
-			return null;
+			//automappers..
+			return caregivers.Select(Caregiver => _mapper.Map<AdminCaregiverDTO>(Caregiver)).ToList();
 
 
 		}
 
-		//that have deleted themselves
-		public async Task<IEnumerable<CaregiverCardDTO>> GetAllCurrentCaregiver()
+		public async Task<List<AdminCaregiverDTO>> GetCaregiversJobTitle(string title)
 		{
-			IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.IsDeleted == false);
-			if (caregivers != null)
-			{
-				return _mapper.Map<List<CaregiverCardDTO>>(caregivers);
-
-
-			}
-			return null;
-
-
+			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations", a=>a.JobTitle == title);
+			//automappers..
+			return caregivers.Select(Caregiver => _mapper.Map<AdminCaregiverDTO>(Caregiver)).ToList();
 		}
 
-		public async Task<object> AllCaregiver()
+
+
+		public async Task<bool> AcceptRequestAsync(string id)
 		{
-			IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllWithNavAsync(["Reservations"]);
-			
-			if (caregivers != null)
+			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
+			if (caregiver == null)
 			{
-				return caregivers;
-
-
+				return false;
 			}
-			return null;
-
+			var result = await _adminRepo.AcceptRequest(caregiver);
+			if (result == true) return true;
+			return false;
 
 		}
 
+
+		public async Task<bool> HardDeleteCaregiver(string id)
+		{
+			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
+			if (caregiver == null && caregiver.IsAccepted == true)
+			{
+				return false;
+			}
+			var result = await _careGenericRepo.HardDeleteUser(caregiver);
+			if (result == true) return true;
+			return false;
+
+		}
+
+
+		public async Task<bool> SoftDeleteCaregiver(string id)
+		{
+			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
+			if (caregiver == null)
+			{
+				return false;
+			}
+			var result = await _careGenericRepo.SoftDeleteUser(caregiver);
+			if (result == true) return true;
+			return false;
+
+		}
 
 
 

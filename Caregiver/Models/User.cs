@@ -20,17 +20,17 @@ namespace Caregiver.Models
 
 		public string Nationality { get; set; } = string.Empty;
 
-		public string EmailAddress { get; set; } = string.Empty;
+		//public string EmailAddress { get; set; } = string.Empty;
 
-		public string Password { get; set; } = string.Empty;
+		//public string Password { get; set; } = string.Empty;
 
-		public string ConfirmPassword { get; set; } = string.Empty;
+		//public string ConfirmPassword { get; set; } = string.Empty;
 
-		public int PhoneNumber { get; set; }
+		//public string PhoneNumber { get; set; }
 
 		public bool IsDeleted { get; set; } = false;
 
-		//public DateTime JoinedDate { get; set; } = DateTime.Today;
+		public DateTime JoinedDate { get; set; } = DateTime.Today;
 
 	}
 }

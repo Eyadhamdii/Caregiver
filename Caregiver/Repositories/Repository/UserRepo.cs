@@ -198,7 +198,7 @@ namespace Caregiver.Repositories.Repository
 				UserName = model.Email,
 				Email = model.Email,
 				PhoneNumber = model.PhoneNumber,
-
+				Bio = model.Bio
 
 			};
 
@@ -269,13 +269,10 @@ Message = "User created successfully!",
 				caregiverUser.JobTitle = model.JobTitle.ToString();
 				caregiverUser.PricePerDay = model.PricePerDay;
 				caregiverUser.PricePerHour = model.PricePerHour;
-
 				caregiverUser.YearsOfExperience = model.YearsOfExperience;
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();
 				caregiverUser.Photo = datastream2.ToArray();
-
-                caregiverUser.WhatCanCaregiverDo = model.WhatCanCaregiverDo;
 
 				var result = await _userManager.UpdateAsync(caregiverUser);
 
@@ -395,7 +392,7 @@ Message = "User created successfully!",
                 patientUser.LastName = model.LastName;
                 patientUser.Age = model.Age;
                 patientUser.Gender = model.Gender.ToString();
-                patientUser.EmailAddress = model.EmailAddress;
+                patientUser.Email = model.EmailAddress;
                 patientUser.Location = model.Location;
                 patientUser.PhoneNumber = model.PhoneNumber;
                 patientUser.ReservationNotes = model.ReservationNotes;
