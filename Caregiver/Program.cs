@@ -9,6 +9,7 @@ using Caregiver.Services.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Stripe;
@@ -118,8 +119,8 @@ namespace Caregiver
             builder.Services.AddScoped<TokenService>();
             builder.Services.AddScoped<CustomerService>();
             builder.Services.AddScoped<ChargeService>();
-
-            StripeConfiguration.ApiKey = builder.Configuration.GetValue<string>("Stripe:SecretKey");
+			builder.Services.AddDistributedMemoryCache();
+			StripeConfiguration.ApiKey = builder.Configuration.GetValue<string>("Stripe:SecretKey");
 
 
             builder.Services.AddControllers().AddJsonOptions(options =>
@@ -169,7 +170,12 @@ namespace Caregiver
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
-
+			var staticFilesPath = Path.Combine(Environment.CurrentDirectory, "Images");
+			app.UseStaticFiles(new StaticFileOptions
+			{
+				FileProvider = new PhysicalFileProvider(staticFilesPath),
+				RequestPath = "/Images"
+			});
 			app.UseCors("angularlocalhost");
 
 			app.UseHttpsRedirection();
