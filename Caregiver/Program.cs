@@ -161,12 +161,11 @@ namespace Caregiver
 		}
 	});
 
-			builder.Services.AddSwaggerGen();
-			builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
-            builder.Services.AddTransient<ISmsServicecs, SmsServicecs>();
-
 			});
-			var app = builder.Build();
+
+            builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
+            builder.Services.AddTransient<ISmsServicecs, SmsServicecs>();
+            var app = builder.Build();
            
 
 			// Configure the HTTP request pipeline.
