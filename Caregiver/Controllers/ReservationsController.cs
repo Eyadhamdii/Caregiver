@@ -101,7 +101,7 @@ namespace Caregiver.Controllers
                     PatientFirstName = reservation.Patient.FirstName,
                     PatientLastName = reservation.Patient.LastName,
                     CaregiverEmailAddress = reservation.Caregiver.Email,
-                    CaregiverPhoneNumber = reservation.Caregiver.PhoneNumber,
+                   CaregiverPhoneNumber = reservation.Caregiver.PhoneNumber,
                     PatientEmailAddress = reservation.Patient.Email,
                     PatientPhoneNumber = reservation.Patient.PhoneNumber,
                     StartDate = reservation.StartDate,
@@ -153,7 +153,8 @@ namespace Caregiver.Controllers
                 Status = reservation.Status,
                 TotalPrice = reservation.TotalPrice,
                 TotalPriceWithfees = reservation.TotalPriceWithfees,
-                Fees = reservation.Fees
+                Fees = reservation.Fees,
+                PricePerDay = reservation.Caregiver.PricePerDay
             };
 
             return Ok(dto);
@@ -375,11 +376,6 @@ namespace Caregiver.Controllers
 
         }
 
-        #region Timer
-     
-
-
-        #endregion
 
         #region in case i needed  this 
         // var pricrPerDay = _context.Caregivers.Select(a => a.PricePerDay).FirstOrDefaultAsync(a => dto.CaregiverId == dto.CaregiverId);
