@@ -27,7 +27,7 @@ namespace Caregiver.Controllers
         }
 
         [HttpPost("CreateCheckout")]
-        public async Task<IActionResult> CreateCheckoutSession()
+        public async Task<IActionResult> CreateCheckoutSession(int id)
         {
             StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
 
@@ -37,7 +37,7 @@ namespace Caregiver.Controllers
             var reservationOrderId = await reservationsRepo.GetReservationById(id);
             var reservation = await _dbContext.Reservations.FirstOrDefaultAsync(a=>a.PatientId==loggedInUserId);
           
-            var amount = reservation.totalPrice * 100;
+            var amount = (int)Math.Round(reservation.TotalPriceWithfees * 100);
             
            
             var options = new Stripe.Checkout.SessionCreateOptions
