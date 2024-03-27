@@ -20,18 +20,21 @@ namespace Caregiver.Models
 
 		public string Nationality { get; set; } = string.Empty;
 
-		public string EmailAddress { get; set; } = string.Empty;
+		//public string EmailAddress { get; set; } = string.Empty;
 
-		public string Password { get; set; } = string.Empty;
+		//public string Password { get; set; } = string.Empty;
 
-		public string ConfirmPassword { get; set; } = string.Empty;
+		//public string ConfirmPassword { get; set; } = string.Empty;
 
-		public int PhoneNumber { get; set; }
+		//public string PhoneNumber { get; set; }
 
 		public bool IsDeleted { get; set; } = false;
 
-		//public DateTime JoinedDate { get; } = DateTime.Now;
+		//public bool IsActive { get; set; } = true;//user can login again with the same account  => Reactive Your Account => isDeletedbyuser to false again... 
+		//public bool IsDeletedByAdmin { get; set; } = false; //user must create a new account with new email => can't login with his account ...
 
+
+		public DateTime JoinedDate { get; set; } = DateTime.Today;
 
 	}
 }
