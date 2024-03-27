@@ -6,6 +6,7 @@
 
         public bool IsSuccess { get; set; }
 
+        public string URL { get; set; }
         public IEnumerable<string> Errors { get; set; }
     }
 }

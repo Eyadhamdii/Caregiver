@@ -1,5 +1,7 @@
 ﻿using Caregiver.Dtos;
+using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Caregiver.Controllers
@@ -124,7 +126,7 @@ namespace Caregiver.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var result = await _userService.FormCaregiverAsync(model);
+				var result = await _userService.FormCaregiverAsync(model , Request);
 				if (result.IsSuccess)
 					return Ok(result); // Status Code: 200
 				return BadRequest(result);
@@ -132,5 +134,16 @@ namespace Caregiver.Controllers
 			return BadRequest("Some properties are not valid"); // Status code: 400
 		}
 
+		[HttpPost("logout")]
+		public async Task<IActionResult> LogoutAsync()
+		{
+
+				var result = await _userService.LogoutAsync();
+				if (result.IsSuccess)
+					return Ok(result); // Status Code: 200
+			
+			// Handle the case where the username is null or empty
+			return BadRequest("Invalid username for logout."); // Statu
+		}
 	}
 }
