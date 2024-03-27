@@ -44,7 +44,7 @@ namespace Caregiver.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _userService.FormCaregiverAsync(model);
+                var result = await _userService.FormCaregiverAsync(model , Request);
                 if (result.IsSuccess)
                     return Ok(result); // Status Code: 200
                 return BadRequest(result);
