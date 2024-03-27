@@ -4,10 +4,14 @@ using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static Caregiver.Enums.Enums;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Caregiver.Repositories.Repository
 {
@@ -18,8 +22,10 @@ namespace Caregiver.Repositories.Repository
 		private readonly ApplicationDBContext _db;
 		private readonly IMapper _mapper;
 		private readonly IHttpContextAccessor _httpContextAccessor;
-        private new List<string> _allowedExt = new List<string> { ".jpg", ".png", ".pdf" };
+		private new List<string> _allowedExt = new List<string> { ".jpg", ".png", ".pdf", ".jpeg" };
 		private readonly IEmailRepo _emailService;
+		private readonly IDistributedCache _cache;
+		private readonly SignInManager<User> _signInManager;
 
 
 
@@ -32,16 +38,17 @@ namespace Caregiver.Repositories.Repository
 			_mapper = mapper;
 			_httpContextAccessor = httpContextAccessor;
 			_emailService = emailService;
+			_cache = cache;
+			_signInManager = signInManager;
 		}
 
 		public async Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO)
 		{
 
+
 			var user = await _userManager.FindByEmailAsync(loginReqDTO.Email);
+			
 			bool isValid = await _userManager.CheckPasswordAsync(user, loginReqDTO.Password);
-
-
-
 			if (user == null || isValid == false)
 			{
 				return new LoginResDTO()
@@ -52,20 +59,62 @@ namespace Caregiver.Repositories.Repository
 				};
 			}
 
+
+			var status = "";
+			if (user.IsDeleted == true)
+			{
+				//reactivate the account..
+				status = "NotActive";
+				user.IsDeleted = false;
+				await _userManager.UpdateAsync(user);
+			}
 		
+			
+			if (user.IsDeletedByAdmin == true)
+			{
+				//can't login
+				return new LoginResDTO
+				{
+					Status = "Can'tLogin",
+					Token = null,
+					User = null
+
+				};
+
+			}
+			
+			if (user is CaregiverUser caregiver) {
+			if(caregiver.IsAccepted == false)
+				{
+					return new LoginResDTO
+					{
+						Status = "PendingRequest",
+						Token = null,
+						User = null
+
+					};
+				}			
+			
+			}
+
+			
 			//key 
 			var secretKeyInBytes = Encoding.ASCII.GetBytes(secretKey);
 			var key = new SymmetricSecurityKey(secretKeyInBytes);
 
+
+			var userClaim = await _userManager.GetClaimsAsync(user);
+			var cc = userClaim.FirstOrDefault();
+			
 			var tokenDescriptor = new SecurityTokenDescriptor
 			{
-				
+
 				Subject = new ClaimsIdentity(new Claim[]
 			{
-				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-				new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1))
-				
-			}),
+					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+					//new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)),
+					new Claim(cc.Type, cc.Value)
+		}),
 				Expires = DateTime.UtcNow.AddDays(7),
 				SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
 			};
@@ -77,11 +126,12 @@ namespace Caregiver.Repositories.Repository
 			var StringToken = TokenHandler.WriteToken(token);
 			LoginResDTO loginResDTO = new LoginResDTO()
 			{
+				Status = status,
 				Token = StringToken,
 				//Role = Role,
 				User = new UserDTO
 				{
-					
+
 					ID = user.Id,
 					Email = user.Email,
 					Type = user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)
@@ -92,29 +142,29 @@ namespace Caregiver.Repositories.Repository
 		}
 
 
-		public async Task<string> ForgotPassword(string id, string email)
+		public async Task<string> ForgotPassword( string email)
 		{
-			User user = await _userManager.FindByIdAsync(id);
+			User user = await _userManager.FindByEmailAsync(email);
 			if (user == null)
 			{
 				return null;
 			}
 
-			if (email == user.Email)
-			{
+			//if (email == user.Email)
+			//{
 				string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
 				string resetUrl = $"http://localhost:5248/api/Auth/UpdatePassword?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
 				var message = $"<h3> Click on the link and will direct you to the page to enter a new password</h3>  <a href=\"{resetUrl}\">Click Here</a>";
 				string header = "Your Reset Password Link";
-				var result = await _emailService.SendEmail(message,header, email);
+				var result = await _emailService.SendEmail(message, header, email);
 				if (result == "Success")
 				{
 					return resetToken;
 				}
 				else return null;
-			}
-			return null;
+			//}
+			//return null;
 
 		}
 		public async Task<string> UpdateForgottenPassword(string email, string resetToken, string newPassword)
@@ -157,7 +207,7 @@ namespace Caregiver.Repositories.Repository
 				};
 			var userClaims = new List<Claim>
 {
-	
+
 	new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)),
 };
 
@@ -167,7 +217,7 @@ namespace Caregiver.Repositories.Repository
 			{
 				Message = "User created successfully!",
 				IsSuccess = true,
-				
+
 			};
 		}
 
@@ -196,7 +246,7 @@ namespace Caregiver.Repositories.Repository
 				UserName = model.Email,
 				Email = model.Email,
 				PhoneNumber = model.PhoneNumber,
-
+				Bio = model.Bio
 
 			};
 
@@ -205,14 +255,14 @@ namespace Caregiver.Repositories.Repository
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 
-	
+
 			if (!result.Succeeded)
 				return new UserManagerResponse
 				{
-				Message = "User did not create",
-				IsSuccess = false,
-				Errors = result.Errors.Select(e => e.Description)
-			
+					Message = "User did not create",
+					IsSuccess = false,
+					Errors = result.Errors.Select(e => e.Description)
+
 				};
 
 			var userClaims = new List<Claim>
@@ -225,24 +275,53 @@ namespace Caregiver.Repositories.Repository
 			return new UserManagerResponse
 			{
 
-Message = "User created successfully!",
-					IsSuccess = true,
-			
+				Message = "User created successfully!",
+				IsSuccess = true,
+
 			};
 		}
-                
 
-        public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model)
+
+		public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model , HttpRequest Request)
 		{
 			if (!_allowedExt.Contains(Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
 
-                return new UserManagerResponse
-                {
-                    IsSuccess = false,
-                    Message = "return only valid ext"
-                };
+				return new UserManagerResponse
+				{
+					IsSuccess = false,
+					Message = "return only valid ext"
+				};
 
-            using var datastream = new MemoryStream();
+			#region Storing The Image
+			//Random + Extension 
+			var extension = Path.GetExtension(model.UploadPhoto.FileName);
+			var newFileName = $"{Guid.NewGuid()}{extension}";
+
+			var imagesDirectory = Path.Combine(Environment.CurrentDirectory, "Images");
+
+			if (!Directory.Exists(imagesDirectory))
+			{
+				Directory.CreateDirectory(imagesDirectory);
+			}
+
+			// Combine the directory path with the file name
+			var fullFilePath = Path.Combine(imagesDirectory, newFileName);
+
+			// Save the file to the specified path
+			using (var stream = new FileStream(fullFilePath, FileMode.Create))
+			{
+				await model.UploadPhoto.CopyToAsync(stream);
+			}
+
+			// Generate the URL for the saved file
+			#endregion
+
+			#region Generating Url
+			var photoUrl = $"{Request.Scheme}://{Request.Host}/Images/{newFileName}";
+
+			#endregion
+
+			using var datastream = new MemoryStream();
 
 			await model.Resume.CopyToAsync(datastream);
 
@@ -250,11 +329,11 @@ Message = "User created successfully!",
 
 			await model.CriminalRecords.CopyToAsync(datastream1);
 
-            using var datastream2 = new MemoryStream();
+			using var datastream2 = new MemoryStream();
 
-            await model.UploadPhoto.CopyToAsync(datastream2);
+			await model.UploadPhoto.CopyToAsync(datastream2);
 
-            var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
 			if (model == null)
 				throw new NullReferenceException("Register Model is null");
@@ -267,13 +346,10 @@ Message = "User created successfully!",
 				caregiverUser.JobTitle = model.JobTitle.ToString();
 				caregiverUser.PricePerDay = model.PricePerDay;
 				caregiverUser.PricePerHour = model.PricePerHour;
-
 				caregiverUser.YearsOfExperience = model.YearsOfExperience;
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();
 				caregiverUser.Photo = datastream2.ToArray();
-
-                caregiverUser.WhatCanCaregiverDo = model.WhatCanCaregiverDo;
 
 				var result = await _userManager.UpdateAsync(caregiverUser);
 
@@ -283,7 +359,8 @@ Message = "User created successfully!",
 					return new UserManagerResponse
 					{
 						IsSuccess = true,
-						Message = "Additional data updated successfully."
+						Message = "Additional data updated successfully.",
+						URL = photoUrl		
 					};
 				}
 				else
@@ -308,5 +385,162 @@ Message = "User created successfully!",
 
 			}
 		}
+
+		//     public async Task<UserManagerResponse> PersonalDetailsAsync(PersonalDetailsDTO model)
+		//     {
+		//var loggedInUserId = "777ab200-3f98-4f4c-a0f6-83d892a5b9bd";
+		//	// _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
+		//         if (model == null)
+		//             throw new NullReferenceException("Please Fill The Form");
+
+		//         var user = await _userManager.FindByIdAsync(loggedInUserId);
+		//         if (user != null && user is PatientUser PatientUser && model.ReservationType == "Me")
+		//         {
+		//             PatientUser.FirstName = model.FirstName;
+		//             PatientUser.LastName = model.LastName;
+		//             PatientUser.Age = model.Age;
+		//	PatientUser.Gender = model.Gender.ToString();
+		//	PatientUser.EmailAddress = model.EmailAddress;
+		//	PatientUser.Location = model.Location;
+		//	PatientUser.PhoneNumber = model.PhoneNumber;
+		//	PatientUser.ReservationNotes = model.ReservationNotes;
+
+
+		//             var result = await _userManager.UpdateAsync(PatientUser);
+
+		//             if (result.Succeeded)
+		//             {
+		//                 // Update successful, return success response
+		//                 return new UserManagerResponse
+		//                 {
+		//                     IsSuccess = true,
+		//                     Message = "Additional data updated successfully."
+		//                 };
+		//             }
+		//             else
+		//             {
+		//                 // Update failed, return error response
+		//                 return new UserManagerResponse
+		//                 {
+		//                     IsSuccess = false,
+		//                     Message = "Failed to update additional data.",
+		//                     Errors = result.Errors.Select(e => e.Description)
+		//                 };
+		//             }
+		//         }
+		//         else
+		//         {
+		//	// User not found, return error response
+
+
+		//	//return new UserManagerResponse
+		//	//{
+		//	//    IsSuccess = false,
+		//	//    Message = "User not found."
+		//	//};
+		//	var relevant = new Dependant
+		//	{
+		//                 PatientId = loggedInUserId,
+		//                 FirstName = model.FirstName,
+		//                 LastName = model.LastName,
+		//                 PhoneNumber = model.PhoneNumber,
+		//                 Age = model.Age,
+		//                 Location = model.Location,
+		//                 EmailAddress = model.EmailAddress,
+		//                 Gender = model.Gender,
+		//                 ReservationNotes = model.ReservationNotes
+		//             };
+
+
+		//         }
+		//     }
+		public async Task<UserManagerResponse> PersonalDetailsAsync(PersonalDetailsDTO model)
+		{
+			var loggedInUserId = "777ab200-3f98-4f4c-a0f6-83d892a5b9bd";
+			// _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
+			if (model == null)
+				throw new NullReferenceException("Please Fill The Form");
+
+            var user = await _userManager.FindByIdAsync(loggedInUserId);
+            if (user != null && user is PatientUser patientUser && model.ReservationType == Enum.Parse<ReservationType>("Me"))
+            {
+                patientUser.FirstName = model.FirstName;
+                patientUser.LastName = model.LastName;
+                patientUser.Age = model.Age;
+                patientUser.Gender = model.Gender.ToString();
+                patientUser.Email = model.EmailAddress;
+                patientUser.Location = model.Location;
+                patientUser.PhoneNumber = model.PhoneNumber;
+                patientUser.ReservationNotes = model.ReservationNotes;
+
+				var result = await _userManager.UpdateAsync(patientUser);
+
+				if (result.Succeeded)
+				{
+					// Update successful, return success response
+					return new UserManagerResponse
+					{
+						IsSuccess = true,
+						Message = "Additional data updated successfully."
+					};
+				}
+				else
+				{
+					// Update failed, return error response
+					return new UserManagerResponse
+					{
+						IsSuccess = false,
+						Message = "Failed to update additional data.",
+						Errors = result.Errors.Select(e => e.Description)
+					};
+				}
+			}
+			else
+			{
+				// ReservationType is not "Me" or user is not found, add logic for Dependant here
+
+				var relevant = new Dependant
+				{
+					PatientId = loggedInUserId,
+					FirstName = model.FirstName,
+					LastName = model.LastName,
+					PhoneNumber = model.PhoneNumber,
+					Age = model.Age,
+					Location = model.Location,
+					EmailAddress = model.EmailAddress,
+					Gender = model.Gender.ToString(),
+					ReservationNotes = model.ReservationNotes
+				};
+				await _db.Dependants.AddAsync(relevant);
+				_db.SaveChanges();
+				// Now you should add code to handle saving Dependant to your data store
+
+				// For example, if you have a repository method to save a Dependant:
+				// await _dependantRepository.AddAsync(relevant);
+
+				// Return appropriate response
+				return new UserManagerResponse
+				{
+					IsSuccess = true,
+					Message = "Dependant details added successfully."
+				};
+			}
+		}
+
+		public async Task<UserManagerResponse> LogoutAsync()
+		{
+			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+			await _cache.RemoveAsync(loggedInUserId);
+
+			// Return a response indicating successful logout
+			return new UserManagerResponse
+			{
+				IsSuccess = true,
+				Message = $"User {loggedInUserId} logged out successfully."
+			};
+		}
 	}
+
 }

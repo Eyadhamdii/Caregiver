@@ -13,5 +13,13 @@ namespace Caregiver.Repositories.IRepository
 		Task<bool> SoftDeleteUser(User user);
 
 		Task<User> UpdateUserAsync(User user);
+		//admin
+		List<T> GetAllWithNavAsync(
+				 string includes, Expression<Func<T, bool>> filter = null);
+
+		Task<bool> HardDeleteUser(User user);
+		Task<bool> AdminDeleteUser(User user);
+
+		Task<bool> AdminReturnUser(User user);
 	}
 }

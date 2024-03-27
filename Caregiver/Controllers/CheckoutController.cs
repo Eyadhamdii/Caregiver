@@ -26,19 +26,8 @@ namespace Caregiver.Controllers
             reservationsRepo = _reservationsRepo;
         }
 
-        [HttpGet("Products")]
-        public IActionResult GetProducts()
-        {
-            //StripeConfiguration.ApiKey = "sk_test_51Oevw8Akocj1NhM27tLAmOl0f1SybvzfgLlctwhd9QL60lJ8XkvD4sUfmHiE6PF2WqMBWw9y7N1gp0N9uKnf0gEZ00mJoWy3K7";
-            StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
-            var options = new ProductListOptions { Limit = 3 };
-            var service = new ProductService();
-            StripeList<Product> products = service.List(options);
-            return Ok(products);
-        }
-
         [HttpPost("CreateCheckout")]
-        public async Task<IActionResult> CreateCheckoutSession(int id)
+        public async Task<IActionResult> CreateCheckoutSession()
         {
             StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
 
@@ -47,12 +36,10 @@ namespace Caregiver.Controllers
             var email = user.Email;
             var reservationOrderId = await reservationsRepo.GetReservationById(id);
             var reservation = await _dbContext.Reservations.FirstOrDefaultAsync(a=>a.PatientId==loggedInUserId);
-            var amount = reservation.TotalPrice * 100;
-            if (reservationOrderId == null)
-            {
-                return BadRequest("Reservation order ID is does not exist");
-            }
-
+          
+            var amount = reservation.totalPrice * 100;
+            
+           
             var options = new Stripe.Checkout.SessionCreateOptions
             {
                 SuccessUrl = "http://localhost:3000/booking-success",
@@ -89,7 +76,12 @@ namespace Caregiver.Controllers
             try
             {
                 var session = service.Create(options);
-                return Ok(new { sessionId = session.Id, sessionUrl = session.Url});
+                return Ok(new
+                {
+                    sessionId = session.Id,
+                    sessionlink = session.Url,
+                   
+                }) ;
 
             }
             catch (StripeException e)

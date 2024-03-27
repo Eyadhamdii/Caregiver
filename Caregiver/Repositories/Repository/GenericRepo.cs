@@ -1,10 +1,6 @@
-﻿using Azure;
-using Caregiver.Dtos.UpdateDTOs;
-using Caregiver.Enums;
-using Caregiver.Models;
+﻿using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -45,6 +41,8 @@ namespace Caregiver.Repositories.Repository
 			return await query.ToListAsync();
 		}
 
+
+
 		public async Task<bool> SoftDeleteUser(User user)
 		{
 			user.IsDeleted = true;
@@ -66,6 +64,58 @@ namespace Caregiver.Repositories.Repository
 			return null;
 		}
 
+		public  List<T> GetAllWithNavAsync(
+				 string includes, Expression<Func<T, bool>> filter = null)
+		{
+			
+			IQueryable<T> query = _dbSet;
+			
+
+			// Include navigation properties
+			if (includes!= null)
+			{
+				query = query.Include(includes);
+			}
+			if (filter != null)
+			{
+				query = query.Where(filter);
+			}
+
+			return  query.ToList();
+		}
+
+
+
+		public async Task<bool> HardDeleteUser(User user)
+		{
+
+			var result = await _userManager.DeleteAsync(user);
+			if (result.Succeeded)
+			{
+				return true;
+			}
+			return false;
+		}
+
+
+		public async Task<bool> AdminDeleteUser(User user)
+		{
+			user.IsDeletedByAdmin = true;
+			var result = await _userManager.UpdateAsync(user);
+			if (result.Succeeded) return true;
+			else return false;
+		}
+
+
+
+		//if user contact us and want to get back his account again
+			public async Task<bool> AdminReturnUser(User user)
+		{
+			user.IsDeletedByAdmin = false;
+			var result = await _userManager.UpdateAsync(user);
+			if (result.Succeeded) return true;
+			else return false;
+		}
 
 
 

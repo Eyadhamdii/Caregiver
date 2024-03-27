@@ -4,6 +4,7 @@ using Caregiver.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240325200536_JoinedDate column")]
+    partial class JoinedDatecolumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,14 +42,8 @@ namespace Caregiver.Migrations
                     b.Property<double>("Fees")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("LastStatusUpdate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("PatientId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PaymentStatus")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -98,8 +95,8 @@ namespace Caregiver.Migrations
                     b.Property<string>("PatientId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PhoneNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("ReservationNotes")
                         .HasColumnType("nvarchar(max)");
@@ -139,6 +136,9 @@ namespace Caregiver.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ConfirmPassword")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(13)
@@ -147,6 +147,9 @@ namespace Caregiver.Migrations
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("EmailAddress")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -158,9 +161,6 @@ namespace Caregiver.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeletedByAdmin")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("JoinedDate")
@@ -186,11 +186,14 @@ namespace Caregiver.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PhoneNumber")
+                        .HasColumnType("int");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
@@ -374,9 +377,6 @@ namespace Caregiver.Migrations
                     b.Property<byte[]>("CriminalRecords")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<bool>("IsAccepted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("JobLocationLookingFor")
                         .HasColumnType("nvarchar(max)");
 
@@ -394,6 +394,9 @@ namespace Caregiver.Migrations
 
                     b.Property<byte[]>("Resume")
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("WhatCanCaregiverDo")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("YearsOfExperience")
                         .HasColumnType("int");

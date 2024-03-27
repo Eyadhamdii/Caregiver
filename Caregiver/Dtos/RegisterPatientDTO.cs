@@ -43,7 +43,9 @@ namespace Caregiver.Dtos
 		public string ConfirmPassword { get; set; }
 
 		[Required]
-		public int PhoneNumber { get; set; }
+		[RegularExpression(@"^01.*", ErrorMessage = "Phone number must start with '01'")]
+
+		public string PhoneNumber { get; set; }
 
 	}
 }

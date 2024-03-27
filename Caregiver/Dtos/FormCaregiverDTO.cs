@@ -5,8 +5,6 @@ namespace Caregiver.Dtos
 {
 	public class FormCaregiverDTO
 	{
-		[Required]
-		public string[] WhatCanCaregiverDo { get; set; }
 
 		public string Country { get; set; }
 

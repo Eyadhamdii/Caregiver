@@ -28,6 +28,18 @@
             Caregiver = 2,
             Babysitter = 3
         }
+		//public enum JobTitle
+		//{
+		//	Nurse = 1,
+		//	Caregiver = 2,
+		//	Babysitter = 3
+		//}
+        public enum ReservationType
+        {
+            Me = 1,
+            SomeOneElse = 2
+            
+        }
 
         public enum ReservationStatus
         {
@@ -45,4 +57,6 @@
         }
         //
     }
-}
+
+    }
+
