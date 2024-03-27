@@ -1,6 +1,7 @@
 
 using Caregiver.Configurations;
 using Caregiver.Dtos;
+using Caregiver.Helpers;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Caregiver.Repositories.Repository;
@@ -125,8 +126,10 @@ namespace Caregiver
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
+			builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
+            builder.Services.AddTransient<ISmsServicecs, SmsServicecs>();
 
-			var app = builder.Build();
+            var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())

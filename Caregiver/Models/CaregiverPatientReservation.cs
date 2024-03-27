@@ -26,6 +26,7 @@ namespace Caregiver.Models
         [Required]
         [DataType(DataType.DateTime)]
         public DateTime EndDate { get; set; }
+        public DateTime LastStatusUpdate { get; set; }
 
         public string Status { get; set; }
 
@@ -33,6 +34,7 @@ namespace Caregiver.Models
         public double TotalPriceWithfees { get; set;}
         public double Fees { get; set; }
 
+        public string PaymentStatus { get; set; }
 
 
 

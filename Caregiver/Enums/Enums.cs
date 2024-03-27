@@ -34,7 +34,8 @@
             OnProgress  ,
             Confirmed  ,
             Cancelled ,
-            CannotProceed
+            CannotProceed,
+            Pending
         }
         public enum Status
         {

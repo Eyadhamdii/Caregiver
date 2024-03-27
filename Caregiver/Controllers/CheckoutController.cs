@@ -1,5 +1,6 @@
 ﻿using Caregiver.Dtos;
 using Caregiver.Models;
+using Caregiver.Repositories.IRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +16,14 @@ namespace Caregiver.Controllers
         private IConfiguration _configuration;
         private UserManager<User> _userManager;
         private ApplicationDBContext _dbContext;
+        private readonly IReservationsRepo reservationsRepo;
 
-        public CheckoutController(IConfiguration configuration, UserManager<User> userManager , ApplicationDBContext dbContext)
+        public CheckoutController(IConfiguration configuration, UserManager<User> userManager, ApplicationDBContext dbContext, IReservationsRepo _reservationsRepo)
         {
             _configuration = configuration;
             _userManager = userManager;
             _dbContext = dbContext;
+            reservationsRepo = _reservationsRepo;
         }
 
         [HttpGet("Products")]
@@ -31,24 +34,25 @@ namespace Caregiver.Controllers
             var options = new ProductListOptions { Limit = 3 };
             var service = new ProductService();
             StripeList<Product> products = service.List(options);
-
             return Ok(products);
         }
 
-        [HttpPost("Create Checkout")]
-        public async Task<IActionResult> CreateCheckoutSession()
+        [HttpPost("CreateCheckout")]
+        public async Task<IActionResult> CreateCheckoutSession(int id)
         {
             StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
 
             var loggedInUserId = _userManager.GetUserId(HttpContext.User);
             var user = await _userManager.FindByIdAsync(loggedInUserId);
             var email = user.Email;
-            
+            var reservationOrderId = await reservationsRepo.GetReservationById(id);
             var reservation = await _dbContext.Reservations.FirstOrDefaultAsync(a=>a.PatientId==loggedInUserId);
-          
-            var amount = reservation.totalPrice * 100;
-            
-           
+            var amount = reservation.TotalPrice * 100;
+            if (reservationOrderId == null)
+            {
+                return BadRequest("Reservation order ID is does not exist");
+            }
+
             var options = new Stripe.Checkout.SessionCreateOptions
             {
                 SuccessUrl = "http://localhost:3000/booking-success",
@@ -71,15 +75,21 @@ namespace Caregiver.Controllers
                         Quantity = 1
                     }
                 },
-                CustomerEmail = email
-            };
+                CustomerEmail = email,
+                Metadata = new Dictionary<string, string>
+        {
+            { "order_id", id.ToString() }
+        }
 
+
+            };
+           
             var service = new Stripe.Checkout.SessionService();
 
             try
             {
                 var session = service.Create(options);
-                return Ok(new { sessionId = session.Id });
+                return Ok(new { sessionId = session.Id, sessionUrl = session.Url});
 
             }
             catch (StripeException e)

@@ -41,8 +41,11 @@ namespace Caregiver.Repositories.Repository
                 TotalPrice = source.TotalPrice,
                 TotalPriceWithfees = source.TotalPriceWithfees,
                 Fees = source.Fees,
-                StartDate = (DateTime)source.StartDate,
-                PatientId = source.PatientId
+                StartDate = source.StartDate,
+                EndDate=source.EndDate,
+                PatientId = source.PatientId,
+                PricePerDay = source.Caregiver.PricePerDay
+
 
             }).ToListAsync();
         }
@@ -62,10 +65,12 @@ namespace Caregiver.Repositories.Repository
                 Status = source.Status,
                 Gender = source.Caregiver.Gender,
                 TotalPrice=source.TotalPrice,
-                StartDate = (DateTime)source.StartDate,
+                StartDate = source.StartDate,
                 PatientId=source.PatientId,
                 TotalPriceWithfees = source.TotalPriceWithfees,
-                Fees = source.Fees
+                Fees = source.Fees,
+                EndDate = source.EndDate,
+                PricePerDay = source.Caregiver.PricePerDay
 
             }).ToListAsync();
            
@@ -99,7 +104,9 @@ namespace Caregiver.Repositories.Repository
                 StartDate = (DateTime)source.StartDate,
                 PatientId = source.PatientId,
                 TotalPriceWithfees = source.TotalPriceWithfees,
-                Fees = source.Fees
+                Fees = source.Fees,
+                EndDate = source.EndDate,
+                PricePerDay = source.Caregiver.PricePerDay
 
             }).ToListAsync();
 
@@ -170,6 +177,11 @@ namespace Caregiver.Repositories.Repository
         public bool CheckReservationDatesExists(int id)
         {
             return db.ReservationDates.Select(item => item.OrderId).Contains(id);
+        }
+
+        public async Task<IEnumerable<CaregiverPatientReservation>> GetReservationsByStatus(string status)
+        {
+            return await db.Reservations.Where(r => r.Status == status).ToListAsync();
         }
     }
 }
