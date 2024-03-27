@@ -23,19 +23,7 @@ namespace Caregiver.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpGet("Products")]
-        public IActionResult GetProducts()
-        {
-            //StripeConfiguration.ApiKey = "sk_test_51Oevw8Akocj1NhM27tLAmOl0f1SybvzfgLlctwhd9QL60lJ8XkvD4sUfmHiE6PF2WqMBWw9y7N1gp0N9uKnf0gEZ00mJoWy3K7";
-            StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
-            var options = new ProductListOptions { Limit = 3 };
-            var service = new ProductService();
-            StripeList<Product> products = service.List(options);
-
-            return Ok(products);
-        }
-
-        [HttpPost("Create Checkout")]
+        [HttpPost("CreateCheckout")]
         public async Task<IActionResult> CreateCheckoutSession()
         {
             StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];

@@ -188,23 +188,5 @@ namespace Caregiver.Controllers
 
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	}
 }
