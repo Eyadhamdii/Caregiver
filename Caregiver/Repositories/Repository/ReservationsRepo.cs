@@ -37,7 +37,8 @@ namespace Caregiver.Repositories.Repository
                CaregiverPhoneNumber = source.Caregiver.PhoneNumber,
                 OrderId = source.OrderId,
                 Status = source.Status,
-                Gender = source.Caregiver.Gender,
+                CaregiverGender = source.Caregiver.Gender,
+                PatientGender = source.Patient.Gender,
                 TotalPrice = source.TotalPrice,
                 TotalPriceWithfees = source.TotalPriceWithfees,
                 Fees = source.Fees,
@@ -45,8 +46,6 @@ namespace Caregiver.Repositories.Repository
                 EndDate=source.EndDate,
                 PatientId = source.PatientId,
                 PricePerDay = source.Caregiver.PricePerDay
-
-
             }).ToListAsync();
         }
 
@@ -63,8 +62,9 @@ namespace Caregiver.Repositories.Repository
                 CaregiverPhoneNumber= source.Caregiver.PhoneNumber,
                 OrderId=source.OrderId,
                 Status = source.Status,
-                Gender = source.Caregiver.Gender,
-                TotalPrice=source.TotalPrice,
+                CaregiverGender = source.Caregiver.Gender,
+                PatientGender = source.Caregiver.Gender,
+                TotalPrice =source.TotalPrice,
                 StartDate = source.StartDate,
                 PatientId=source.PatientId,
                 TotalPriceWithfees = source.TotalPriceWithfees,
@@ -99,7 +99,8 @@ namespace Caregiver.Repositories.Repository
                 CaregiverPhoneNumber = source.Caregiver.PhoneNumber,
                 OrderId = source.OrderId,
                 Status = source.Status,
-                Gender = source.Caregiver.Gender,
+                CaregiverGender = source.Caregiver.Gender,
+                PatientGender = source.Patient.Gender,
                 TotalPrice = source.TotalPrice,
                 StartDate = (DateTime)source.StartDate,
                 PatientId = source.PatientId,

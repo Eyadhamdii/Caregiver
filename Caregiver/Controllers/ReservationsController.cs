@@ -101,7 +101,7 @@ namespace Caregiver.Controllers
                     PatientFirstName = reservation.Patient.FirstName,
                     PatientLastName = reservation.Patient.LastName,
                     CaregiverEmailAddress = reservation.Caregiver.Email,
-                   CaregiverPhoneNumber = reservation.Caregiver.PhoneNumber,
+                    CaregiverPhoneNumber = reservation.Caregiver.PhoneNumber,
                     PatientEmailAddress = reservation.Patient.Email,
                     PatientPhoneNumber = reservation.Patient.PhoneNumber,
                     StartDate = reservation.StartDate,
@@ -109,11 +109,14 @@ namespace Caregiver.Controllers
                     Photo= reservation.Caregiver.Photo,
                     Country=reservation.Caregiver.Country,
                     OrderId = reservation.OrderId,
-                    Gender = reservation.Caregiver.Gender,
+                    CaregiverGender = reservation.Caregiver.Gender,
+                    PatientGender = reservation.Patient.Gender,
                     Status = reservation.Status.ToString(),
                     TotalPrice= reservation.TotalPrice,
                     TotalPriceWithfees = reservation.TotalPriceWithfees,
-                    Fees = reservation.Fees
+                    Fees = reservation.Fees,
+                    PricePerDay = reservation.Caregiver.PricePerDay,
+                    JobTitle= reservation.Caregiver.JobTitle
                 };
 
                 return Ok(dto);
@@ -148,13 +151,21 @@ namespace Caregiver.Controllers
                 PatientLastName = reservation.Patient.LastName,
                 CaregiverEmailAddress = reservation.Caregiver.Email,
                 CaregiverPhoneNumber = reservation.Caregiver.PhoneNumber,
+                PatientEmailAddress = reservation.Patient.Email,
+                PatientPhoneNumber = reservation.Patient.PhoneNumber,
+                StartDate = reservation.StartDate,
+                EndDate = reservation.EndDate,
+                Photo = reservation.Caregiver.Photo,
+                Country = reservation.Caregiver.Country,
                 OrderId = reservation.OrderId,
-                Gender = reservation.Caregiver.Gender,
-                Status = reservation.Status,
+                CaregiverGender = reservation.Caregiver.Gender,
+                PatientGender = reservation.Patient.Gender,
+                Status = reservation.Status.ToString(),
                 TotalPrice = reservation.TotalPrice,
                 TotalPriceWithfees = reservation.TotalPriceWithfees,
                 Fees = reservation.Fees,
-                PricePerDay = reservation.Caregiver.PricePerDay
+                PricePerDay = reservation.Caregiver.PricePerDay,
+                JobTitle = reservation.Caregiver.JobTitle
             };
 
             return Ok(dto);
@@ -303,10 +314,12 @@ namespace Caregiver.Controllers
         #endregion
 
         #region Calculate Total Price method
-        private int CalculateTotalPrice(int pricePerHour, DateTime EndDate, DateTime startDate)
+
+
+        private int CalculateTotalPrice(int pricePerHour, DateTime endDate, DateTime startDate)
         {
-            TimeSpan difference = EndDate - startDate;
-            int totalDays = ((int)difference.TotalDays)+1;
+            TimeSpan difference = endDate.Date - startDate.Date;
+            int totalDays = difference.Days + 1;
 
             return pricePerHour * totalDays;
         }
@@ -461,6 +474,16 @@ if (timeDifference.TotalHours > 24)
     reservation.Status = ReservationStatus.Cancelled.ToString();
     return BadRequest("Reservation is cancelled as 24 hours have passed since the request time.");
 }*/
+
+        /*
+         *         private int CalculateTotalPrice(int pricePerHour, DateTime EndDate, DateTime startDate)
+        {
+            TimeSpan difference = EndDate - startDate;
+            int totalDays = ((int)difference.TotalDays)+1;
+
+            return pricePerHour * totalDays;
+        }
+         */
         #endregion
     }
 }
