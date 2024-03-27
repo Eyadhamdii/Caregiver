@@ -39,11 +39,10 @@ namespace Caregiver.Repositories.Repository
 		public async Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO)
 		{
 
+
 			var user = await _userManager.FindByEmailAsync(loginReqDTO.Email);
+			
 			bool isValid = await _userManager.CheckPasswordAsync(user, loginReqDTO.Password);
-
-
-
 			if (user == null || isValid == false)
 			{
 				return new LoginResDTO()
@@ -53,8 +52,17 @@ namespace Caregiver.Repositories.Repository
 
 				};
 			}
-
-		
+			/*
+			//if email & password valid...
+			if(isValid == true && user.IsActive == false)
+			{
+			retun reactiavtion of account ,, isactive == true
+			}
+			if(isValid == true && user.isdeleted by admin == true)
+			{
+			retun you can't login to your account.. yout accoount have been deleted
+			}
+			*/
 			//key 
 			var secretKeyInBytes = Encoding.ASCII.GetBytes(secretKey);
 			var key = new SymmetricSecurityKey(secretKeyInBytes);
@@ -94,16 +102,16 @@ namespace Caregiver.Repositories.Repository
 		}
 
 
-		public async Task<string> ForgotPassword(string id, string email)
+		public async Task<string> ForgotPassword( string email)
 		{
-			User user = await _userManager.FindByIdAsync(id);
+			User user = await _userManager.FindByEmailAsync(email);
 			if (user == null)
 			{
 				return null;
 			}
 
-			if (email == user.Email)
-			{
+			//if (email == user.Email)
+			//{
 				string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
 				string resetUrl = $"http://localhost:5248/api/Auth/UpdatePassword?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
@@ -115,8 +123,8 @@ namespace Caregiver.Repositories.Repository
 					return resetToken;
 				}
 				else return null;
-			}
-			return null;
+			//}
+			//return null;
 
 		}
 		public async Task<string> UpdateForgottenPassword(string email, string resetToken, string newPassword)
@@ -198,7 +206,7 @@ namespace Caregiver.Repositories.Repository
 				UserName = model.Email,
 				Email = model.Email,
 				PhoneNumber = model.PhoneNumber,
-
+				Bio = model.Bio
 
 			};
 
@@ -269,13 +277,10 @@ Message = "User created successfully!",
 				caregiverUser.JobTitle = model.JobTitle.ToString();
 				caregiverUser.PricePerDay = model.PricePerDay;
 				caregiverUser.PricePerHour = model.PricePerHour;
-
 				caregiverUser.YearsOfExperience = model.YearsOfExperience;
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();
 				caregiverUser.Photo = datastream2.ToArray();
-
-                caregiverUser.WhatCanCaregiverDo = model.WhatCanCaregiverDo;
 
 				var result = await _userManager.UpdateAsync(caregiverUser);
 
@@ -395,7 +400,7 @@ Message = "User created successfully!",
                 patientUser.LastName = model.LastName;
                 patientUser.Age = model.Age;
                 patientUser.Gender = model.Gender.ToString();
-                patientUser.EmailAddress = model.EmailAddress;
+                patientUser.Email = model.EmailAddress;
                 patientUser.Location = model.Location;
                 patientUser.PhoneNumber = model.PhoneNumber;
                 patientUser.ReservationNotes = model.ReservationNotes;

@@ -1,6 +1,7 @@
 ﻿using Caregiver.Dtos;
 using Caregiver.Repositories.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 
 namespace Caregiver.Controllers
 {
@@ -20,11 +21,11 @@ namespace Caregiver.Controllers
 		}
 
 		[HttpPost("ForgotPassword")]
-		public async Task<ActionResult<APIResponse>> ForgotPassword(string id, [FromBody] string email)
-		{
+		public async Task<ActionResult<APIResponse>> ForgotPassword( [FromBody] ForgotPasswordDTO model)
+	{
 			try
 			{
-				var result = await _userService.ForgotPassword(id, email);
+				var result = await _userService.ForgotPassword(model.Email);
 				if (result != null)
 				{
 					_response.StatusCode = System.Net.HttpStatusCode.OK;
@@ -43,14 +44,18 @@ namespace Caregiver.Controllers
 		}
 
 		[HttpPut("UpdatePassword")]
-		public async Task<ActionResult<APIResponse>> UpdatePassword([FromBody] string NewPassword)
+		public async Task<ActionResult<APIResponse>> UpdatePassword([FromBody] UpdatePasswordDTO model)
 		{
 			try
 			{
-				string email = HttpContext.Request.Query["email"];
-				string token = HttpContext.Request.Query["token"];
 
-				var result = await _userService.UpdateForgottenPassword(email, token, NewPassword);
+				string decodedToken = HttpUtility.UrlDecode(model.Token);
+				string decodedEmail = Uri.UnescapeDataString(model.Email);
+
+				//string email = HttpContext.Request.Query["email"];
+				//string token = HttpContext.Request.Query["token"];
+
+				var result = await _userService.UpdateForgottenPassword(decodedEmail, decodedToken, model.NewPassword);
 				if (result == "success")
 				{
 					_response.StatusCode = System.Net.HttpStatusCode.OK;

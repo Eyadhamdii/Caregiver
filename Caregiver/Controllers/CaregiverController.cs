@@ -1,12 +1,11 @@
 ﻿using Caregiver.Dtos;
-using Caregiver.Dtos.UpdateDTOs;
 using Caregiver.Models;
 using Caregiver.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Caregiver.Controllers
 {
-	[Route("api/Caregiver")]
+    [Route("api/Caregiver")]
 	[ApiController]
 	public class CaregiverController : ControllerBase
 	{
