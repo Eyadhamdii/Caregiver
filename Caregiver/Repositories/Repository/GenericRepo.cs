@@ -85,6 +85,7 @@ namespace Caregiver.Repositories.Repository
 		}
 
 
+
 		public async Task<bool> HardDeleteUser(User user)
 		{
 
@@ -96,6 +97,25 @@ namespace Caregiver.Repositories.Repository
 			return false;
 		}
 
+
+		public async Task<bool> AdminDeleteUser(User user)
+		{
+			user.IsDeletedByAdmin = true;
+			var result = await _userManager.UpdateAsync(user);
+			if (result.Succeeded) return true;
+			else return false;
+		}
+
+
+
+		//if user contact us and want to get back his account again
+			public async Task<bool> AdminReturnUser(User user)
+		{
+			user.IsDeletedByAdmin = false;
+			var result = await _userManager.UpdateAsync(user);
+			if (result.Succeeded) return true;
+			else return false;
+		}
 
 
 

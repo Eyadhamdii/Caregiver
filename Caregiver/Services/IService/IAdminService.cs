@@ -10,5 +10,6 @@ namespace Caregiver.Services.IService
 		Task<bool> AcceptRequestAsync(string id);
 		Task<bool> HardDeleteCaregiver(string id);
 		Task<bool> SoftDeleteCaregiver(string id);
+		Task<bool> AdminDeleteCaregiver(string id);
 	}
 }

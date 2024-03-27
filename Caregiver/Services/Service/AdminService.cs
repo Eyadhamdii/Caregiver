@@ -20,11 +20,22 @@ namespace Caregiver.Services.Service
 			_mapper = mapper;
 			_adminRepo = adminRepo;
 		}
-		
-		
+
+		//get all caregivers which deleted and active and admin delete them 
+		public async Task<List<AdminCaregiverDTO>> GetAllWithDeletedCaregivers()
+		{
+			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations");
+
+			//automappers..
+			return caregivers.Select(Caregiver => _mapper.Map<AdminCaregiverDTO>(Caregiver)).ToList();
+
+
+		}
+
+		//get all current caregiver , accepted, active , admin didn't delete them => all titles
 		public async Task<List<AdminCaregiverDTO>> GetAllCaregivers()
 		{
-			var caregivers =  _careGenericRepo.GetAllWithNavAsync("Reservations");
+			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations", a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false);
 
 			//automappers..
 			return caregivers.Select(Caregiver => _mapper.Map<AdminCaregiverDTO>(Caregiver)).ToList();
@@ -32,15 +43,19 @@ namespace Caregiver.Services.Service
 
 		}
 
+
+		//get all current caregiver , accepted, active , admin didn't delete them
 		public async Task<List<AdminCaregiverDTO>> GetCaregiversJobTitle(string title)
 		{
-			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations", a=>a.JobTitle == title);
+			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations", a=>a.JobTitle == title && a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false);
 			//automappers..
 			return caregivers.Select(Caregiver => _mapper.Map<AdminCaregiverDTO>(Caregiver)).ToList();
 		}
 
 
+		#region Request Accept & Delete
 
+		//is accepted => true
 		public async Task<bool> AcceptRequestAsync(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
@@ -54,11 +69,11 @@ namespace Caregiver.Services.Service
 
 		}
 
-
+	//when decline the request..
 		public async Task<bool> HardDeleteCaregiver(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
-			if (caregiver == null && caregiver.IsAccepted == true)
+			if (caregiver == null)
 			{
 				return false;
 			}
@@ -67,6 +82,45 @@ namespace Caregiver.Services.Service
 			return false;
 
 		}
+
+		#endregion
+
+
+
+		#region Delete and GetBack Caregiver
+
+		//is deleted by admin => true
+		public async Task<bool> AdminDeleteCaregiver(string id)
+		{
+			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
+			if (caregiver == null )
+			{
+				return false;
+			}
+			var result = await _careGenericRepo.AdminDeleteUser(caregiver);
+			if (result == true) return true;
+			return false;
+
+		}
+
+
+		//is deleted by admin => false ,, caregiver want her account back after the admin delete it
+		
+		public async Task<bool> AdminReturnCaregiver(string id)
+		{
+			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
+			if (caregiver == null)
+			{
+				return false;
+			}
+			var result = await _careGenericRepo.AdminReturnUser(caregiver);
+			if (result == true) return true;
+			return false;
+
+		}
+
+		#endregion
+
 
 
 		public async Task<bool> SoftDeleteCaregiver(string id)

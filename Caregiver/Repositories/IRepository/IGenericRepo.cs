@@ -18,5 +18,8 @@ namespace Caregiver.Repositories.IRepository
 				 string includes, Expression<Func<T, bool>> filter = null);
 
 		Task<bool> HardDeleteUser(User user);
+		Task<bool> AdminDeleteUser(User user);
+
+		Task<bool> AdminReturnUser(User user);
 	}
 }

@@ -22,7 +22,7 @@ namespace Caregiver.Services.Service
 		{
 			
 				//services
-				IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.IsDeleted == false);
+				IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false);
 				//services
 				if(caregivers != null)
 				{
@@ -37,7 +37,7 @@ namespace Caregiver.Services.Service
 		public async Task<IEnumerable<CaregiverCardDTO>> GetAllCaregiverByType(string Role) {
 			if (Role != "Caregiver" && Role != "Nurse" && Role != "BabySitter") return null;
 
-			IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.JobTitle == Role && a.IsDeleted == false);
+			IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.JobTitle == Role && a.IsDeleted == false  && a.IsAccepted == true && a.IsDeletedByAdmin == false);
 				if(caregivers != null)
 				{
 					return _mapper.Map<List<CaregiverCardDTO>>(caregivers);
@@ -46,6 +46,7 @@ namespace Caregiver.Services.Service
 			
 		}
 
+		//caregiver delete herself..
 		public async Task<bool> SoftDeleteCaregiver(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);

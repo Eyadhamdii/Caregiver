@@ -109,6 +109,38 @@ namespace Caregiver.Controllers
 		}
 
 
+		[HttpDelete("AdminDeleteRequest/{id}")]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<APIResponse>> AdminDeleteCaregiver(string id)
+		{
+			try
+			{
+				var result = await _adminService.AdminDeleteCaregiver(id);
+				if (result == true)
+				{
+					_response.IsSuccess = true;
+					_response.StatusCode = System.Net.HttpStatusCode.NoContent;
+					return Ok(_response);
+				}
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { " Can't find the user by this id or error in delete it" };
+				_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+				return NotFound(_response);
+
+			}
+			catch (Exception e)
+			{
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { e.Message };
+				_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+				return BadRequest(_response);
+
+			}
+		}
+
+
 		[HttpDelete("DeleteCaregiver{id}")]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]

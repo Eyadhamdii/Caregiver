@@ -4,6 +4,7 @@ using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -22,11 +23,12 @@ namespace Caregiver.Repositories.Repository
 		private readonly IHttpContextAccessor _httpContextAccessor;
         private new List<string> _allowedExt = new List<string> { ".jpg", ".png", ".pdf" };
 		private readonly IEmailRepo _emailService;
+		private readonly SignInManager<User> _signInManager;
 
 
 
 
-		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailRepo emailService)
+		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailRepo emailService, SignInManager<User> signInManager)
 		{
 			_db = db;
 			_userManager = userManager;
@@ -34,6 +36,7 @@ namespace Caregiver.Repositories.Repository
 			_mapper = mapper;
 			_httpContextAccessor = httpContextAccessor;
 			_emailService = emailService;
+			_signInManager = signInManager;
 		}
 
 		public async Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO)
@@ -52,30 +55,63 @@ namespace Caregiver.Repositories.Repository
 
 				};
 			}
-			/*
-			//if email & password valid...
-			if(isValid == true && user.IsActive == false)
+
+
+			var status = "";
+			if (user.IsDeleted == true)
 			{
-			retun reactiavtion of account ,, isactive == true
+				//reactivate the account..
+				status = "NotActive";
+				user.IsDeleted = false;
+				await _userManager.UpdateAsync(user);
 			}
-			if(isValid == true && user.isdeleted by admin == true)
+		
+			
+			if (user.IsDeletedByAdmin == true)
 			{
-			retun you can't login to your account.. yout accoount have been deleted
+				//can't login
+				return new LoginResDTO
+				{
+					Status = "Can'tLogin",
+					Token = null,
+					User = null
+
+				};
+
 			}
-			*/
+			
+			if (user is CaregiverUser caregiver) {
+			if(caregiver.IsAccepted == false)
+				{
+					return new LoginResDTO
+					{
+						Status = "PendingRequest",
+						Token = null,
+						User = null
+
+					};
+				}			
+			
+			}
+
+			
 			//key 
 			var secretKeyInBytes = Encoding.ASCII.GetBytes(secretKey);
 			var key = new SymmetricSecurityKey(secretKeyInBytes);
 
+
+			var userClaim = await _userManager.GetClaimsAsync(user);
+			var cc = userClaim.FirstOrDefault();
+			
 			var tokenDescriptor = new SecurityTokenDescriptor
 			{
-				
+
 				Subject = new ClaimsIdentity(new Claim[]
 			{
-				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-				new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1))
-				
-			}),
+					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+					//new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)),
+					new Claim(cc.Type, cc.Value)
+		}),
 				Expires = DateTime.UtcNow.AddDays(7),
 				SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
 			};
@@ -87,6 +123,7 @@ namespace Caregiver.Repositories.Repository
 			var StringToken = TokenHandler.WriteToken(token);
 			LoginResDTO loginResDTO = new LoginResDTO()
 			{
+				Status = status,
 				Token = StringToken,
 				//Role = Role,
 				User = new UserDTO
