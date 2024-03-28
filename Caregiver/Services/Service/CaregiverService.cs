@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Caregiver.Dtos;
+using Caregiver.Helpers;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Caregiver.Services.IService;
@@ -22,12 +23,19 @@ namespace Caregiver.Services.Service
 		{
 			
 				// add isFormCompleted = true
-				IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false && a.IsFormCompleted == true); 
+				List<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false && a.IsFormCompleted == true); 
 				//services
 				if(caregivers != null)
 				{
-				return _mapper.Map<List<CaregiverCardDTO>>(caregivers);
-				
+
+				var caregiversDTO = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
+				foreach (var caregiverDto in caregiversDTO)
+				{
+					var imageBytes = _careGenericRepo.GetImageBytesForCaregiver(caregiverDto.Id); // Implement this method to get image bytes
+					caregiverDto.Image = Convert.ToBase64String(imageBytes);
+				}
+
+				return caregiversDTO;
 
 				} return null;
 

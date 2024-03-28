@@ -21,5 +21,6 @@ namespace Caregiver.Repositories.IRepository
 		Task<bool> AdminDeleteUser(User user);
 
 		Task<bool> AdminReturnUser(User user);
+		byte[] GetImageBytesForCaregiver(string id);
 	}
 }

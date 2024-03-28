@@ -117,7 +117,15 @@ namespace Caregiver.Repositories.Repository
 			else return false;
 		}
 
+		public  byte[] GetImageBytesForCaregiver(string id)
+		{
 
+			CaregiverUser user = _db.Caregivers.FirstOrDefault(i => i.Id == id);
+			var image = user.Photo;
+
+
+			return image;
+		}
 
 	}
 }
