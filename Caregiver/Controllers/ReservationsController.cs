@@ -43,7 +43,7 @@ namespace Caregiver.Controllers
 
 
         #region Get all reservations to admin
-        [HttpGet]
+        [HttpGet("admin")]
         public async Task <IActionResult> GetAllReservations()
         {
             var reservations = await reservationsRepo.GetAll();

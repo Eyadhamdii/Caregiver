@@ -209,7 +209,7 @@ namespace Caregiver.Repositories.Repository
 			var StringToken = TokenHandler.WriteToken(token);
 			LoginResDTO loginResDTO = new LoginResDTO()
 			{
-				//Status = status,
+				Status = status,
 				Token = StringToken,
 				//Role = Role,
 				User = new UserDTO

@@ -23,6 +23,7 @@ namespace Caregiver.Repositories.Repository
             _httpContextAccessor = httpContextAccessor;
         }
 
+        //to admin 
         public async Task<IEnumerable<ReservationDto>> GetAll()
         {
            
@@ -43,8 +44,12 @@ namespace Caregiver.Repositories.Repository
                 StartDate = source.StartDate,
                 EndDate=source.EndDate,
                 PatientId = source.PatientId,
-                PricePerDay = source.Caregiver.PricePerDay
-            }).ToListAsync();
+                PricePerDay = source.Caregiver.PricePerDay,
+				PatientFirstName = source.Patient.FirstName,
+				PatientLastName = source.Patient.LastName,
+				PatientPhoneNumber = source.Patient.PhoneNumber,
+                JobTitle = source.Caregiver.JobTitle
+			}).ToListAsync();
         }
 
         public async Task<IEnumerable<ReservationDto>> GetPatientAllReservations()
@@ -52,7 +57,7 @@ namespace Caregiver.Repositories.Repository
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
             
 
-            return  await db.Reservations.Include(p=>p.Caregiver).Where(r => r.PatientId == loggedInUserId).Select(source => new ReservationDto
+            return  await db.Reservations.Include(p=>p.Caregiver).Include(p=> p.Patient).Where(r => r.PatientId == loggedInUserId).Select(source => new ReservationDto
             {
                 CaregiverFirstName = source.Caregiver.FirstName,
                 CaregiverLastName = source.Caregiver.LastName,
@@ -69,7 +74,10 @@ namespace Caregiver.Repositories.Repository
                 TotalPriceWithfees = source.TotalPriceWithfees,
                 Fees = source.Fees,
                 EndDate = source.EndDate,
-                PricePerDay = source.Caregiver.PricePerDay
+                PricePerDay = source.Caregiver.PricePerDay,
+                PatientFirstName = source.Patient.FirstName,
+                PatientLastName = source.Patient.LastName,
+                PatientPhoneNumber = source.Patient.PhoneNumber
 
             }).ToListAsync();
            
@@ -89,7 +97,7 @@ namespace Caregiver.Repositories.Repository
         {
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
-            return await db.Reservations.Include(p => p.Caregiver).Where(r => r.CaregiverId == loggedInUserId).Select(source => new ReservationDto
+            return await db.Reservations.Include(p => p.Caregiver).Include(p=> p.Patient).Where(r => r.CaregiverId == loggedInUserId).Select(source => new ReservationDto
             {
                 CaregiverFirstName = source.Caregiver.FirstName,
                 CaregiverLastName = source.Caregiver.LastName,
@@ -106,9 +114,15 @@ namespace Caregiver.Repositories.Repository
                 TotalPriceWithfees = source.TotalPriceWithfees,
                 Fees = source.Fees,
                 EndDate = source.EndDate,
-                PricePerDay = source.Caregiver.PricePerDay
+                PricePerDay = source.Caregiver.PricePerDay,
+                JobTitle = source.Caregiver.JobTitle,
+				PatientFirstName = source.Patient.FirstName,
+				PatientLastName = source.Patient.LastName,
+				PatientPhoneNumber = source.Patient.PhoneNumber
 
-            }).ToListAsync();
+
+
+			}).ToListAsync();
 
         }
 
