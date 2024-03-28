@@ -37,7 +37,7 @@ namespace Caregiver.Dtos
         public double TotalPriceWithfees { get; set; }
         public double Fees { get; set; }
         public string JobTitle { get; set; }
-
+        public string LoggedInUserId { get; set; }
 
     }
 }

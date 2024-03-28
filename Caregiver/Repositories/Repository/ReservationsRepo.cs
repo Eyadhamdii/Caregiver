@@ -1,11 +1,9 @@
 ﻿using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Net.Mail;
 using System.Net;
+using System.Net.Mail;
 
 namespace Caregiver.Repositories.Repository
 {
@@ -52,6 +50,7 @@ namespace Caregiver.Repositories.Repository
         public async Task<IEnumerable<ReservationDto>> GetPatientAllReservations()
         {
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+            
 
             return  await db.Reservations.Include(p=>p.Caregiver).Where(r => r.PatientId == loggedInUserId).Select(source => new ReservationDto
             {
@@ -66,7 +65,7 @@ namespace Caregiver.Repositories.Repository
                 PatientGender = source.Caregiver.Gender,
                 TotalPrice =source.TotalPrice,
                 StartDate = source.StartDate,
-                PatientId=source.PatientId,
+                PatientId= source.PatientId,
                 TotalPriceWithfees = source.TotalPriceWithfees,
                 Fees = source.Fees,
                 EndDate = source.EndDate,

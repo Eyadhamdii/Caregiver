@@ -51,7 +51,7 @@ namespace Caregiver.Controllers
             
             await   _IEmailRepo.SendEmail("Hello Eman","Trying this function","sohilaafify23@gmail.com");
             return Ok(reservations);
-
+            
         }
         #endregion
 
@@ -63,10 +63,11 @@ namespace Caregiver.Controllers
             var reservations = await reservationsRepo.GetPatientAllReservations();
 
 
+
             return Ok(reservations);
         }
         #endregion
-
+        
 
         #region Get all reservations to patient
         [HttpGet("CaregiverReservations")]
@@ -385,7 +386,7 @@ namespace Caregiver.Controllers
                 return BadRequest("Something went wrong");
             }
 
-            return Ok("Dates are added");
+            return Ok($"Dates are added {session.PaymentIntentId}" );
 
         }
 

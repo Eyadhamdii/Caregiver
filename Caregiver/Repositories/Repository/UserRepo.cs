@@ -59,7 +59,7 @@ namespace Caregiver.Repositories.Repository
 				};
 			}
 
-
+			/*
 			var status = "";
 			if (user.IsDeleted == true)
 			{
@@ -97,7 +97,7 @@ namespace Caregiver.Repositories.Repository
 			
 			}
 
-			
+			*/
 			//key 
 			var secretKeyInBytes = Encoding.ASCII.GetBytes(secretKey);
 			var key = new SymmetricSecurityKey(secretKeyInBytes);
@@ -126,7 +126,7 @@ namespace Caregiver.Repositories.Repository
 			var StringToken = TokenHandler.WriteToken(token);
 			LoginResDTO loginResDTO = new LoginResDTO()
 			{
-				Status = status,
+				//Status = status,
 				Token = StringToken,
 				//Role = Role,
 				User = new UserDTO

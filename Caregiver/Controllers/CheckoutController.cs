@@ -26,6 +26,35 @@ namespace Caregiver.Controllers
             reservationsRepo = _reservationsRepo;
         }
 
+
+        [HttpPost("refund")]
+        public async Task<IActionResult> Refund(string chargeId)
+        {
+            StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
+            var loggedInUserId = _userManager.GetUserId(HttpContext.User);
+            var user = await _userManager.FindByIdAsync(loggedInUserId);
+            var reservation = await _dbContext.Reservations.FirstOrDefaultAsync(a => a.PatientId == loggedInUserId);
+
+            var refundService = new RefundService();
+            var refundOptions = new RefundCreateOptions
+            {
+                PaymentIntent = chargeId,
+                Amount = (int)Math.Round(reservation.TotalPriceWithfees * 100),
+           
+            };
+            try
+            {
+                Refund refund = await refundService.CreateAsync(refundOptions);
+                return Ok(new { RefundId = refund.Id });
+            }
+            catch (StripeException e)
+            {
+                return BadRequest(new { ErrorMessage = e.StripeError.Message });
+            }
+        }
+
+
+
         [HttpPost("CreateCheckout")]
         public async Task<IActionResult> CreateCheckoutSession(int id)
         {
@@ -38,6 +67,7 @@ namespace Caregiver.Controllers
             var reservation = await _dbContext.Reservations.FirstOrDefaultAsync(a=>a.PatientId==loggedInUserId);
           
             var amount = (int)Math.Round(reservation.TotalPriceWithfees * 100);
+
             
            
             var options = new Stripe.Checkout.SessionCreateOptions
@@ -45,6 +75,7 @@ namespace Caregiver.Controllers
                 SuccessUrl = "http://localhost:3000/booking-success",
                 CancelUrl = "http://localhost:3000/booking-cancel",
                 Mode = "payment",
+                
                 LineItems = new List<Stripe.Checkout.SessionLineItemOptions>
                 {
                     new Stripe.Checkout.SessionLineItemOptions
@@ -59,7 +90,8 @@ namespace Caregiver.Controllers
                             },
                             UnitAmount = amount
                         },
-                        Quantity = 1
+                        Quantity = 1,
+
                     }
                 },
                 CustomerEmail = email,
@@ -76,11 +108,14 @@ namespace Caregiver.Controllers
             try
             {
                 var session = service.Create(options);
+              
                 return Ok(new
                 {
+                    
                     sessionId = session.Id,
                     sessionlink = session.Url,
                    
+
                 }) ;
 
             }
