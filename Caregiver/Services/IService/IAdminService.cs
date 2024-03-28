@@ -11,5 +11,6 @@ namespace Caregiver.Services.IService
 		Task<bool> HardDeleteCaregiver(string id);
 		Task<bool> SoftDeleteCaregiver(string id);
 		Task<bool> AdminDeleteCaregiver(string id);
+		Task<bool> AdminReturnCaregiver(string id);
 	}
 }

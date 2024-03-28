@@ -24,7 +24,7 @@ namespace Caregiver.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<IActionResult> GetAllCurrentCaregiver()
-		{
+		{//a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false && isFormCompleted = true
 			try
 			{
 				IEnumerable<CaregiverCardDTO> CaregiverCards = await _caregiverService.GetAllCurrentCaregiver(); 
@@ -57,7 +57,7 @@ namespace Caregiver.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<IActionResult> GetAllCaregiverByType(string Role)
-		{
+		{////a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false && isFormCompleted = true
 			try
 			{
 				IEnumerable<CaregiverCardDTO> CaregiverCards = await _caregiverService.GetAllCaregiverByType(Role);
@@ -89,7 +89,7 @@ namespace Caregiver.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<APIResponse>> SoftDeleteCaregiver(string id)
-		{
+		{//.IsDeleted = true;
 			try
 			{
 				var result = await _caregiverService.SoftDeleteCaregiver(id);
@@ -122,7 +122,7 @@ namespace Caregiver.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult> GeOneCaregiverById(string id)
-		{
+		{ //access to all types..
 			try {
 
 				CaregiverUser caregiver = await _caregiverService.GetCaregiverById(id);
@@ -160,7 +160,7 @@ namespace Caregiver.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<APIResponse>> Update(string id, [FromBody] CaregiverUpdateDTO caregiverUpdate)
-		{
+		{//access all
 			try
 			{
 				var result = await _caregiverService.UpdateCaregiverAsync(id, caregiverUpdate);
