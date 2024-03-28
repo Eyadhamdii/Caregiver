@@ -69,16 +69,22 @@ namespace Caregiver.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> LoginAsync([FromBody] LoginReqDTO model)
         {
-            var LoginRes = await _userService.LoginAsync(model);
-            if (LoginRes.User == null || string.IsNullOrEmpty(LoginRes.Token))
-            {
+			try
+			{
+				var LoginRes = await _userService.LoginAsync(model);
+				if (LoginRes.User == null || string.IsNullOrEmpty(LoginRes.Token))
+				{
 
-                return BadRequest(new { message = "Username or Password are Incorrect" });
+					return BadRequest(new { message = "Username or Password are Incorrect" });
 
-            }
+				}
 
 
-            return Ok(LoginRes);
+				return Ok(LoginRes);
+			} catch(Exception e)
+			{
+				return BadRequest(e.Message);
+			}
         }
 
         [HttpPost("ForgotPassword")]
