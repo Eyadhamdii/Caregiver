@@ -21,8 +21,8 @@ namespace Caregiver.Services.Service
 		public async Task<IEnumerable<CaregiverCardDTO>> GetAllCurrentCaregiver()
 		{
 			
-				//services
-				IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false);
+				// add isFormCompleted = true
+				IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false && a.IsFormCompleted == true); 
 				//services
 				if(caregivers != null)
 				{
@@ -36,8 +36,8 @@ namespace Caregiver.Services.Service
 
 		public async Task<IEnumerable<CaregiverCardDTO>> GetAllCaregiverByType(string Role) {
 			if (Role != "Caregiver" && Role != "Nurse" && Role != "BabySitter") return null;
-
-			IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.JobTitle == Role && a.IsDeleted == false  && a.IsAccepted == true && a.IsDeletedByAdmin == false);
+			// add isFormCompleted = true
+			IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.JobTitle == Role && a.IsDeleted == false  && a.IsAccepted == true && a.IsDeletedByAdmin == false && a.IsFormCompleted == true);
 				if(caregivers != null)
 				{
 					return _mapper.Map<List<CaregiverCardDTO>>(caregivers);

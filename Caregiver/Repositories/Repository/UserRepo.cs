@@ -44,7 +44,7 @@ namespace Caregiver.Repositories.Repository
 
 		public async Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO)
 		{
-
+			
 
 			var user = await _userManager.FindByEmailAsync(loginReqDTO.Email);
 			
@@ -58,8 +58,8 @@ namespace Caregiver.Repositories.Repository
 
 				};
 			}
-
 			/*
+
 			var status = "";
 			if (user.IsDeleted == true)
 			{
@@ -84,26 +84,107 @@ namespace Caregiver.Repositories.Repository
 			}
 			
 			if (user is CaregiverUser caregiver) {
+
 			if(caregiver.IsAccepted == false)
 				{
-					return new LoginResDTO
-					{
-						Status = "PendingRequest",
-						Token = null,
-						User = null
+					status = "PendingRequest";
+					//return new LoginResDTO
+					//{
+					//	Status = "PendingRequest",
+					//	Token = null,
+					//	User = null
 
-					};
+					//};
 				}			
 			
 			}
-
 			*/
+			/*
+			//var status = "";
+			//if (user is CaregiverUser caregiver)
+			//{
+			//	if (caregiver.IsFormCompleted == false && caregiver.IsAccepted == false && caregiver.IsDeleted == false && caregiver.IsDeletedByAdmin == false)
+			//	{
+			//		//go to from register
+			//		status = "RegisterForm";
+
+			//	}
+			//	else if (caregiver.IsFormCompleted == true && caregiver.IsAccepted == false && caregiver.IsDeleted == false && caregiver.IsDeletedByAdmin == false)
+			//	{
+			//		//completed form succeffuly
+			//		status = "Your Request is Pending";
+
+			//	}
+			//	else if (caregiver.IsFormCompleted == true && caregiver.IsAccepted == true && caregiver.IsDeleted == false && caregiver.IsDeletedByAdmin == false)
+			//	{
+			//		status = "Welcome";
+			//	}
+			//	else if (caregiver.IsFormCompleted == true && caregiver.IsAccepted == true && caregiver.IsDeleted == true && caregiver.IsDeletedByAdmin == false)
+			//	{	
+			//		status = "your are active again!!";
+			//		caregiver.IsDeleted = false;
+
+			//		var result = await _userManager.UpdateAsync(caregiver);
+
+			//		if (!result.Succeeded)
+			//		{
+			//			return new LoginResDTO
+			//			{
+			//				Status = "failed to activate your account"
+			//			};
+			//		}
+
+			//	}
+			//	else if (caregiver.IsFormCompleted == true && caregiver.IsAccepted == true && caregiver.IsDeleted == true && caregiver.IsDeletedByAdmin == true)
+			//	{
+			//		status = "Can't login";
+			//	}
+			//}
+			*/
+			var status = "";
+			if (user is CaregiverUser caregiver)
+			{
+				bool isFormCompleted = caregiver.IsFormCompleted;
+				bool isAccepted = caregiver.IsAccepted;
+				bool isDeleted = caregiver.IsDeleted;
+				bool isDeletedByAdmin = caregiver.IsDeletedByAdmin;
+
+				switch ((isFormCompleted, isAccepted, isDeleted, isDeletedByAdmin))
+				{
+					case (false, false, false, false):
+						status = "RegisterForm";
+						break;
+					case (true, false, false, false):
+						status = "Your Request is Pending";
+						break;
+					case (true, true, false, false):
+						status = "Welcome";
+						break;
+					case (true, true, true, false):
+						status = "Your are active again!!";
+						caregiver.IsDeleted = false;
+						var result = await _userManager.UpdateAsync(caregiver);
+						if (!result.Succeeded)
+						{
+							return new LoginResDTO
+							{
+								Status = "Failed to activate your account"
+							};
+						}
+						break;
+					case (true, true, true, true):
+						status = "Can't login";
+						break;
+				}
+			}
+
 			//key 
 			var secretKeyInBytes = Encoding.ASCII.GetBytes(secretKey);
 			var key = new SymmetricSecurityKey(secretKeyInBytes);
 
 
 			var userClaim = await _userManager.GetClaimsAsync(user);
+
 			var cc = userClaim.FirstOrDefault();
 			
 			var tokenDescriptor = new SecurityTokenDescriptor
@@ -119,6 +200,7 @@ namespace Caregiver.Repositories.Repository
 				SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
 			};
 
+			
 
 
 			var TokenHandler = new JwtSecurityTokenHandler();
@@ -169,6 +251,7 @@ namespace Caregiver.Repositories.Repository
 		}
 		public async Task<string> UpdateForgottenPassword(string email, string resetToken, string newPassword)
 		{
+
 			User user = await _userManager.FindByEmailAsync(email);
 			IdentityResult passwordChangeResult = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
 			if (passwordChangeResult.Succeeded)
@@ -350,7 +433,7 @@ namespace Caregiver.Repositories.Repository
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();
 				caregiverUser.Photo = datastream2.ToArray();
-
+				caregiverUser.IsFormCompleted = true;
 				var result = await _userManager.UpdateAsync(caregiverUser);
 
 				if (result.Succeeded)
