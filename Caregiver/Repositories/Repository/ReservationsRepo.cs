@@ -48,7 +48,8 @@ namespace Caregiver.Repositories.Repository
 				PatientFirstName = source.Patient.FirstName,
 				PatientLastName = source.Patient.LastName,
 				PatientPhoneNumber = source.Patient.PhoneNumber,
-                JobTitle = source.Caregiver.JobTitle
+                JobTitle = source.Caregiver.JobTitle,
+                PatientEmailAddress = source.Patient.Email
 			}).ToListAsync();
         }
 
@@ -77,9 +78,11 @@ namespace Caregiver.Repositories.Repository
                 PricePerDay = source.Caregiver.PricePerDay,
                 PatientFirstName = source.Patient.FirstName,
                 PatientLastName = source.Patient.LastName,
-                PatientPhoneNumber = source.Patient.PhoneNumber
+                PatientPhoneNumber = source.Patient.PhoneNumber,
+				PatientEmailAddress = source.Patient.Email
 
-            }).ToListAsync();
+
+			}).ToListAsync();
            
         }
 
@@ -118,8 +121,8 @@ namespace Caregiver.Repositories.Repository
                 JobTitle = source.Caregiver.JobTitle,
 				PatientFirstName = source.Patient.FirstName,
 				PatientLastName = source.Patient.LastName,
-				PatientPhoneNumber = source.Patient.PhoneNumber
-
+				PatientPhoneNumber = source.Patient.PhoneNumber,
+				PatientEmailAddress = source.Patient.Email
 
 
 			}).ToListAsync();
