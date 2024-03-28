@@ -4,6 +4,7 @@ using Caregiver.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240326023433_AddLastStatusUpdateTable")]
+    partial class AddLastStatusUpdateTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,9 +48,6 @@ namespace Caregiver.Migrations
                     b.Property<string>("PatientId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("PaymentStatus")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -67,48 +67,6 @@ namespace Caregiver.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.Dependant", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EmailAddress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PatientId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReservationNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("Dependants");
                 });
 
             modelBuilder.Entity("Caregiver.Models.ReservationDates", b =>
@@ -139,6 +97,9 @@ namespace Caregiver.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ConfirmPassword")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(13)
@@ -147,6 +108,9 @@ namespace Caregiver.Migrations
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("EmailAddress")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -159,12 +123,6 @@ namespace Caregiver.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeletedByAdmin")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("JoinedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -186,11 +144,14 @@ namespace Caregiver.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PhoneNumber")
+                        .HasColumnType("int");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
@@ -374,12 +335,6 @@ namespace Caregiver.Migrations
                     b.Property<byte[]>("CriminalRecords")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<bool>("IsAccepted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsFormCompleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("JobLocationLookingFor")
                         .HasColumnType("nvarchar(max)");
 
@@ -398,6 +353,9 @@ namespace Caregiver.Migrations
                     b.Property<byte[]>("Resume")
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("WhatCanCaregiverDo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("YearsOfExperience")
                         .HasColumnType("int");
 
@@ -407,15 +365,6 @@ namespace Caregiver.Migrations
             modelBuilder.Entity("Caregiver.Models.PatientUser", b =>
                 {
                     b.HasBaseType("Caregiver.Models.User");
-
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReservationNotes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("PatientUser");
                 });
@@ -431,15 +380,6 @@ namespace Caregiver.Migrations
                         .HasForeignKey("PatientId");
 
                     b.Navigation("Caregiver");
-
-                    b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("Caregiver.Models.Dependant", b =>
-                {
-                    b.HasOne("Caregiver.Models.PatientUser", "Patient")
-                        .WithMany("Dependants")
-                        .HasForeignKey("PatientId");
 
                     b.Navigation("Patient");
                 });
@@ -513,8 +453,6 @@ namespace Caregiver.Migrations
 
             modelBuilder.Entity("Caregiver.Models.PatientUser", b =>
                 {
-                    b.Navigation("Dependants");
-
                     b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618

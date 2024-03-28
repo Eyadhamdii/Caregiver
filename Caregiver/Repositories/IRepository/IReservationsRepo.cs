@@ -10,6 +10,7 @@ namespace Caregiver.Repositories.IRepository
         Task<IEnumerable<ReservationDto>> GetPatientAllReservations();
 
         Task<IEnumerable<ReservationDto>> GetCaregiverAllReservations();
+        Task<IEnumerable<CaregiverPatientReservation>> GetReservationsByStatus(string status);
 
         Task<CaregiverPatientReservation> GetReservationById(int id);
         Task<CaregiverPatientReservation> GetPatientReservationById(int id);

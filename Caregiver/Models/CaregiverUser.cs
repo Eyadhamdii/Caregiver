@@ -26,8 +26,6 @@ namespace Caregiver.Models
 
 		public string JobLocationLookingFor { get; set; }
 
-
-
 		public int PricePerHour { get; set; }
 
 		public int PricePerDay { get; set; }

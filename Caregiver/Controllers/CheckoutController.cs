@@ -1,5 +1,6 @@
 ﻿using Caregiver.Dtos;
 using Caregiver.Models;
+using Caregiver.Repositories.IRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,25 +16,29 @@ namespace Caregiver.Controllers
         private IConfiguration _configuration;
         private UserManager<User> _userManager;
         private ApplicationDBContext _dbContext;
+        private readonly IReservationsRepo reservationsRepo;
 
-        public CheckoutController(IConfiguration configuration, UserManager<User> userManager , ApplicationDBContext dbContext)
+        public CheckoutController(IConfiguration configuration, UserManager<User> userManager, ApplicationDBContext dbContext, IReservationsRepo _reservationsRepo)
         {
             _configuration = configuration;
             _userManager = userManager;
             _dbContext = dbContext;
+            reservationsRepo = _reservationsRepo;
         }
 
         [HttpPost("CreateCheckout")]
-        public async Task<IActionResult> CreateCheckoutSession()
+        public async Task<IActionResult> CreateCheckoutSession(int id)
         {
             StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
 
             var loggedInUserId = _userManager.GetUserId(HttpContext.User);
             var user = await _userManager.FindByIdAsync(loggedInUserId);
             var email = user.Email;
-            
+            var reservationOrderId = await reservationsRepo.GetReservationById(id);
             var reservation = await _dbContext.Reservations.FirstOrDefaultAsync(a=>a.PatientId==loggedInUserId);
-            var amount = reservation.TotalPrice * 100;
+          
+            var amount = (int)Math.Round(reservation.TotalPriceWithfees * 100);
+            
            
             var options = new Stripe.Checkout.SessionCreateOptions
             {
@@ -57,9 +62,15 @@ namespace Caregiver.Controllers
                         Quantity = 1
                     }
                 },
-                CustomerEmail = email
-            };
+                CustomerEmail = email,
+                Metadata = new Dictionary<string, string>
+        {
+            { "order_id", id.ToString() }
+        }
 
+
+            };
+           
             var service = new Stripe.Checkout.SessionService();
 
             try

@@ -1,6 +1,7 @@
 
 using Caregiver.Configurations;
 using Caregiver.Dtos;
+using Caregiver.Helpers;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Caregiver.Repositories.Repository;
@@ -160,9 +161,12 @@ namespace Caregiver
 		}
 	});
 
-
 			});
-			var app = builder.Build();
+
+            builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
+            builder.Services.AddTransient<ISmsServicecs, SmsServicecs>();
+            var app = builder.Build();
+           
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())

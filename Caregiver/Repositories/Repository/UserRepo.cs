@@ -30,8 +30,8 @@ namespace Caregiver.Repositories.Repository
 
 
 
-		public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailRepo emailService, IDistributedCache cache, SignInManager<User> signInManager)
-		{
+        public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailRepo emailService, IDistributedCache cache, SignInManager<User> signInManager)
+        {
 			_db = db;
 			_userManager = userManager;
 			secretKey = configuration.GetValue<string>("ApiSettings:secret");
