@@ -32,7 +32,7 @@ namespace Caregiver.Services.Service
 				foreach (var caregiverDto in caregiversDTO)
 				{
 					var image = _careGenericRepo.GetImageBytesForCaregiver(caregiverDto.Id);
-					caregiverDto.Image = Convert.ToBase64String(image);
+					caregiverDto.Photo = Convert.ToBase64String(image);
 				}
 
 				return caregiversDTO;
