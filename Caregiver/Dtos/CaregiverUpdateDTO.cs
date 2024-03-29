@@ -38,9 +38,9 @@ namespace Caregiver.Dtos
         [Required]
 
         public JobTitle JobTitle { get; set; }
-        [Required]
+        //[Required]
 
-        public int PricePerHour { get; set; }
+        //public int PricePerHour { get; set; }
         [Required]
 
         public int PricePerDay { get; set; }

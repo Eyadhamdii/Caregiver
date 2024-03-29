@@ -202,6 +202,7 @@ namespace Caregiver.Controllers
                 TotalPriceWithfees = calculatedValue + (calculatedValue * 0.1),
                 Fees = calculatedValue * 0.1,
                 LastStatusUpdate = DateTime.Now,
+               
             };
 
             #region Email section
@@ -220,7 +221,7 @@ namespace Caregiver.Controllers
 
             await reservationsRepo.AddReservarion(caregiverPatientReservation);
 
-            return Ok(dto);
+            return Ok(caregiverPatientReservation.OrderId);
         }
 
         #endregion

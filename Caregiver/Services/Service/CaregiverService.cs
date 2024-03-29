@@ -68,16 +68,20 @@ namespace Caregiver.Services.Service
 
 		}
 
-		//i should return caregiver dto not the model
-		public async Task<CaregiverUser> GetCaregiverById(string id)
+		public async Task<CaregiverDataDTO> GetCaregiverById(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
 			if (caregiver == null)
 			{
 				return null;
 			}
+			var caregiverDTO = _mapper.Map<CaregiverDataDTO>(caregiver);
+			caregiverDTO.Photo = Convert.ToBase64String(caregiver.Photo);
+			caregiverDTO.Resume = Convert.ToBase64String(caregiver.Resume);
+			caregiverDTO.CriminalRecords = Convert.ToBase64String(caregiver.CriminalRecords);
 			
-			return caregiver;
+
+			return caregiverDTO;
 		}
 
 		public async Task<CaregiverUpdateDTO> UpdateCaregiverAsync(string id, CaregiverUpdateDTO caregiverUpdate)

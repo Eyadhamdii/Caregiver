@@ -125,7 +125,7 @@ namespace Caregiver.Controllers
 		{ //access to all types..
 			try {
 
-				CaregiverUser caregiver = await _caregiverService.GetCaregiverById(id);
+				CaregiverDataDTO caregiver = await _caregiverService.GetCaregiverById(id);
 			   if (caregiver == null)
 				{
 				_response.IsSuccess = false;
