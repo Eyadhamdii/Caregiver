@@ -27,7 +27,7 @@ namespace Caregiver.Dtos
 		public int PricePerDay { get; set; }
 		public string Resume { get; set; }
 		public string Photo { get; set; }
-
+		public string Id { get; set; }
 
 		public string CriminalRecords { get; set; }
 
