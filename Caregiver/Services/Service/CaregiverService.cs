@@ -31,8 +31,8 @@ namespace Caregiver.Services.Service
 				var caregiversDTO = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
 				foreach (var caregiverDto in caregiversDTO)
 				{
-					var imageBytes = _careGenericRepo.GetImageBytesForCaregiver(caregiverDto.Id); // Implement this method to get image bytes
-					caregiverDto.Image = Convert.ToBase64String(imageBytes);
+					var image = _careGenericRepo.GetImageBytesForCaregiver(caregiverDto.Id);
+					caregiverDto.Image = Convert.ToBase64String(image);
 				}
 
 				return caregiversDTO;
@@ -76,7 +76,7 @@ namespace Caregiver.Services.Service
 			{
 				return null;
 			}
-
+			
 			return caregiver;
 		}
 

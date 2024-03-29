@@ -126,6 +126,24 @@ namespace Caregiver.Repositories.Repository
 
 			return image;
 		}
+		public byte[] GetResumeBytesForCaregiver(string id)
+		{
+
+			CaregiverUser user = _db.Caregivers.FirstOrDefault(i => i.Id == id);
+			var resume = user.Resume;
+
+
+			return resume ;
+		}
+		public byte[] GetCriminalRecordBytesForCaregiver(string id)
+		{
+
+			CaregiverUser user = _db.Caregivers.FirstOrDefault(i => i.Id == id);
+			var criminalRecord = user.CriminalRecords;
+
+
+			return criminalRecord;
+		}
 
 	}
 }

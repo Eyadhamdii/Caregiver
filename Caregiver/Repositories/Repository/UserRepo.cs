@@ -280,6 +280,7 @@ namespace Caregiver.Repositories.Repository
 
 			var user = _mapper.Map<PatientUser>(model);
 
+
 			var result = await _userManager.CreateAsync(user, model.Password);
 
 			if (!result.Succeeded)

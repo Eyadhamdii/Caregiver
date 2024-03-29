@@ -22,5 +22,7 @@ namespace Caregiver.Repositories.IRepository
 
 		Task<bool> AdminReturnUser(User user);
 		byte[] GetImageBytesForCaregiver(string id);
+		byte[] GetResumeBytesForCaregiver(string id);
+		byte[] GetCriminalRecordBytesForCaregiver(string id);
 	}
 }

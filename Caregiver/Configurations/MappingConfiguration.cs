@@ -11,7 +11,11 @@ namespace Caregiver.Configurations
 
 		public MappingConfiguration()
 		{
-			CreateMap<RegisterPatientDTO, PatientUser>().ReverseMap();
+			//CreateMap<RegisterPatientDTO, PatientUser>().ReverseMap();
+			CreateMap<RegisterPatientDTO, PatientUser>()
+	.ForMember(dest => dest.Age, opt => opt.MapFrom((src, dest) => Helpers.Handlers.CalculateAge(dest.Birthdate)));
+
+
 			CreateMap<GetCustomerDTO, PatientUser>().ReverseMap();
 			CreateMap<RegisterCaregiverDTO, CaregiverUser>().ReverseMap();
 			CreateMap<CaregiverUser, CaregiverCardDTO>().ReverseMap();

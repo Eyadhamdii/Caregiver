@@ -176,7 +176,7 @@ namespace Caregiver.Controllers
 
         #region Reserve a caregiver
         [HttpPost]
-        public async Task<IActionResult> CreateReservationsAsync([FromForm] PostReservationDto  dto, [FromQuery] string CaregiverId)
+        public async Task<IActionResult> CreateReservationsAsync([FromBody] PostReservationDto  dto, [FromQuery] string CaregiverId)
         {
             //edits to use generic 
             var caregiver = await _dbCaregiver.GetAsync(a => a.Id == CaregiverId);
