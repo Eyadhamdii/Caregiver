@@ -69,8 +69,6 @@ namespace Caregiver.Controllers
             var amount = (int)Math.Round(reservation.TotalPriceWithfees*100);
 
             
-           
-            var amount = (int)Math.Round(reservation.TotalPriceWithfees * 100);
             var successUrl = $"http://localhost:4200/Orderconfirmeddetails/{id}";
             var options = new Stripe.Checkout.SessionCreateOptions
             {
