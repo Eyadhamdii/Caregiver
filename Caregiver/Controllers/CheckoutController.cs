@@ -64,9 +64,9 @@ namespace Caregiver.Controllers
             var user = await _userManager.FindByIdAsync(loggedInUserId);
             var email = user.Email;
             var reservationOrderId = await reservationsRepo.GetReservationById(id);
-            var reservation = await _dbContext.Reservations.FirstOrDefaultAsync(a=>a.PatientId==loggedInUserId);
+            var reservation = await _dbContext.Reservations.Where(r=>r.OrderId==id).FirstOrDefaultAsync(a=>a.PatientId==loggedInUserId);
           
-            var amount = (int)Math.Round(reservation.TotalPriceWithfees * 100);
+            var amount = (int)Math.Round(reservation.TotalPriceWithfees*100);
 
             
            
