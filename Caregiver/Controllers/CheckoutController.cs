@@ -72,7 +72,7 @@ namespace Caregiver.Controllers
            
             var options = new Stripe.Checkout.SessionCreateOptions
             {
-                SuccessUrl = $"http://localhost:4200/Orderconfirmeddetails/{id}",
+                SuccessUrl = $"http://localhost:4200/home",
                 Mode = "payment",
                 
                 LineItems = new List<Stripe.Checkout.SessionLineItemOptions>
