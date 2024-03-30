@@ -70,10 +70,12 @@ namespace Caregiver.Controllers
 
             
            
+            var amount = (int)Math.Round(reservation.TotalPriceWithfees * 100);
+            var successUrl = $"http://localhost:4200/Orderconfirmeddetails/{id}";
             var options = new Stripe.Checkout.SessionCreateOptions
             {
-                SuccessUrl = "http://localhost:3000/booking-success",
-                CancelUrl = "http://localhost:3000/booking-cancel",
+                SuccessUrl = successUrl,
+
                 Mode = "payment",
                 
                 LineItems = new List<Stripe.Checkout.SessionLineItemOptions>
