@@ -339,10 +339,10 @@ namespace Caregiver.Controllers
         #endregion
 
         [HttpPost("ConfirmReservations")]
-        public async Task<IActionResult> ConfirmReservation([FromBody]string sessionId)
+        public async Task<IActionResult> ConfirmReservation([FromBody] sessionIdDto sessionIddto)
         {
             StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
-
+            string sessionId = sessionIddto.sessionId;
             var service = new Stripe.Checkout.SessionService();
             var session = service.Get(sessionId);
             string reservationStatus = ReservationStatus.Confirmed.ToString();
