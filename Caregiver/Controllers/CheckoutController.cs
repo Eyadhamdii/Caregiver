@@ -70,8 +70,8 @@ namespace Caregiver.Controllers
 
             
             var successUrl = $"http://localhost:4200/Orderconfirmeddetails/{id}";
-            var reservation = await _dbContext.Reservations.Where(r => r.OrderId == id).FirstOrDefaultAsync(a => a.PatientId == loggedInUserId);
-            var amount = (int)Math.Round(reservation.TotalPriceWithfees * 100);
+            //var reservation = await _dbContext.Reservations.Where(r => r.OrderId == id).FirstOrDefaultAsync(a => a.PatientId == loggedInUserId);
+            //var amount = (int)Math.Round(reservation.TotalPriceWithfees * 100);
             var options = new Stripe.Checkout.SessionCreateOptions
             {
                 SuccessUrl = $"http://localhost:4200/Orderconfirmeddetails/{id}",

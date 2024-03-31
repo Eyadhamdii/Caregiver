@@ -142,41 +142,44 @@ namespace Caregiver.Repositories.Repository
 			//	}
 			//}
 			*/
-			var status = "";
+			bool isFormCompleted = false;
+			bool isAccepted = false;
+			bool isDeleted = false;
+			bool isDeletedByAdmin = false;
 			if (user is CaregiverUser caregiver)
 			{
-				bool isFormCompleted = caregiver.IsFormCompleted;
-				bool isAccepted = caregiver.IsAccepted;
-				bool isDeleted = caregiver.IsDeleted;
-				bool isDeletedByAdmin = caregiver.IsDeletedByAdmin;
+				isFormCompleted = caregiver.IsFormCompleted;
+				 isAccepted = caregiver.IsAccepted;
+				 isDeleted = caregiver.IsDeleted; //desavtivate
+				 isDeletedByAdmin = caregiver.IsDeletedByAdmin; //block
 
-				switch ((isFormCompleted, isAccepted, isDeleted, isDeletedByAdmin))
-				{
-					case (false, false, false, false):
-						status = "RegisterForm";
-						break;
-					case (true, false, false, false):
-						status = "Your Request is Pending";
-						break;
-					case (true, true, false, false):
-						status = "Welcome";
-						break;
-					case (true, true, true, false):
-						status = "Your are active again!!";
-						caregiver.IsDeleted = false;
-						var result = await _userManager.UpdateAsync(caregiver);
-						if (!result.Succeeded)
-						{
-							return new LoginResDTO
-							{
-								Status = "Failed to activate your account"
-							};
-						}
-						break;
-					case (true, true, true, true):
-						status = "Can't login";
-						break;
-				}
+				//switch ((isFormCompleted, isAccepted, isDeleted, isDeletedByAdmin))
+				//{
+				//	case (false, false, false, false):
+				//		status = "RegisterForm";
+				//		break;
+				//	case (true, false, false, false):
+				//		status = "Your Request is Pending";
+				//		break;
+				//	case (true, true, false, false):
+				//		status = "Welcome";
+				//		break;
+				//	case (true, true, true, false):
+				//		status = "Your are active again!!";
+				//		caregiver.IsDeleted = false;
+				//		var result = await _userManager.UpdateAsync(caregiver);
+				//		if (!result.Succeeded)
+				//		{
+				//			return new LoginResDTO
+				//			{
+				//				Status = "Failed to activate your account"
+				//			};
+				//		}
+				//		break;
+				//	case (true, true, true, true):
+				//		status = "Can't login";
+				//		break;
+				//}
 			}
 
 			//key 
@@ -190,6 +193,7 @@ namespace Caregiver.Repositories.Repository
 			
 			var tokenDescriptor = new SecurityTokenDescriptor
 			{
+			
 
 				Subject = new ClaimsIdentity(new Claim[]
 			{
@@ -209,7 +213,12 @@ namespace Caregiver.Repositories.Repository
 			var StringToken = TokenHandler.WriteToken(token);
 			LoginResDTO loginResDTO = new LoginResDTO()
 			{
-				Status = status,
+				isFormCompleted = isFormCompleted,
+				isAccepted = isAccepted,
+				isDeactivated = isDeleted,
+				isBlocked = isDeletedByAdmin,
+
+
 				Token = StringToken,
 				//Role = Role,
 				User = new UserDTO
@@ -369,42 +378,42 @@ namespace Caregiver.Repositories.Repository
 
 		public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model , HttpRequest Request)
 		{
-			if (!_allowedExt.Contains(Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
+			//if (!_allowedExt.Contains(Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
 
-				return new UserManagerResponse
-				{
-					IsSuccess = false,
-					Message = "return only valid ext"
-				};
+			//	return new UserManagerResponse
+			//	{
+			//		IsSuccess = false,
+			//		Message = "return only valid ext"
+			//	};
 
-			#region Storing The Image
-			//Random + Extension 
-			var extension = Path.GetExtension(model.UploadPhoto.FileName);
-			var newFileName = $"{Guid.NewGuid()}{extension}";
+			//#region Storing The Image
+			////Random + Extension 
+			//var extension = Path.GetExtension(model.UploadPhoto.FileName);
+			//var newFileName = $"{Guid.NewGuid()}{extension}";
 
-			var imagesDirectory = Path.Combine(Environment.CurrentDirectory, "Images");
+			//var imagesDirectory = Path.Combine(Environment.CurrentDirectory, "Images");
 
-			if (!Directory.Exists(imagesDirectory))
-			{
-				Directory.CreateDirectory(imagesDirectory);
-			}
+			//if (!Directory.Exists(imagesDirectory))
+			//{
+			//	Directory.CreateDirectory(imagesDirectory);
+			//}
 
-			// Combine the directory path with the file name
-			var fullFilePath = Path.Combine(imagesDirectory, newFileName);
+			//// Combine the directory path with the file name
+			//var fullFilePath = Path.Combine(imagesDirectory, newFileName);
 
-			// Save the file to the specified path
-			using (var stream = new FileStream(fullFilePath, FileMode.Create))
-			{
-				await model.UploadPhoto.CopyToAsync(stream);
-			}
+			//// Save the file to the specified path
+			//using (var stream = new FileStream(fullFilePath, FileMode.Create))
+			//{
+			//	await model.UploadPhoto.CopyToAsync(stream);
+			//}
 
-			// Generate the URL for the saved file
-			#endregion
+			//// Generate the URL for the saved file
+			//#endregion
 
-			#region Generating Url
-			var photoUrl = $"{Request.Scheme}://{Request.Host}/Images/{newFileName}";
+			//#region Generating Url
+			//var photoUrl = $"{Request.Scheme}://{Request.Host}/Images/{newFileName}";
 
-			#endregion
+			//#endregion
 
 			using var datastream = new MemoryStream();
 
@@ -444,7 +453,7 @@ namespace Caregiver.Repositories.Repository
 					{
 						IsSuccess = true,
 						Message = "Additional data updated successfully.",
-						URL = photoUrl		
+						//URL = photoUrl		
 					};
 				}
 				else
