@@ -229,7 +229,7 @@ namespace Caregiver.Controllers
 
         #region  Confirm or reject or cancel reservation request
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateReservationStatusAsync(int id, [FromForm] ReservationStatusDto dto)
+        public async Task<IActionResult> UpdateReservationStatusAsync(int id, [FromBody] ReservationStatusDto dto)
         {
             var reservation = await  reservationsRepo.GetReservationById(id);
 
