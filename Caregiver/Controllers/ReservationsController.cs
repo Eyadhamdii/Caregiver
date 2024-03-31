@@ -308,7 +308,9 @@ namespace Caregiver.Controllers
                 ReservationDates reservationDate = new ReservationDates
                 {
                     OrderId = reservation.OrderId,
-                    ReservationDate = date
+                    ReservationDate = date,
+                    CaregiverId= reservation.CaregiverId,
+                    
                 };
                 await reservationsRepo.AddReservationDates(reservationDate);
             }
