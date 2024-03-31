@@ -13,5 +13,6 @@
         public int CompletedOrders { get; set; }
         public int CanceledOrders { get; set; }
         public DateTime JoinedDate { get; set; }
-	}
+        public string Status { get; set; }
+    }
 }
