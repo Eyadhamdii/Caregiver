@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240330172009_marwa1")]
-    partial class marwa1
+    [Migration("20240401084801_updateDb")]
+    partial class updateDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
