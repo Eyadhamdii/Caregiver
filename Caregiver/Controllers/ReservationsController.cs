@@ -261,10 +261,10 @@ namespace Caregiver.Controllers
                 #endregion
                 #region Send SMS
                 // Patient
-                var PatientSms = _smsServicecs.sendMessage("+201096669249", $"Dear {reservation.Patient.FirstName}, Thank you for choosing our services and reserving a nurse. We regret to inform you that the nurse you requested is currently \r\nunavailable to fulfill your request. We understand the importance of your healthcare needs and apologize for any inconvenience caused. We are committed to providing you with the best care possible and would be happy to assist you in finding an alternative solution or recommending another qualified healthcare professional.");
+                //var PatientSms = _smsServicecs.sendMessage("+201096669249", $"Dear {reservation.Patient.FirstName}, Thank you for choosing our services and reserving a nurse. We regret to inform you that the nurse you requested is currently \r\nunavailable to fulfill your request. We understand the importance of your healthcare needs and apologize for any inconvenience caused. We are committed to providing you with the best care possible and would be happy to assist you in finding an alternative solution or recommending another qualified healthcare professional.");
 
-                if (!string.IsNullOrEmpty(PatientSms.ErrorMessage))
-                    return BadRequest(PatientSms.ErrorMessage);
+                //if (!string.IsNullOrEmpty(PatientSms.ErrorMessage))
+                //    return BadRequest(PatientSms.ErrorMessage);
                 #endregion
             }
             else if (dto.Status == ReservationStatus.Cancelled)

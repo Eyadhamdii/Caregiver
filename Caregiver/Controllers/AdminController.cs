@@ -27,10 +27,17 @@ namespace Caregiver.Controllers
 
 
 
-		[HttpGet("Caregivers")]
+		[HttpGet("AllCaregivers")]
 		public async Task<IActionResult> getAll()
 		{
 			var ss = await _adminService.GetAllCaregivers();
+			//var ss =  s.getCaregivers();
+			return Ok(ss);
+		}
+		[HttpGet("RequestedCaregivers")]
+		public async Task<IActionResult> getAllRequests()
+		{
+			var ss = await _adminService.GetRequested();
 			//var ss =  s.getCaregivers();
 			return Ok(ss);
 		}
@@ -58,6 +65,7 @@ namespace Caregiver.Controllers
 				{
 					_response.IsSuccess = true;
 					_response.StatusCode = System.Net.HttpStatusCode.NoContent;
+					
 					return Ok(_response);
 				}
 				_response.IsSuccess = false;
