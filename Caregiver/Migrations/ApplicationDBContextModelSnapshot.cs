@@ -66,7 +66,7 @@ namespace Caregiver.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("Caregiver.Models.Dependant", b =>
@@ -108,7 +108,7 @@ namespace Caregiver.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Dependants");
+                    b.ToTable("Dependants", (string)null);
                 });
 
             modelBuilder.Entity("Caregiver.Models.ReservationDates", b =>
@@ -121,7 +121,7 @@ namespace Caregiver.Migrations
 
                     b.HasKey("OrderId", "ReservationDate");
 
-                    b.ToTable("ReservationDates");
+                    b.ToTable("ReservationDates", (string)null);
                 });
 
             modelBuilder.Entity("Caregiver.Models.User", b =>
