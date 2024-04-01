@@ -117,7 +117,9 @@ namespace Caregiver.Controllers
                     TotalPriceWithfees = reservation.TotalPriceWithfees,
                     Fees = reservation.Fees,
                     PricePerDay = reservation.Caregiver.PricePerDay,
-                    JobTitle= reservation.Caregiver.JobTitle
+                    JobTitle= reservation.Caregiver.JobTitle,
+                    Age = reservation.Patient.Age,
+                    Location= reservation.Patient.Location
                 };
 
                 return Ok(dto);
@@ -166,7 +168,10 @@ namespace Caregiver.Controllers
                 TotalPriceWithfees = reservation.TotalPriceWithfees,
                 Fees = reservation.Fees,
                 PricePerDay = reservation.Caregiver.PricePerDay,
-                JobTitle = reservation.Caregiver.JobTitle
+                JobTitle = reservation.Caregiver.JobTitle,
+                Age = reservation.Patient.Age,
+                Location = reservation.Patient.Location
+
             };
 
             return Ok(dto);
