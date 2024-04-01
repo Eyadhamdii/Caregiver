@@ -5,24 +5,24 @@
 namespace Caregiver.Migrations
 {
     /// <inheritdoc />
-    public partial class marwa1 : Migration
+    public partial class addCaregiverData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "PricePerHour",
-                table: "AspNetUsers");
+            migrationBuilder.AddColumn<string>(
+                name: "CaregiverId",
+                table: "ReservationDates",
+                type: "nvarchar(max)",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "PricePerHour",
-                table: "AspNetUsers",
-                type: "int",
-                nullable: true);
+            migrationBuilder.DropColumn(
+                name: "CaregiverId",
+                table: "ReservationDates");
         }
     }
 }

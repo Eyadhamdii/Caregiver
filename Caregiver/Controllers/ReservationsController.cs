@@ -320,12 +320,12 @@ namespace Caregiver.Controllers
         #region Calculate Total Price method
 
 
-        private int CalculateTotalPrice(int pricePerHour, DateTime endDate, DateTime startDate)
+        private int CalculateTotalPrice(int pricePerDay, DateTime endDate, DateTime startDate)
         {
             TimeSpan difference = endDate.Date - startDate.Date;
             int totalDays = difference.Days + 1;
 
-            return pricePerHour * totalDays;
+            return pricePerDay * totalDays;
         }
         #endregion
 
