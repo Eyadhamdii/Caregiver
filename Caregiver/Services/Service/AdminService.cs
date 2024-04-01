@@ -35,13 +35,24 @@ namespace Caregiver.Services.Service
 		//get all current caregiver , accepted, active , admin didn't delete them => all titles
 		public async Task<List<AdminCaregiverDTO>> GetAllCaregivers()
 		{
-			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations", a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false);
+			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations");
 
 			//automappers..
 			return caregivers.Select(Caregiver => _mapper.Map<AdminCaregiverDTO>(Caregiver)).ToList();
 
 
 		}
+		public async Task<List<AdminCaregiverDTO>> GetRequested()
+		{
+			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations", a => a.IsDeleted == false && a.IsAccepted == false && a.IsDeletedByAdmin == false && a.IsFormCompleted == true);
+
+			//automappers..
+			return caregivers.Select(Caregiver => _mapper.Map<AdminCaregiverDTO>(Caregiver)).ToList();
+
+
+		}
+
+
 
 
 		//get all current caregiver , accepted, active , admin didn't delete them

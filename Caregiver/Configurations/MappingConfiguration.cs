@@ -2,6 +2,8 @@
 using Caregiver.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Caregiver.Migrations;
 
 
 namespace Caregiver.Configurations
@@ -25,9 +27,44 @@ namespace Caregiver.Configurations
 		   .ForMember(dest => dest.TotalCustomers, opt => opt.MapFrom(src => src.Reservations.Count(a => a.Status == "Confirmed")))
 		   .ForMember(dest => dest.TotalRevenu, opt => opt.MapFrom(src => src.Reservations.Where(a => a.Status == "Confirmed").Sum(a => a.TotalPrice)))
 		   .ForMember(dest => dest.OngoingOrders, opt => opt.MapFrom(src => src.Reservations.Count(a => a.Status == "OnProgress")))
-		   .ForMember(dest => dest.CanceledOrders, opt => opt.MapFrom(src => src.Reservations.Count(a => a.Status == "Cancelled")));
+		   .ForMember(dest => dest.CanceledOrders, opt => opt.MapFrom(src => src.Reservations.Count(a => a.Status == "Cancelled")))
+		   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DetermineStatus(src)))
+			   .ForMember(dest => dest.JoinedDate, opt => opt.MapFrom(src => src.JoinedDate.ToString("MM/dd/yyyy")));
 
 
+
+
+
+
+		}
+
+
+		public string DetermineStatus(CaregiverUser src)
+		{
+			if (!src.IsFormCompleted && !src.IsDeleted && !src.IsDeletedByAdmin && !src.IsAccepted)
+			{
+				return "form incomplete";
+			}
+			else if (src.IsFormCompleted && !src.IsDeleted && !src.IsDeletedByAdmin && !src.IsAccepted)
+			{
+				return "pending";
+			}
+			else if (src.IsFormCompleted && !src.IsDeleted && !src.IsDeletedByAdmin && src.IsAccepted)
+			{
+				return "active";
+			}
+			else if (src.IsFormCompleted && src.IsDeleted && !src.IsDeletedByAdmin && src.IsAccepted)
+			{
+				return "not active";
+			}
+			else if (src.IsDeletedByAdmin)
+			{
+				return "blocked";
+			}
+			else
+			{
+				return "";
+			}
 		}
 
 	}

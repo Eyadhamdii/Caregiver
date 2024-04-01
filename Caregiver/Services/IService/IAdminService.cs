@@ -6,6 +6,7 @@ namespace Caregiver.Services.IService
 	{
 
 		Task<List<AdminCaregiverDTO>> GetAllCaregivers();
+		Task<List<AdminCaregiverDTO>> GetRequested();
 		Task<List<AdminCaregiverDTO>> GetCaregiversJobTitle(string title);
 		Task<bool> AcceptRequestAsync(string id);
 		Task<bool> HardDeleteCaregiver(string id);
