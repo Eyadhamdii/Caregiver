@@ -27,7 +27,7 @@ namespace Caregiver.Controllers
 
 
 
-		[HttpGet("CurrentCaregivers")]
+		[HttpGet("AllCaregivers")]
 		public async Task<IActionResult> getAll()
 		{
 			var ss = await _adminService.GetAllCaregivers();

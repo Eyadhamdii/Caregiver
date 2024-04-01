@@ -28,7 +28,9 @@ namespace Caregiver.Configurations
 		   .ForMember(dest => dest.TotalRevenu, opt => opt.MapFrom(src => src.Reservations.Where(a => a.Status == "Confirmed").Sum(a => a.TotalPrice)))
 		   .ForMember(dest => dest.OngoingOrders, opt => opt.MapFrom(src => src.Reservations.Count(a => a.Status == "OnProgress")))
 		   .ForMember(dest => dest.CanceledOrders, opt => opt.MapFrom(src => src.Reservations.Count(a => a.Status == "Cancelled")))
-		   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DetermineStatus(src)));
+		   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DetermineStatus(src)))
+			   .ForMember(dest => dest.JoinedDate, opt => opt.MapFrom(src => src.JoinedDate.ToString("MM/dd/yyyy")));
+
 
 
 

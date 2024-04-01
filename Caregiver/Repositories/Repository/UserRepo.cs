@@ -378,7 +378,7 @@ namespace Caregiver.Repositories.Repository
 
 		public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model , HttpRequest Request)
 		{
-			//if (!_allowedExt.Contains(Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
+			//if (!_allowedExt.Contains (Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
 
 			//	return new UserManagerResponse
 			//	{
