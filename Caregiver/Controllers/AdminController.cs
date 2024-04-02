@@ -56,16 +56,44 @@ namespace Caregiver.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		//public async Task<ActionResult<APIResponse>> AcceptRequest(string id)
+		//{//.IsAccepted = true;
+		//	try
+		//	{
+		//		var result = await _adminService.AcceptRequestAsync(id);
+		//		if (result == true)
+		//		{
+		//			_response.IsSuccess = true;
+		//			_response.StatusCode = System.Net.HttpStatusCode.NoContent;
+		//			_response.Result = 
+		//			return Ok(_response);
+		//		}
+		//		_response.IsSuccess = false;
+		//		_response.ErrorMessages = new List<string> { " Can't find the user by this id or error in Accept it" };
+		//		_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+		//		return NotFound(_response);
+
+		//	}
+		//	catch (Exception e)
+		//	{
+		//		_response.IsSuccess = false;
+		//		_response.ErrorMessages = new List<string> { e.Message };
+		//		_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+		//		return BadRequest(_response);
+
+		//	}
+		//}
+
 		public async Task<ActionResult<APIResponse>> AcceptRequest(string id)
 		{//.IsAccepted = true;
 			try
 			{
 				var result = await _adminService.AcceptRequestAsync(id);
-				if (result == true)
+				if (result != null)
 				{
 					_response.IsSuccess = true;
 					_response.StatusCode = System.Net.HttpStatusCode.NoContent;
-					
+					_response.Result = result;
 					return Ok(_response);
 				}
 				_response.IsSuccess = false;

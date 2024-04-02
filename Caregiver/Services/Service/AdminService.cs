@@ -67,20 +67,36 @@ namespace Caregiver.Services.Service
 		#region Request Accept & Delete
 
 		//is accepted => true
-		public async Task<bool> AcceptRequestAsync(string id)
+		//public async Task<bool> AcceptRequestAsync(string id)
+		//{
+		//	CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
+		//	if (caregiver == null)
+		//	{
+		//		return false;
+		//	}
+		//	var result = await _adminRepo.AcceptRequest(caregiver);
+		//	if (result != null) return true;
+		//	return false;
+
+		//}
+
+		public async Task<string> AcceptRequestAsync(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
 			if (caregiver == null)
 			{
-				return false;
+				return null;
 			}
 			var result = await _adminRepo.AcceptRequest(caregiver);
-			if (result == true) return true;
-			return false;
+			if (result != null)
+			{
+				return result;
+			};
+			return null;
 
 		}
 
-	//when decline the request..
+		//when decline the request..
 		public async Task<bool> HardDeleteCaregiver(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
