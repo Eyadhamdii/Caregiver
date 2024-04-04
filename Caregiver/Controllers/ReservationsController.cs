@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
+using System.Runtime.CompilerServices;
 using static Caregiver.Enums.Enums;
 
 namespace Caregiver.Controllers
@@ -21,12 +22,12 @@ namespace Caregiver.Controllers
         private readonly IReservationsRepo reservationsRepo;
         private UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-		//  private readonly ICaregiverRepo _dbCaregiver;
-		private readonly IGenericRepo<CaregiverUser> _dbCaregiver;
+        //  private readonly ICaregiverRepo _dbCaregiver;
+        private readonly IGenericRepo<CaregiverUser> _dbCaregiver;
         private readonly IEmailRepo _IEmailRepo;
         private readonly ISmsServicecs _smsServicecs;
         private readonly IConfiguration _configuration;
-       
+
 
         public ReservationsController(IConfiguration configuration, ApplicationDBContext context, IReservationsRepo _reservationsRepo, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, /*ICaregiverRepo dbCaregiver*/   IGenericRepo<CaregiverUser> dbCaregiver, IEmailRepo iEmailRepo, ISmsServicecs smsServicecs)
         {
@@ -38,20 +39,20 @@ namespace Caregiver.Controllers
             _IEmailRepo = iEmailRepo;
             _smsServicecs = smsServicecs;
             _configuration = configuration;
-           
+
         }
 
 
         #region Get all reservations to admin
         [HttpGet("admin")]
-        public async Task <IActionResult> GetAllReservations()
+        public async Task<IActionResult> GetAllReservations()
         {
             var reservations = await reservationsRepo.GetAll();
             if (reservations == null) return BadRequest();
-            
-            await   _IEmailRepo.SendEmail("Hello Eman","Trying this function","sohilaafify23@gmail.com");
+
+            await _IEmailRepo.SendEmail("Hello Eman", "Trying this function", "sohilaafify23@gmail.com");
             return Ok(reservations);
-            
+
         }
         #endregion
 
@@ -59,7 +60,7 @@ namespace Caregiver.Controllers
         [HttpGet("PatientReservations")]
         public async Task<IActionResult> GetAllReservationsToPatient()
         {
-            
+
             var reservations = await reservationsRepo.GetPatientAllReservations();
 
 
@@ -67,7 +68,7 @@ namespace Caregiver.Controllers
             return Ok(reservations);
         }
         #endregion
-        
+
 
         #region Get all reservations to patient
         [HttpGet("CaregiverReservations")]
@@ -86,7 +87,7 @@ namespace Caregiver.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetReservationbyId(int id)
         {
-        var reservation = await reservationsRepo.GetReservationById(id);
+            var reservation = await reservationsRepo.GetReservationById(id);
 
 
             if (reservation == null)
@@ -95,7 +96,8 @@ namespace Caregiver.Controllers
             }
             else
             {
-                var dto = new ReservationDto {
+                var dto = new ReservationDto
+                {
                     PatientId = reservation.PatientId,
                     CaregiverFirstName = reservation.Caregiver.FirstName,
                     CaregiverLastName = reservation.Caregiver.LastName,
@@ -107,29 +109,29 @@ namespace Caregiver.Controllers
                     PatientPhoneNumber = reservation.Patient.PhoneNumber,
                     StartDate = reservation.StartDate,
                     EndDate = reservation.EndDate,
-                    Photo= reservation.Caregiver.Photo,
-                    Country=reservation.Caregiver.Country,
+                    Photo = reservation.Caregiver.Photo,
+                    Country = reservation.Caregiver.Country,
                     OrderId = reservation.OrderId,
                     CaregiverGender = reservation.Caregiver.Gender,
                     PatientGender = reservation.Patient.Gender,
                     Status = reservation.Status.ToString(),
-                    TotalPrice= reservation.TotalPrice,
+                    TotalPrice = reservation.TotalPrice,
                     TotalPriceWithfees = reservation.TotalPriceWithfees,
                     Fees = reservation.Fees,
                     PricePerDay = reservation.Caregiver.PricePerDay,
-                    JobTitle= reservation.Caregiver.JobTitle,
+                    JobTitle = reservation.Caregiver.JobTitle,
                     Age = reservation.Patient.Age,
-                    Location= reservation.Patient.Location
+                    Location = reservation.Patient.Location
                 };
 
                 return Ok(dto);
 
             }
-                
-               
-        }   
+
+
+        }
         #endregion
-         
+
         #region Get Patient reservation by id
         [HttpGet("PatientReservation")]
         public async Task<IActionResult> GetPatientReservation(int id)
@@ -176,12 +178,12 @@ namespace Caregiver.Controllers
 
             return Ok(dto);
         }
-        
+
         #endregion
 
         #region Reserve a caregiver
         [HttpPost]
-        public async Task<IActionResult> CreateReservationsAsync([FromBody] PostReservationDto  dto, [FromQuery] string CaregiverId)
+        public async Task<IActionResult> CreateReservationsAsync([FromBody] PostReservationDto dto, [FromQuery] string CaregiverId)
         {
             //edits to use generic 
             var caregiver = await _dbCaregiver.GetAsync(a => a.Id == CaregiverId);
@@ -207,15 +209,15 @@ namespace Caregiver.Controllers
                 TotalPriceWithfees = calculatedValue + (calculatedValue * 0.1),
                 Fees = calculatedValue * 0.1,
                 LastStatusUpdate = DateTime.Now,
-               
+
             };
 
             #region Email section
             // Caregiver
-            await _IEmailRepo.SendEmail( $"Dear {caregiver.FirstName}, Please take a moment to verify the reservation that have been sent to you and confirm them as soon as possible.","New reservation request!",caregiver.Email);
+            await _IEmailRepo.SendEmail($"Dear {caregiver.FirstName}, Please take a moment to verify the reservation that have been sent to you and confirm them as soon as possible.", "New reservation request!", caregiver.Email);
 
             // Patient
-            await _IEmailRepo.SendEmail( $"Dear {caregiver.FirstName}, Thank you for choosing our caregiver services. We appreciate your patience, and we will make it a priority to contact you promptly.", "Your Caregiver Reservation request is sent!", caregiver.Email);
+            await _IEmailRepo.SendEmail($"Dear {caregiver.FirstName}, Thank you for choosing our caregiver services. We appreciate your patience, and we will make it a priority to contact you promptly.", "Your Caregiver Reservation request is sent!", caregiver.Email);
             #endregion
 
             #region Send SMS
@@ -236,11 +238,11 @@ namespace Caregiver.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReservationStatusAsync(int id, [FromBody] ReservationStatusDto dto)
         {
-            var reservation = await  reservationsRepo.GetReservationById(id);
+            var reservation = await reservationsRepo.GetReservationById(id);
 
             if (reservation == null) return NotFound($"No reservation was found with ID: {id}");
 
-         if (dto.Status == ReservationStatus.Pending)
+            if (dto.Status == ReservationStatus.Pending)
             {
                 reservation.Status = dto.Status.ToString();
                 #region Email section
@@ -254,7 +256,7 @@ namespace Caregiver.Controllers
                 //if (!string.IsNullOrEmpty(PatientSms.ErrorMessage))
                 //    return BadRequest(PatientSms.ErrorMessage);
                 #endregion
-             
+
             }
 
             else if (dto.Status == ReservationStatus.CannotProceed)
@@ -314,8 +316,8 @@ namespace Caregiver.Controllers
                 {
                     OrderId = reservation.OrderId,
                     ReservationDate = date,
-                    CaregiverId= reservation.CaregiverId,
-                    
+                    CaregiverId = reservation.CaregiverId,
+
                 };
                 await reservationsRepo.AddReservationDates(reservationDate);
             }
@@ -387,18 +389,34 @@ namespace Caregiver.Controllers
 
                     #endregion
                     */
-                
+
                 }
-            }else
+            }
+            else
             {
                 return BadRequest("Something went wrong");
             }
 
-            return Ok($"Dates are added {session.PaymentIntentId}" );
+            return Ok($"Dates are added {session.PaymentIntentId}");
 
         }
 
+        #region  get Reservations Date
+        [HttpGet("ReservationsDates")]
+        public async Task<IActionResult> GetAllCaregiverReservationDates(String id)
+        {
 
+            var reservations = await reservationsRepo.GetAllReservationsDateDto(id);
+            if (reservations == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(reservations);
+            #endregion
+
+          
+        }
         #region in case i needed  this 
         // var pricrPerDay = _context.Caregivers.Select(a => a.PricePerDay).FirstOrDefaultAsync(a => dto.CaregiverId == dto.CaregiverId);
         // var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);

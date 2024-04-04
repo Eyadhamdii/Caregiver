@@ -19,7 +19,8 @@ namespace Caregiver.Configurations
 
 			CreateMap<CaregiverDataDTO, CaregiverUser>().ReverseMap();
 			CreateMap<GetCustomerDTO, PatientUser>().ReverseMap();
-			CreateMap<RegisterCaregiverDTO, CaregiverUser>().ReverseMap();
+            CreateMap<DependantDetailsDTO, Dependant>().ReverseMap();
+            CreateMap<RegisterCaregiverDTO, CaregiverUser>().ReverseMap();
 			CreateMap<CaregiverUser, CaregiverCardDTO>().ReverseMap();
 			CreateMap<CaregiverUser, CaregiverUpdateDTO>().ReverseMap();
 
