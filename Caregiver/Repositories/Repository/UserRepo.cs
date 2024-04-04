@@ -382,7 +382,7 @@ Message = "User created successfully!",
         //     }
         public async Task<UserManagerResponse> PersonalDetailsAsync(PersonalDetailsDTO model)
         {
-            var loggedInUserId = "777ab200-3f98-4f4c-a0f6-83d892a5b9bd";
+            var loggedInUserId = "2d7b16c3-2090-43c2-862e-b89feb588d47";
             // _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
             if (model == null)

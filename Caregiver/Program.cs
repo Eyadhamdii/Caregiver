@@ -97,8 +97,9 @@ namespace Caregiver
 
 			builder.Services.AddScoped<IGenericRepo<CaregiverUser>, GenericRepo<CaregiverUser>>();
 			builder.Services.AddScoped<IGenericRepo<PatientUser>, GenericRepo<PatientUser>>();
+            builder.Services.AddScoped<IGenericRepo<Dependant>, GenericRepo<Dependant>>();
 
-			builder.Services.AddScoped<ICaregiverService, CaregiverService>();
+            builder.Services.AddScoped<ICaregiverService, CaregiverService>();
 			builder.Services.AddScoped<ICustomerService, CustomerServices>();
 
 			//	builder.Services.AddScoped<ICaregiverRepo, CaregiverRepo>();

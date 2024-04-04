@@ -115,5 +115,36 @@ namespace Caregiver.Controllers
 
 			}
 		}
-	}
+
+		[HttpPut("{id}")]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<APIResponse>> Update(string id, [FromBody] GetCustomerDTO CustomerUpdate)
+		{
+			try
+			{
+				var result = await _customerService.UpdateCustomerAsync(id, CustomerUpdate);
+				if (result != null)
+				{
+					_response.IsSuccess = true;
+					_response.StatusCode = System.Net.HttpStatusCode.OK;
+					_response.Result = result;
+					return Ok(_response);
+				}
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { " Not Found " };
+				_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+				return NotFound(_response);
+			}
+			catch (Exception e)
+			{
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { e.Message };
+				_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+				return BadRequest(_response);
+
+			}
+		}
+      }
 }
