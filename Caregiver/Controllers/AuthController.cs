@@ -38,21 +38,35 @@ namespace Caregiver.Controllers
         }
 
         [HttpPost("CaregiverForm")]
-        public async Task<IActionResult> FormAsync([FromForm] FormCaregiverDTO model)
+        public async Task<IActionResult> FormAsync([FromBody] FormCaregiverDTO model)
         {
 
 
             if (ModelState.IsValid)
             {
-                var result = await _userService.FormCaregiverAsync(model , Request);
+                var result = await _userService.FormCaregiverAsync(model);
                 if (result.IsSuccess)
                     return Ok(result); // Status Code: 200
                 return BadRequest(result);
             }
             return BadRequest("Some properties are not valid"); // Status code: 400
         }
+		[HttpPost("CaregiverFile")]
+		public async Task<IActionResult> FileAsync([FromForm] FilesCaregiverDTO model)
+		{
 
-        [HttpPost("PatientRegister")]
+
+			if (ModelState.IsValid)
+			{
+				var result = await _userService.FilesCaregiverAsync(model , Request);
+				if (result.IsSuccess)
+					return Ok(result); // Status Code: 200
+				return BadRequest(result);
+			}
+			return BadRequest("Some properties are not valid"); // Status code: 400
+		}
+
+		[HttpPost("PatientRegister")]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterPatientDTO model)
         {
 

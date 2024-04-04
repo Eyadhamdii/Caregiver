@@ -274,8 +274,7 @@ namespace Caregiver.Repositories.Repository
 			};
 		}
 
-
-		public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model , HttpRequest Request)
+		public async Task<UserManagerResponse> FilesCaregiverAsync([FromForm]FilesCaregiverDTO model, HttpRequest Request)
 		{
 			if (!_allowedExt.Contains(Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
 
@@ -334,16 +333,12 @@ namespace Caregiver.Repositories.Repository
 			var user = await _userManager.FindByIdAsync(loggedInUserId);
 			if (user != null && user is CaregiverUser caregiverUser)
 			{
-				caregiverUser.City = model.City.ToString();
-				caregiverUser.Country = model.Country;
-				caregiverUser.JobTitle = model.JobTitle.ToString();
-				caregiverUser.PricePerDay = model.PricePerDay;
-				caregiverUser.YearsOfExperience = model.YearsOfExperience;
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();
 				caregiverUser.Photo = datastream2.ToArray();
-				
-				
+
+
+
 				caregiverUser.IsFormCompleted = true;
 				var result = await _userManager.UpdateAsync(caregiverUser);
 				string StringToken = await Handlers.GenerateToken(_userManager, secretKey, user);
@@ -356,7 +351,64 @@ namespace Caregiver.Repositories.Repository
 						IsSuccess = true,
 						//Message = "Additional data updated successfully.",
 						Message = StringToken,
-						//URL = photoUrl		
+						URL = photoUrl
+					};
+				}
+				else
+				{
+					// Update failed, return error response
+					return new UserManagerResponse
+					{
+						IsSuccess = false,
+						Message = "Failed to update additional data.",
+						Errors = result.Errors.Select(e => e.Description)
+					};
+				}
+			}
+			else
+			{
+				// User not found, return error response
+				return new UserManagerResponse
+				{
+					IsSuccess = false,
+					Message = "User not found."
+				};
+
+			}
+
+		}
+
+		public async Task<UserManagerResponse> FormCaregiverAsync([FromBody] FormCaregiverDTO model)
+		{
+			
+
+			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
+			if (model == null)
+				throw new NullReferenceException("Register Model is null");
+
+			var user = await _userManager.FindByIdAsync(loggedInUserId);
+			if (user != null && user is CaregiverUser caregiverUser)
+			{
+				caregiverUser.City = model.City.ToString();
+				caregiverUser.Country = model.Country;
+				caregiverUser.JobTitle = model.JobTitle.ToString();
+				caregiverUser.PricePerDay = model.PricePerDay;
+				caregiverUser.YearsOfExperience = model.YearsOfExperience;
+				
+				
+				//caregiverUser.IsFormCompleted = true;
+				var result = await _userManager.UpdateAsync(caregiverUser);
+				string StringToken = await Handlers.GenerateToken(_userManager, secretKey, user);
+
+				if (result.Succeeded)
+				{
+					// Update successful, return success response
+					return new UserManagerResponse
+					{
+						IsSuccess = true,
+						//Message = "Additional data updated successfully.",
+						Message = StringToken,
 					};
 				}
 				else
@@ -538,6 +590,8 @@ namespace Caregiver.Repositories.Repository
 				Message = $"User {loggedInUserId} logged out successfully."
 			};
 		}
+
+
 	}
 
 }
