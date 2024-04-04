@@ -93,7 +93,13 @@ namespace Caregiver
 				options.AddPolicy("RegularUser", policy =>
 					policy
 					.RequireClaim(ClaimTypes.Role, "PatientUser"));
+
+				options.AddPolicy("Admin", policy =>
+					policy
+					.RequireClaim(ClaimTypes.Role, "Admin"));
 			});
+
+
 			//automapper 
 			builder.Services.AddAutoMapper(typeof(MappingConfiguration));
 			//generic repo

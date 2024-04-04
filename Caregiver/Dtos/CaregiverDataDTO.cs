@@ -18,7 +18,6 @@ namespace Caregiver.Dtos
 
 		public string Nationality { get; set; }
 		public string Email { get; set; }
-		[Required]
 		public int PhoneNumber { get; set; }
 
 		public string CareerLevel { get; set; }
