@@ -116,13 +116,13 @@ namespace Caregiver.Controllers
 			try
 			{
 
-				string decodedToken = HttpUtility.UrlDecode(model.Token);
-				string decodedEmail = Uri.UnescapeDataString(model.Email);
+				//string decodedToken = HttpUtility.UrlDecode(model.Token);
+				//string decodedEmail = Uri.UnescapeDataString(model.Email);
 
-				//string email = HttpContext.Request.Query["email"];
-				//string token = HttpContext.Request.Query["token"];
+				////string email = HttpContext.Request.Query["email"];
+				////string token = HttpContext.Request.Query["token"];
 
-				var result = await _userService.UpdateForgottenPassword(decodedEmail, decodedToken, model.NewPassword);
+				var result = await _userService.UpdateForgottenPassword(model.Email, model.Token, model.NewPassword);
 				if (result == "success")
 				{
 					_response.StatusCode = System.Net.HttpStatusCode.OK;
