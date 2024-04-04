@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
-using Caregiver.Dtos.UpdateDTOs;
 using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
+using Caregiver.Repositories.Repository;
+using Caregiver.Services.IService;
+using Caregiver.Services.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,274 +16,232 @@ namespace Caregiver.Controllers
 	[ApiController]
 	public class AdminController : ControllerBase
 	{
-		//private readonly ICaregiverRepo _dbCaregiver;
-		//private readonly APIResponse _response;
-		//private readonly IMapper _mapper;
-		//private readonly UserManager<User> _userManager;
+		private readonly IAdminService _adminService;
+		private readonly APIResponse _response;
 
-		//public AdminController(ICaregiverRepo dbCaregiver, APIResponse response, IMapper mapper, UserManager<User> userManager)
-		//{
-		//	_dbCaregiver = dbCaregiver;
-		//	_response = response;
-		//	_mapper = mapper;
-		//	_userManager = userManager;
-		//}
-
-
-		////get all (nurses or baby sitters or caregivers ) which  thier request still didn't accept
-		////seperate the caregiver based on the ui page.. 
-		//[HttpGet("role/{Role}", Name = "GetPendingCaregiver")]
-		//[ProducesResponseType(StatusCodes.Status200OK)]
-		//public async Task<ActionResult> GetAllCaregiverByType(string Role)
-		//{
-		//	if (Enum.TryParse<JobTitle>(Role, out JobTitle jobTitle))
-		//	{
-		//		IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync(a => a.JobTitle == jobTitle && a.IsAccepted == false);
-		//		IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
-		//		_response.Result = CaregiverCards;
-		//		_response.IsSuccess = true;
-		//		_response.StatusCode = System.Net.HttpStatusCode.OK;
-		//		return Ok(_response);
-		//	}
-		//	else
-		//	{
-		//		_response.IsSuccess = false;
-		//		_response.ErrorMessages = new List<string> { " invalid Role" };
-		//		_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
-		//		return BadRequest(_response);
-		//	}
-		//}
+		public AdminController(IAdminService adminService, APIResponse response)
+		{
+			_response = response;
+			_adminService = adminService;
+		}
 
 
 
-		////accept request of a caregiver is accepted -> true
-		////this method will work with the 3 types of Caregivers
-		//[HttpPut("{id}")]
-		//public async Task<ActionResult<APIResponse>> AcceptCaregiver(string id)
-		//{
+		[HttpGet("AllCaregivers")]
+		public async Task<IActionResult> getAll()
+		{
+			var ss = await _adminService.GetAllCaregivers();
+			//var ss =  s.getCaregivers();
+			return Ok(ss);
+		}
+		[HttpGet("RequestedCaregivers")]
+		public async Task<IActionResult> getAllRequests()
+		{
+			var ss = await _adminService.GetRequested();
+			//var ss =  s.getCaregivers();
+			return Ok(ss);
+		}
+
+
+		[HttpGet("Caregiver/{title}")]
+		public async Task<IActionResult> getAll(string title)
+		{
+			var ss = await _adminService.GetCaregiversJobTitle(title);
+			//var ss =  s.getCaregivers();
+			return Ok(ss);
+		}
+
+
+		[HttpPut("AcceptRequest/{id}")]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		//public async Task<ActionResult<APIResponse>> AcceptRequest(string id)
+		//{//.IsAccepted = true;
 		//	try
 		//	{
-		//		CaregiverUser caregiver = await _dbCaregiver.GetAsync(a => a.Id == id);
-		//		if (caregiver == null)
-		//		{
-		//			_response.IsSuccess = false;
-		//			_response.ErrorMessages = new List<string> { " Can't find the user by this id" };
-		//			_response.StatusCode = System.Net.HttpStatusCode.NotFound;
-		//			return NotFound(_response);
-		//		}
-
-		//		caregiver.IsAccepted = true;
-		//		var result = await _userManager.UpdateAsync(caregiver);
-		//		if (result.Succeeded)
+		//		var result = await _adminService.AcceptRequestAsync(id);
+		//		if (result == true)
 		//		{
 		//			_response.IsSuccess = true;
 		//			_response.StatusCode = System.Net.HttpStatusCode.NoContent;
+		//			_response.Result = 
 		//			return Ok(_response);
-
 		//		}
-		//	}
-		//	catch (Exception e)
-		//	{
 		//		_response.IsSuccess = false;
-		//		_response.ErrorMessages = new List<string> { e.Message };
-
-		//	}
-		//	return _response;
-		//}
-
-
-		////when request is denied -> delete Caregiver or when i want to delete the caregiver ..
-		////delete nurse completely from database 
-		//[HttpDelete("DeleteCaregiver/{id}")]
-		//[ProducesResponseType(StatusCodes.Status404NotFound)]
-		//[ProducesResponseType(StatusCodes.Status200OK)]
-		//public async Task<ActionResult<APIResponse>> HardDeleteCaregiver(string id)
-		//{
-		//	try
-		//	{
-		//		CaregiverUser caregiver = await _dbCaregiver.GetAsync(a => a.Id == id);
-		//		if (caregiver == null)
-		//		{
-		//			_response.IsSuccess = false;
-		//			_response.ErrorMessages = new List<string> { " Can't find the user by this id" };
-		//			_response.StatusCode = System.Net.HttpStatusCode.NotFound;
-		//			return NotFound(_response);
-		//		}
-
-		//		var result = await _userManager.DeleteAsync(caregiver);
-		//		if (result.Succeeded)
-		//		{
-		//			_response.IsSuccess = true;
-		//			_response.StatusCode = System.Net.HttpStatusCode.NoContent;
-		//			return Ok(_response);
-
-		//		}
-		//	}
-		//	catch (Exception e)
-		//	{
-		//		_response.IsSuccess = false;
-		//		_response.ErrorMessages = new List<string> { e.Message };
-
-		//	}
-		//	return _response;
-		//}
-
-		// hamo
-
-
-
-
-
-
-
-
-		////get all caregivers which has account or deleted thier account ... 
-		//[HttpGet("Caregivers")]
-		//[ProducesResponseType(StatusCodes.Status200OK)]
-		//public async Task<ActionResult<APIResponse>> GetAllCaregiverInAllTimes()
-		//{
-		//	try
-		//	{
-		//		IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync();
-
-		//		IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
-
-		//		_response.Result = CaregiverCards;
-		//		_response.IsSuccess = true;
-		//		_response.StatusCode = System.Net.HttpStatusCode.OK;
-		//		return Ok(_response);
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		_response.IsSuccess = false;
-		//		_response.ErrorMessages = new List<string> { ex.Message };
-
-		//	}
-		//	return _response;
-		//}
-
-
-
-
-
-
-		////i can add to check if isdeleted == false.. but i think it won't be necessary now
-		//[HttpGet("{id}", Name = "GetCaregiverById")]
-		//[ProducesResponseType(StatusCodes.Status200OK)]
-		//[ProducesResponseType(StatusCodes.Status404NotFound)]
-		//public async Task<ActionResult> GeOneCaregiverById(string id)
-		//{
-		//	CaregiverUser caregiver = await _dbCaregiver.GetAsync(a => a.Id == id);
-		//	if (caregiver == null)
-		//	{
-		//		_response.IsSuccess = false;
-		//		_response.ErrorMessages = new List<string> { " Can't find the user by this id" };
+		//		_response.ErrorMessages = new List<string> { " Can't find the user by this id or error in Accept it" };
 		//		_response.StatusCode = System.Net.HttpStatusCode.NotFound;
 		//		return NotFound(_response);
-		//	}
 
-		//	return Ok(caregiver);
-		//	//testing the update function
-		//	//return Ok(_mapper.Map<CaregiverUpdateDTO>(caregiver));
-		//}
-
-
-
-		//[HttpDelete("hardDelete/{id}")]
-		//[ProducesResponseType(StatusCodes.Status404NotFound)]
-		//[ProducesResponseType(StatusCodes.Status200OK)]
-		//public async Task<ActionResult<APIResponse>> HardDeleteCaregiver(string id)
-		//{
-		//	try
-		//	{
-		//		CaregiverUser caregiver = await _dbCaregiver.GetAsync(a => a.Id == id);
-		//		if (caregiver == null)
-		//		{
-		//			_response.IsSuccess = false;
-		//			_response.ErrorMessages = new List<string> { " Can't find the user by this id" };
-		//			_response.StatusCode = System.Net.HttpStatusCode.NotFound;
-		//			return NotFound(_response);
-		//		}
-
-		//		var result = await _userManager.DeleteAsync(caregiver);
-		//		if (result.Succeeded)
-		//		{
-		//			_response.IsSuccess = true;
-		//			_response.StatusCode = System.Net.HttpStatusCode.NoContent;
-		//			return Ok(_response);
-
-		//		}
 		//	}
 		//	catch (Exception e)
 		//	{
 		//		_response.IsSuccess = false;
 		//		_response.ErrorMessages = new List<string> { e.Message };
+		//		_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+		//		return BadRequest(_response);
 
 		//	}
-		//	return _response;
 		//}
 
+		public async Task<ActionResult<APIResponse>> AcceptRequest(string id)
+		{//.IsAccepted = true;
+			try
+			{
+				var result = await _adminService.AcceptRequestAsync(id);
+				if (result != null)
+				{
+					_response.IsSuccess = true;
+					_response.StatusCode = System.Net.HttpStatusCode.NoContent;
+					_response.Result = result;
+					return Ok(_response);
+				}
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { " Can't find the user by this id or error in Accept it" };
+				_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+				return NotFound(_response);
+
+			}
+			catch (Exception e)
+			{
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { e.Message };
+				_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+				return BadRequest(_response);
+
+			}
+		}
 
 
-		//[Authorize(Policy = "Caregiver")]
+		[HttpDelete("DeclineRequest/{id}")]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<APIResponse>> DeclineRequestCaregiver(string id)
+		{//DeleteAsync(user);
+			try
+			{
+				var result = await _adminService.HardDeleteCaregiver(id);
+				if (result == true)
+				{
+					_response.IsSuccess = true;
+					_response.StatusCode = System.Net.HttpStatusCode.NoContent;
+					return Ok(_response);
+				}
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { " Can't find the user by this id or error in delete it" };
+				_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+				return NotFound(_response);
+
+			}
+			catch (Exception e)
+			{
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { e.Message };
+				_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+				return BadRequest(_response);
+
+			}
+		}
 
 
+		[HttpDelete("AdminDeleteCaregiver/{id}")]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<APIResponse>> AdminDeleteCaregiver(string id)
+		{//IsDeletedByAdmin = true
+			try
+			{
+				var result = await _adminService.AdminDeleteCaregiver(id);
+				if (result == true)
+				{
+					_response.IsSuccess = true;
+					_response.StatusCode = System.Net.HttpStatusCode.NoContent;
+					return Ok(_response);
+				}
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { " Can't find the user by this id or error in delete it" };
+				_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+				return NotFound(_response);
+
+			}
+			catch (Exception e)
+			{
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { e.Message };
+				_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+				return BadRequest(_response);
+
+			}
+		}
+
+		[HttpPut("AdminReturnDeletedCaregiver/{id}")]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<APIResponse>> AdminReturnDeletedCaregiver(string id)
+		{//IsDeletedByAdmin = false
+			try
+			{
+				var result = await _adminService.AdminReturnCaregiver(id);
+				if (result == true)
+				{
+					_response.IsSuccess = true;
+					_response.StatusCode = System.Net.HttpStatusCode.NoContent;
+					return Ok(_response);
+				}
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { " Can't find the user by this id or error in delete it" };
+				_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+				return NotFound(_response);
+
+			}
+			catch (Exception e)
+			{
+				_response.IsSuccess = false;
+				_response.ErrorMessages = new List<string> { e.Message };
+				_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+				return BadRequest(_response);
+
+			}
+		}
 
 
-
-
-		//[HttpGet("AllTimeCaregivers")]
+		//[HttpDelete("DeleteCaregiver{id}")]
+		//[ProducesResponseType(StatusCodes.Status404NotFound)]
+		//[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		//[ProducesResponseType(StatusCodes.Status200OK)]
-		//public async Task<ActionResult<APIResponse>> GetAllCaregiverInAllTimes()
+		//public async Task<ActionResult<APIResponse>> SoftDeleteCaregiver(string id)
 		//{
 		//	try
 		//	{
-		//		IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync();
+		//		var result = await _adminService.SoftDeleteCaregiver(id);
+		//		if (result == true)
+		//		{
+		//			_response.IsSuccess = true;
+		//			_response.StatusCode = System.Net.HttpStatusCode.NoContent;
+		//			return Ok(_response);
+		//		}
+		//		_response.IsSuccess = false;
+		//		_response.ErrorMessages = new List<string> { " Can't find the user by this id or error in delete it" };
+		//		_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+		//		return NotFound(_response);
 
-		//		IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
-
-		//		_response.Result = CaregiverCards;
-		//		_response.IsSuccess = true;
-		//		_response.StatusCode = System.Net.HttpStatusCode.OK;
-		//		return Ok(_response);
 		//	}
-		//	catch (Exception ex)
+		//	catch (Exception e)
 		//	{
 		//		_response.IsSuccess = false;
-		//		_response.ErrorMessages = new List<string> { ex.Message };
-
-		//	}
-		//	return _response;
-		//}
-
-
-
-
-
-
-		//public async Task<ActionResult> GetAllCaregiverByType(string Role)
-		//{
-		//	if (Enum.TryParse<JobTitle>(Role, out JobTitle jobTitle))
-		//	{
-		//		IEnumerable<CaregiverUser> caregivers = await _dbCaregiver.GetAllAsync(a => a.JobTitle == jobTitle && a.IsDeleted == false);
-		//		IEnumerable<CaregiverCardDTO> CaregiverCards = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
-		//		_response.Result = CaregiverCards;
-		//		_response.IsSuccess = true;
-		//		_response.StatusCode = System.Net.HttpStatusCode.OK;
-		//		return Ok(_response);
-		//	}
-		//	else
-		//	{
-		//		_response.IsSuccess = false;
-		//		_response.ErrorMessages = new List<string> { " invalid Role" };
+		//		_response.ErrorMessages = new List<string> { e.Message };
 		//		_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
 		//		return BadRequest(_response);
+
 		//	}
 		//}
 
 
 
-		//i can add to check if isdeleted == false.. but i think it won't be necessary now
+
 
 	}
 }

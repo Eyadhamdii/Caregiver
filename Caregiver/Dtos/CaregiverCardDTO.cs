@@ -4,8 +4,10 @@ namespace Caregiver.Dtos
 {
 	public class CaregiverCardDTO
 	{
-		//photo
-		public string Id { get; set; }
+
+        //photo
+        public string Photo { get; set; }
+        public string Id { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 

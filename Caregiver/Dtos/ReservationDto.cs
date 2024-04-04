@@ -13,12 +13,13 @@ namespace Caregiver.Dtos
         public string PatientFirstName { get; set; } = string.Empty; 
         public string PatientLastName { get; set; } = string.Empty;
 		//    public Gender Gender { get; set; }
-		public string Gender { get; set; }
+		public string CaregiverGender { get; set; }
+        public string PatientGender { get; set; }
 
-		public string CaregiverEmailAddress { get; set; } = string.Empty;
+        public string CaregiverEmailAddress { get; set; } = string.Empty;
         public string PatientEmailAddress { get; set; } = string.Empty;
-        public int CaregiverPhoneNumber { get; set; }
-        public int PatientPhoneNumber { get; set; }
+        public string CaregiverPhoneNumber { get; set; }
+        public string PatientPhoneNumber { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string PatientId { get; set; }
@@ -35,6 +36,9 @@ namespace Caregiver.Dtos
 
         public double TotalPriceWithfees { get; set; }
         public double Fees { get; set; }
+        public string JobTitle { get; set; }
+        public int Age { get; set; }
+        public string Location { get; set; }
 
 
     }

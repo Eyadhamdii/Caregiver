@@ -1,11 +1,9 @@
 ﻿using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Net.Mail;
 using System.Net;
+using System.Net.Mail;
 
 namespace Caregiver.Repositories.Repository
 {
@@ -25,6 +23,7 @@ namespace Caregiver.Repositories.Repository
             _httpContextAccessor = httpContextAccessor;
         }
 
+        //to admin 
         public async Task<IEnumerable<ReservationDto>> GetAll()
         {
            
@@ -34,24 +33,32 @@ namespace Caregiver.Repositories.Repository
                 CaregiverLastName = source.Caregiver.LastName,
                 CaregiverEmailAddress = source.Caregiver.Email,
                 Photo = source.Caregiver.Photo,
-                CaregiverPhoneNumber = source.Caregiver.PhoneNumber,
+               CaregiverPhoneNumber = source.Caregiver.PhoneNumber,
                 OrderId = source.OrderId,
                 Status = source.Status,
-                Gender = source.Caregiver.Gender,
+                CaregiverGender = source.Caregiver.Gender,
+                PatientGender = source.Patient.Gender,
                 TotalPrice = source.TotalPrice,
                 TotalPriceWithfees = source.TotalPriceWithfees,
                 Fees = source.Fees,
-                StartDate = (DateTime)source.StartDate,
-                PatientId = source.PatientId
-
-            }).ToListAsync();
+                StartDate = source.StartDate,
+                EndDate=source.EndDate,
+                PatientId = source.PatientId,
+                PricePerDay = source.Caregiver.PricePerDay,
+				PatientFirstName = source.Patient.FirstName,
+				PatientLastName = source.Patient.LastName,
+				PatientPhoneNumber = source.Patient.PhoneNumber,
+                JobTitle = source.Caregiver.JobTitle,
+                PatientEmailAddress = source.Patient.Email
+			}).ToListAsync();
         }
 
         public async Task<IEnumerable<ReservationDto>> GetPatientAllReservations()
         {
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+            
 
-            return  await db.Reservations.Include(p=>p.Caregiver).Where(r => r.PatientId == loggedInUserId).Select(source => new ReservationDto
+            return  await db.Reservations.Include(p=>p.Caregiver).Include(p=> p.Patient).Where(r => r.PatientId == loggedInUserId).Select(source => new ReservationDto
             {
                 CaregiverFirstName = source.Caregiver.FirstName,
                 CaregiverLastName = source.Caregiver.LastName,
@@ -60,14 +67,22 @@ namespace Caregiver.Repositories.Repository
                 CaregiverPhoneNumber= source.Caregiver.PhoneNumber,
                 OrderId=source.OrderId,
                 Status = source.Status,
-                Gender = source.Caregiver.Gender,
-                TotalPrice=source.TotalPrice,
-                StartDate = (DateTime)source.StartDate,
-                PatientId=source.PatientId,
+                CaregiverGender = source.Caregiver.Gender,
+                PatientGender = source.Caregiver.Gender,
+                TotalPrice =source.TotalPrice,
+                StartDate = source.StartDate,
+                PatientId= source.PatientId,
                 TotalPriceWithfees = source.TotalPriceWithfees,
-                Fees = source.Fees
+                Fees = source.Fees,
+                EndDate = source.EndDate,
+                PricePerDay = source.Caregiver.PricePerDay,
+                PatientFirstName = source.Patient.FirstName,
+                PatientLastName = source.Patient.LastName,
+                PatientPhoneNumber = source.Patient.PhoneNumber,
+				PatientEmailAddress = source.Patient.Email
 
-            }).ToListAsync();
+
+			}).ToListAsync();
            
         }
 
@@ -85,7 +100,7 @@ namespace Caregiver.Repositories.Repository
         {
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
-            return await db.Reservations.Include(p => p.Caregiver).Where(r => r.CaregiverId == loggedInUserId).Select(source => new ReservationDto
+            return await db.Reservations.Include(p => p.Caregiver).Include(p=> p.Patient).Where(r => r.CaregiverId == loggedInUserId).Select(source => new ReservationDto
             {
                 CaregiverFirstName = source.Caregiver.FirstName,
                 CaregiverLastName = source.Caregiver.LastName,
@@ -94,14 +109,23 @@ namespace Caregiver.Repositories.Repository
                 CaregiverPhoneNumber = source.Caregiver.PhoneNumber,
                 OrderId = source.OrderId,
                 Status = source.Status,
-                Gender = source.Caregiver.Gender,
+                CaregiverGender = source.Caregiver.Gender,
+                PatientGender = source.Patient.Gender,
                 TotalPrice = source.TotalPrice,
                 StartDate = (DateTime)source.StartDate,
                 PatientId = source.PatientId,
                 TotalPriceWithfees = source.TotalPriceWithfees,
-                Fees = source.Fees
+                Fees = source.Fees,
+                EndDate = source.EndDate,
+                PricePerDay = source.Caregiver.PricePerDay,
+                JobTitle = source.Caregiver.JobTitle,
+				PatientFirstName = source.Patient.FirstName,
+				PatientLastName = source.Patient.LastName,
+				PatientPhoneNumber = source.Patient.PhoneNumber,
+				PatientEmailAddress = source.Patient.Email
 
-            }).ToListAsync();
+
+			}).ToListAsync();
 
         }
 
@@ -170,6 +194,19 @@ namespace Caregiver.Repositories.Repository
         public bool CheckReservationDatesExists(int id)
         {
             return db.ReservationDates.Select(item => item.OrderId).Contains(id);
+        }
+
+        public async Task<IEnumerable<CaregiverPatientReservation>> GetReservationsByStatus(string status)
+        {
+            return await db.Reservations.Where(r => r.Status == status).ToListAsync();
+        }
+
+        public async Task<IEnumerable<ReservationsDateDto>> GetAllReservationsDateDto(string id)
+        {
+            return await db.ReservationDates.Where(r => r.CaregiverId == id).Select(source => new ReservationsDateDto
+            {
+               ReservationDate = source.ReservationDate,CaregiverId= source.CaregiverId
+            }).ToListAsync(); ;
         }
     }
 }

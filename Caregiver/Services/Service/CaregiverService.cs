@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Caregiver.Dtos;
-using Caregiver.Dtos.UpdateDTOs;
+using Caregiver.Helpers;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Caregiver.Services.IService;
 
 namespace Caregiver.Services.Service
 {
-	public class CaregiverService  : ICaregiverService
+    public class CaregiverService  : ICaregiverService
 	{
 		private readonly IGenericRepo<CaregiverUser> _careGenericRepo;
 		private readonly IMapper _mapper;
@@ -22,13 +22,20 @@ namespace Caregiver.Services.Service
 		public async Task<IEnumerable<CaregiverCardDTO>> GetAllCurrentCaregiver()
 		{
 			
-				//services
-				IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.IsDeleted == false);
+				// add isFormCompleted = true
+				List<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false && a.IsFormCompleted == true); 
 				//services
 				if(caregivers != null)
 				{
-				return _mapper.Map<List<CaregiverCardDTO>>(caregivers);
-				
+
+				var caregiversDTO = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
+				foreach (var caregiverDto in caregiversDTO)
+				{
+					var image = _careGenericRepo.GetImageBytesForCaregiver(caregiverDto.Id);
+					caregiverDto.Photo = Convert.ToBase64String(image);
+				}
+
+				return caregiversDTO;
 
 				} return null;
 
@@ -37,8 +44,8 @@ namespace Caregiver.Services.Service
 
 		public async Task<IEnumerable<CaregiverCardDTO>> GetAllCaregiverByType(string Role) {
 			if (Role != "Caregiver" && Role != "Nurse" && Role != "BabySitter") return null;
-
-			IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.JobTitle == Role && a.IsDeleted == false);
+			// add isFormCompleted = true
+			IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.JobTitle == Role && a.IsDeleted == false  && a.IsAccepted == true && a.IsDeletedByAdmin == false && a.IsFormCompleted == true);
 				if(caregivers != null)
 				{
 					return _mapper.Map<List<CaregiverCardDTO>>(caregivers);
@@ -47,6 +54,7 @@ namespace Caregiver.Services.Service
 			
 		}
 
+		//caregiver delete herself..
 		public async Task<bool> SoftDeleteCaregiver(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
@@ -60,16 +68,20 @@ namespace Caregiver.Services.Service
 
 		}
 
-		//i should return caregiver dto not the model
-		public async Task<CaregiverUser> GetCaregiverById(string id)
+		public async Task<CaregiverDataDTO> GetCaregiverById(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
 			if (caregiver == null)
 			{
 				return null;
 			}
+			var caregiverDTO = _mapper.Map<CaregiverDataDTO>(caregiver);
+			caregiverDTO.Photo = Convert.ToBase64String(caregiver.Photo);
+			caregiverDTO.Resume = Convert.ToBase64String(caregiver.Resume);
+			caregiverDTO.CriminalRecords = Convert.ToBase64String(caregiver.CriminalRecords);
+			
 
-			return caregiver;
+			return caregiverDTO;
 		}
 
 		public async Task<CaregiverUpdateDTO> UpdateCaregiverAsync(string id, CaregiverUpdateDTO caregiverUpdate)

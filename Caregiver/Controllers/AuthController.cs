@@ -1,6 +1,9 @@
 ﻿using Caregiver.Dtos;
+using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 
 namespace Caregiver.Controllers
 {
@@ -19,12 +22,77 @@ namespace Caregiver.Controllers
 			_response = response;
 		}
 
-		[HttpPost("ForgotPassword")]
-		public async Task<ActionResult<APIResponse>> ForgotPassword(string id, [FromBody] string email)
-		{
+        [HttpPost("CaregiverRegister")]
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterCaregiverDTO model)
+        {
+
+
+            if (ModelState.IsValid)
+            {
+                var result = await _userService.RegisterCaregiverAsync(model);
+                if (result.IsSuccess)
+                    return Ok(result); // Status Code: 200
+                return BadRequest(result);
+            }
+            return BadRequest("Some properties are not valid"); // Status code: 400
+        }
+
+        [HttpPost("CaregiverForm")]
+        public async Task<IActionResult> FormAsync([FromForm] FormCaregiverDTO model)
+        {
+
+
+            if (ModelState.IsValid)
+            {
+                var result = await _userService.FormCaregiverAsync(model , Request);
+                if (result.IsSuccess)
+                    return Ok(result); // Status Code: 200
+                return BadRequest(result);
+            }
+            return BadRequest("Some properties are not valid"); // Status code: 400
+        }
+
+        [HttpPost("PatientRegister")]
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterPatientDTO model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var result = await _userService.RegisterUserAsync(model);
+                if (result.IsSuccess)
+                    return Ok(result); // Status Code: 200
+                return BadRequest(result);
+            }
+            return BadRequest("Some properties are not valid"); // Status code: 400
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> LoginAsync([FromBody] LoginReqDTO model)
+        {
 			try
 			{
-				var result = await _userService.ForgotPassword(id, email);
+				var LoginRes = await _userService.LoginAsync(model);
+				if (LoginRes.User == null || string.IsNullOrEmpty(LoginRes.Token))
+				{
+
+					return BadRequest(new { message = "Username or Password are Incorrect" });
+
+				}
+
+
+				return Ok(LoginRes);
+			} catch(Exception e)
+			{
+				return BadRequest(e.Message);
+			}
+        }
+
+        [HttpPost("ForgotPassword")]
+		public async Task<ActionResult<APIResponse>> ForgotPassword( [FromBody] ForgotPasswordDTO model)
+	{
+			try
+			{
+				var result = await _userService.ForgotPassword(model.Email);
 				if (result != null)
 				{
 					_response.StatusCode = System.Net.HttpStatusCode.OK;
@@ -43,14 +111,18 @@ namespace Caregiver.Controllers
 		}
 
 		[HttpPut("UpdatePassword")]
-		public async Task<ActionResult<APIResponse>> UpdatePassword([FromBody] string NewPassword)
+		public async Task<ActionResult<APIResponse>> UpdatePassword([FromBody] UpdatePasswordDTO model)
 		{
 			try
 			{
-				string email = HttpContext.Request.Query["email"];
-				string token = HttpContext.Request.Query["token"];
 
-				var result = await _userService.UpdateForgottenPassword(email, token, NewPassword);
+				string decodedToken = HttpUtility.UrlDecode(model.Token);
+				string decodedEmail = Uri.UnescapeDataString(model.Email);
+
+				//string email = HttpContext.Request.Query["email"];
+				//string token = HttpContext.Request.Query["token"];
+
+				var result = await _userService.UpdateForgottenPassword(decodedEmail, decodedToken, model.NewPassword);
 				if (result == "success")
 				{
 					_response.StatusCode = System.Net.HttpStatusCode.OK;
@@ -69,68 +141,16 @@ namespace Caregiver.Controllers
 
 		}
 
-
-		[HttpPost("login")]
-		public async Task<IActionResult> LoginAsync([FromBody] LoginReqDTO model)
-		{
-			var LoginRes = await _userService.LoginAsync(model);
-			if (LoginRes.User == null || string.IsNullOrEmpty(LoginRes.Token))
-			{
-
-				return BadRequest(new { message = "Username or Password are Incorrect" });
-
-			}
-
-
-			return Ok(LoginRes);
-		}
-
-		[HttpPost("PatientRegister")]
-		public async Task<IActionResult> RegisterAsync([FromBody] RegisterPatientDTO model)
+		[HttpPost("logout")]
+		public async Task<IActionResult> LogoutAsync()
 		{
 
-			if (ModelState.IsValid)
-			{
-				var result = await _userService.RegisterUserAsync(model);
+				var result = await _userService.LogoutAsync();
 				if (result.IsSuccess)
 					return Ok(result); // Status Code: 200
-				return BadRequest(result);
-			}
-			return BadRequest("Some properties are not valid"); // Status code: 400
+			
+			// Handle the case where the username is null or empty
+			return BadRequest("Invalid username for logout."); // Statu
 		}
-
-
-		[HttpPost("CaregiverRegister")]
-
-		public async Task<IActionResult> RegisterAsync([FromBody] RegisterCaregiverDTO model)
-		{
-
-
-			if (ModelState.IsValid)
-			{
-				var result = await _userService.RegisterCaregiverAsync(model);
-				if (result.IsSuccess)
-					return Ok(result); // Status Code: 200
-				return BadRequest(result);
-			}
-			return BadRequest("Some properties are not valid"); // Status code: 400
-		}
-
-		[HttpPost("CaregiverForm")]
-
-		public async Task<IActionResult> FormAsync([FromForm] FormCaregiverDTO model)
-		{
-
-
-			if (ModelState.IsValid)
-			{
-				var result = await _userService.FormCaregiverAsync(model);
-				if (result.IsSuccess)
-					return Ok(result); // Status Code: 200
-				return BadRequest(result);
-			}
-			return BadRequest("Some properties are not valid"); // Status code: 400
-		}
-
 	}
 }
