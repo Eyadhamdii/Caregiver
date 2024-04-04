@@ -141,6 +141,32 @@ namespace Caregiver.Controllers
 
 		}
 
+
+		[HttpPut("ChangePassword")]
+		public async Task<APIResponse> ChangePasswprd([FromBody] EditPasswordDTO dto)
+		{
+				try
+				{
+
+				var result = await  _userService.ChangePassword(dto);
+					if (result == true)
+					{
+						_response.StatusCode = System.Net.HttpStatusCode.OK;
+						_response.Result = "Success changing the password";
+						_response.IsSuccess = true;
+						return _response;
+					}
+				}
+				catch (Exception e)
+				{
+					_response.IsSuccess = false;
+					_response.ErrorMessages = new List<string> { e.Message };
+
+				}
+			return _response;
+
+		}
+
 		[HttpPost("logout")]
 		public async Task<IActionResult> LogoutAsync()
 		{
