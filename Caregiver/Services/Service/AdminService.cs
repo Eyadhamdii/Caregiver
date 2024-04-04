@@ -35,13 +35,24 @@ namespace Caregiver.Services.Service
 		//get all current caregiver , accepted, active , admin didn't delete them => all titles
 		public async Task<List<AdminCaregiverDTO>> GetAllCaregivers()
 		{
-			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations", a => a.IsDeleted == false && a.IsAccepted == true && a.IsDeletedByAdmin == false);
+			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations");
 
 			//automappers..
 			return caregivers.Select(Caregiver => _mapper.Map<AdminCaregiverDTO>(Caregiver)).ToList();
 
 
 		}
+		public async Task<List<AdminCaregiverDTO>> GetRequested()
+		{
+			var caregivers = _careGenericRepo.GetAllWithNavAsync("Reservations", a => a.IsDeleted == false && a.IsAccepted == false && a.IsDeletedByAdmin == false && a.IsFormCompleted == true);
+
+			//automappers..
+			return caregivers.Select(Caregiver => _mapper.Map<AdminCaregiverDTO>(Caregiver)).ToList();
+
+
+		}
+
+
 
 
 		//get all current caregiver , accepted, active , admin didn't delete them
@@ -56,20 +67,36 @@ namespace Caregiver.Services.Service
 		#region Request Accept & Delete
 
 		//is accepted => true
-		public async Task<bool> AcceptRequestAsync(string id)
+		//public async Task<bool> AcceptRequestAsync(string id)
+		//{
+		//	CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
+		//	if (caregiver == null)
+		//	{
+		//		return false;
+		//	}
+		//	var result = await _adminRepo.AcceptRequest(caregiver);
+		//	if (result != null) return true;
+		//	return false;
+
+		//}
+
+		public async Task<string> AcceptRequestAsync(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
 			if (caregiver == null)
 			{
-				return false;
+				return null;
 			}
 			var result = await _adminRepo.AcceptRequest(caregiver);
-			if (result == true) return true;
-			return false;
+			if (result != null)
+			{
+				return result;
+			};
+			return null;
 
 		}
 
-	//when decline the request..
+		//when decline the request..
 		public async Task<bool> HardDeleteCaregiver(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);

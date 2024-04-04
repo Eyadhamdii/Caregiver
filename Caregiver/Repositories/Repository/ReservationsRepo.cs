@@ -200,5 +200,13 @@ namespace Caregiver.Repositories.Repository
         {
             return await db.Reservations.Where(r => r.Status == status).ToListAsync();
         }
+
+        public async Task<IEnumerable<ReservationsDateDto>> GetAllReservationsDateDto(string id)
+        {
+            return await db.ReservationDates.Where(r => r.CaregiverId == id).Select(source => new ReservationsDateDto
+            {
+               ReservationDate = source.ReservationDate,CaregiverId= source.CaregiverId
+            }).ToListAsync(); ;
+        }
     }
 }

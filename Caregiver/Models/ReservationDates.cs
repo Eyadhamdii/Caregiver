@@ -7,6 +7,7 @@ namespace Caregiver.Models
         [ForeignKey("CaregiverPatientReservation")]
         public int OrderId { get; set; }
         public DateTime ReservationDate { get; set;}
+        public string CaregiverId { get; set; }
         public CaregiverPatientReservation CaregiverPatientReservation { get; set; }
         //
     }

@@ -6,7 +6,6 @@ namespace Caregiver.Repositories.IRepository
 {
 	public interface IGenericRepo<T>
 	{
-
 		Task<T> GetAsync(Expression<Func<T, bool>> filter = null);
 		Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null);
 
@@ -22,5 +21,7 @@ namespace Caregiver.Repositories.IRepository
 
 		Task<bool> AdminReturnUser(User user);
 		byte[] GetImageBytesForCaregiver(string id);
+		byte[] GetResumeBytesForCaregiver(string id);
+		byte[] GetCriminalRecordBytesForCaregiver(string id);
 	}
 }

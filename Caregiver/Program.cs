@@ -93,15 +93,22 @@ namespace Caregiver
 				options.AddPolicy("RegularUser", policy =>
 					policy
 					.RequireClaim(ClaimTypes.Role, "PatientUser"));
+
+				options.AddPolicy("Admin", policy =>
+					policy
+					.RequireClaim(ClaimTypes.Role, "Admin"));
 			});
+
+
 			//automapper 
 			builder.Services.AddAutoMapper(typeof(MappingConfiguration));
 			//generic repo
 
 			builder.Services.AddScoped<IGenericRepo<CaregiverUser>, GenericRepo<CaregiverUser>>();
 			builder.Services.AddScoped<IGenericRepo<PatientUser>, GenericRepo<PatientUser>>();
+            builder.Services.AddScoped<IGenericRepo<Dependant>, GenericRepo<Dependant>>();
 
-			builder.Services.AddScoped<ICaregiverService, CaregiverService>();
+            builder.Services.AddScoped<ICaregiverService, CaregiverService>();
 			builder.Services.AddScoped<ICustomerService, CustomerServices>();
 
 			builder.Services.AddScoped<IAdminService,AdminService>();

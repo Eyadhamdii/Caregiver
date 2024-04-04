@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Caregiver.Helpers;
 using static Caregiver.Enums.Enums;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -43,6 +44,26 @@ namespace Caregiver.Repositories.Repository
 			_signInManager = signInManager;
 		}
 
+
+		public async Task<bool> ChangePassword(EditPasswordDTO model)
+		{
+			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
+			var user = await _userManager.FindByIdAsync(loggedInUserId);
+				if (user == null)
+				{
+					return false;
+				}
+
+			var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+			if (result.Succeeded)
+			{
+				return true;
+			}
+			return false;
+		}
+
+
 		public async Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO)
 		{
 			
@@ -59,157 +80,13 @@ namespace Caregiver.Repositories.Repository
 
 				};
 			}
-			/*
 
-			var status = "";
-			if (user.IsDeleted == true)
-			{
-				//reactivate the account..
-				status = "NotActive";
-				user.IsDeleted = false;
-				await _userManager.UpdateAsync(user);
-			}
-		
-			
-			if (user.IsDeletedByAdmin == true)
-			{
-				//can't login
-				return new LoginResDTO
-				{
-					Status = "Can'tLogin",
-					Token = null,
-					User = null
+			string StringToken = await Handlers.GenerateToken(_userManager, secretKey, user);
 
-				};
-
-			}
-			
-			if (user is CaregiverUser caregiver) {
-
-			if(caregiver.IsAccepted == false)
-				{
-					status = "PendingRequest";
-					//return new LoginResDTO
-					//{
-					//	Status = "PendingRequest",
-					//	Token = null,
-					//	User = null
-
-					//};
-				}			
-			
-			}
-			*/
-			/*
-			//var status = "";
-			//if (user is CaregiverUser caregiver)
-			//{
-			//	if (caregiver.IsFormCompleted == false && caregiver.IsAccepted == false && caregiver.IsDeleted == false && caregiver.IsDeletedByAdmin == false)
-			//	{
-			//		//go to from register
-			//		status = "RegisterForm";
-
-			//	}
-			//	else if (caregiver.IsFormCompleted == true && caregiver.IsAccepted == false && caregiver.IsDeleted == false && caregiver.IsDeletedByAdmin == false)
-			//	{
-			//		//completed form succeffuly
-			//		status = "Your Request is Pending";
-
-			//	}
-			//	else if (caregiver.IsFormCompleted == true && caregiver.IsAccepted == true && caregiver.IsDeleted == false && caregiver.IsDeletedByAdmin == false)
-			//	{
-			//		status = "Welcome";
-			//	}
-			//	else if (caregiver.IsFormCompleted == true && caregiver.IsAccepted == true && caregiver.IsDeleted == true && caregiver.IsDeletedByAdmin == false)
-			//	{	
-			//		status = "your are active again!!";
-			//		caregiver.IsDeleted = false;
-
-			//		var result = await _userManager.UpdateAsync(caregiver);
-
-			//		if (!result.Succeeded)
-			//		{
-			//			return new LoginResDTO
-			//			{
-			//				Status = "failed to activate your account"
-			//			};
-			//		}
-
-			//	}
-			//	else if (caregiver.IsFormCompleted == true && caregiver.IsAccepted == true && caregiver.IsDeleted == true && caregiver.IsDeletedByAdmin == true)
-			//	{
-			//		status = "Can't login";
-			//	}
-			//}
-			*/
-			var status = "";
-			if (user is CaregiverUser caregiver)
-			{
-				bool isFormCompleted = caregiver.IsFormCompleted;
-				bool isAccepted = caregiver.IsAccepted;
-				bool isDeleted = caregiver.IsDeleted;
-				bool isDeletedByAdmin = caregiver.IsDeletedByAdmin;
-
-				switch ((isFormCompleted, isAccepted, isDeleted, isDeletedByAdmin))
-				{
-					case (false, false, false, false):
-						status = "RegisterForm";
-						break;
-					case (true, false, false, false):
-						status = "Your Request is Pending";
-						break;
-					case (true, true, false, false):
-						status = "Welcome";
-						break;
-					case (true, true, true, false):
-						status = "Your are active again!!";
-						caregiver.IsDeleted = false;
-						var result = await _userManager.UpdateAsync(caregiver);
-						if (!result.Succeeded)
-						{
-							return new LoginResDTO
-							{
-								Status = "Failed to activate your account"
-							};
-						}
-						break;
-					case (true, true, true, true):
-						status = "Can't login";
-						break;
-				}
-			}
-
-			//key 
-			var secretKeyInBytes = Encoding.ASCII.GetBytes(secretKey);
-			var key = new SymmetricSecurityKey(secretKeyInBytes);
-
-
-			var userClaim = await _userManager.GetClaimsAsync(user);
-
-			var cc = userClaim.FirstOrDefault();
-			
-			var tokenDescriptor = new SecurityTokenDescriptor
-			{
-
-				Subject = new ClaimsIdentity(new Claim[]
-			{
-					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-					//new Claim(ClaimTypes.Role, user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)),
-					new Claim(cc.Type, cc.Value)
-		}),
-				Expires = DateTime.UtcNow.AddDays(7),
-				SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature)
-			};
-
-			
-
-
-			var TokenHandler = new JwtSecurityTokenHandler();
-			var token = TokenHandler.CreateToken(tokenDescriptor);
-			var StringToken = TokenHandler.WriteToken(token);
 			LoginResDTO loginResDTO = new LoginResDTO()
 			{
-				Status = status,
+			
+
 				Token = StringToken,
 				//Role = Role,
 				User = new UserDTO
@@ -279,6 +156,7 @@ namespace Caregiver.Repositories.Repository
 
 
 			var user = _mapper.Map<PatientUser>(model);
+
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 
@@ -368,42 +246,42 @@ namespace Caregiver.Repositories.Repository
 
 		public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model , HttpRequest Request)
 		{
-			if (!_allowedExt.Contains(Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
+			//if (!_allowedExt.Contains (Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
 
-				return new UserManagerResponse
-				{
-					IsSuccess = false,
-					Message = "return only valid ext"
-				};
+			//	return new UserManagerResponse
+			//	{
+			//		IsSuccess = false,
+			//		Message = "return only valid ext"
+			//	};
 
-			#region Storing The Image
-			//Random + Extension 
-			var extension = Path.GetExtension(model.UploadPhoto.FileName);
-			var newFileName = $"{Guid.NewGuid()}{extension}";
+			//#region Storing The Image
+			////Random + Extension 
+			//var extension = Path.GetExtension(model.UploadPhoto.FileName);
+			//var newFileName = $"{Guid.NewGuid()}{extension}";
 
-			var imagesDirectory = Path.Combine(Environment.CurrentDirectory, "Images");
+			//var imagesDirectory = Path.Combine(Environment.CurrentDirectory, "Images");
 
-			if (!Directory.Exists(imagesDirectory))
-			{
-				Directory.CreateDirectory(imagesDirectory);
-			}
+			//if (!Directory.Exists(imagesDirectory))
+			//{
+			//	Directory.CreateDirectory(imagesDirectory);
+			//}
 
-			// Combine the directory path with the file name
-			var fullFilePath = Path.Combine(imagesDirectory, newFileName);
+			//// Combine the directory path with the file name
+			//var fullFilePath = Path.Combine(imagesDirectory, newFileName);
 
-			// Save the file to the specified path
-			using (var stream = new FileStream(fullFilePath, FileMode.Create))
-			{
-				await model.UploadPhoto.CopyToAsync(stream);
-			}
+			//// Save the file to the specified path
+			//using (var stream = new FileStream(fullFilePath, FileMode.Create))
+			//{
+			//	await model.UploadPhoto.CopyToAsync(stream);
+			//}
 
-			// Generate the URL for the saved file
-			#endregion
+			//// Generate the URL for the saved file
+			//#endregion
 
-			#region Generating Url
-			var photoUrl = $"{Request.Scheme}://{Request.Host}/Images/{newFileName}";
+			//#region Generating Url
+			//var photoUrl = $"{Request.Scheme}://{Request.Host}/Images/{newFileName}";
 
-			#endregion
+			//#endregion
 
 			using var datastream = new MemoryStream();
 
@@ -429,13 +307,15 @@ namespace Caregiver.Repositories.Repository
 				caregiverUser.Country = model.Country;
 				caregiverUser.JobTitle = model.JobTitle.ToString();
 				caregiverUser.PricePerDay = model.PricePerDay;
-				caregiverUser.PricePerHour = model.PricePerHour;
 				caregiverUser.YearsOfExperience = model.YearsOfExperience;
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();
 				caregiverUser.Photo = datastream2.ToArray();
+				
+				
 				caregiverUser.IsFormCompleted = true;
 				var result = await _userManager.UpdateAsync(caregiverUser);
+				string StringToken = await Handlers.GenerateToken(_userManager, secretKey, user);
 
 				if (result.Succeeded)
 				{
@@ -443,8 +323,9 @@ namespace Caregiver.Repositories.Repository
 					return new UserManagerResponse
 					{
 						IsSuccess = true,
-						Message = "Additional data updated successfully.",
-						URL = photoUrl		
+						//Message = "Additional data updated successfully.",
+						Message = StringToken,
+						//URL = photoUrl		
 					};
 				}
 				else

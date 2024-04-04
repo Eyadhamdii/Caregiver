@@ -7,7 +7,10 @@ namespace Caregiver.Services.IService
 	{
 		Task<IEnumerable<GetCustomerDTO>> GetAllCurrentCustomer();
 		Task<PatientUser> GetCustomerById(string id);
-	//	Task<CaregiverUpdateDTO> UpdateCaregiverAsync(string id, CaregiverUpdateDTO caregiverUpdate);
+	    Task<GetCustomerDTO> UpdateCustomerAsync(string id, GetCustomerDTO  CustomerUpdate);
 		Task<bool> SoftDeleteCustomer(string id);
-	}
+
+        Task <DependantDetailsDTO> GetDependantDetails();
+       
+    }
 }

@@ -8,7 +8,7 @@ namespace Caregiver.Repositories.IRepository
         Task<IEnumerable<ReservationDto>> GetAll();
 
         Task<IEnumerable<ReservationDto>> GetPatientAllReservations();
-
+        Task<IEnumerable<ReservationsDateDto>> GetAllReservationsDateDto(string id);
         Task<IEnumerable<ReservationDto>> GetCaregiverAllReservations();
         Task<IEnumerable<CaregiverPatientReservation>> GetReservationsByStatus(string status);
 

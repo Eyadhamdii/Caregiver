@@ -31,8 +31,8 @@ namespace Caregiver.Services.Service
 				var caregiversDTO = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
 				foreach (var caregiverDto in caregiversDTO)
 				{
-					var imageBytes = _careGenericRepo.GetImageBytesForCaregiver(caregiverDto.Id); // Implement this method to get image bytes
-					caregiverDto.Image = Convert.ToBase64String(imageBytes);
+					var image = _careGenericRepo.GetImageBytesForCaregiver(caregiverDto.Id);
+					caregiverDto.Photo = Convert.ToBase64String(image);
 				}
 
 				return caregiversDTO;
@@ -68,16 +68,20 @@ namespace Caregiver.Services.Service
 
 		}
 
-		//i should return caregiver dto not the model
-		public async Task<CaregiverUser> GetCaregiverById(string id)
+		public async Task<CaregiverDataDTO> GetCaregiverById(string id)
 		{
 			CaregiverUser caregiver = await _careGenericRepo.GetAsync(a => a.Id == id);
 			if (caregiver == null)
 			{
 				return null;
 			}
+			var caregiverDTO = _mapper.Map<CaregiverDataDTO>(caregiver);
+			caregiverDTO.Photo = Convert.ToBase64String(caregiver.Photo);
+			caregiverDTO.Resume = Convert.ToBase64String(caregiver.Resume);
+			caregiverDTO.CriminalRecords = Convert.ToBase64String(caregiver.CriminalRecords);
+			
 
-			return caregiver;
+			return caregiverDTO;
 		}
 
 		public async Task<CaregiverUpdateDTO> UpdateCaregiverAsync(string id, CaregiverUpdateDTO caregiverUpdate)
