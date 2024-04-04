@@ -149,20 +149,27 @@ namespace Caregiver.Controllers
 				{
 
 				var result = await  _userService.ChangePassword(dto);
-					if (result == true)
+					if (result.IsSuccess == true)
 					{
 						_response.StatusCode = System.Net.HttpStatusCode.OK;
-						_response.Result = "Success changing the password";
+						_response.Result = result.Message;
 						_response.IsSuccess = true;
 						return _response;
 					}
+				if (result.IsSuccess == false)
+				{
+					_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+					_response.Result = result.Message;
+					_response.IsSuccess = false;
+					return _response;
 				}
+			}
 				catch (Exception e)
 				{
 					_response.IsSuccess = false;
 					_response.ErrorMessages = new List<string> { e.Message };
-
-				}
+				_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
+			}
 			return _response;
 
 		}

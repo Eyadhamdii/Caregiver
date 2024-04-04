@@ -11,11 +11,13 @@ namespace Caregiver.Controllers
 	{
 		private readonly ICaregiverService _caregiverService;
 		private readonly APIResponse _response;
+		ILogger<CaregiverController> _log;
 
-		public CaregiverController(ICaregiverService caregiverService,  APIResponse response)
+		public CaregiverController(ILogger<CaregiverController> log,ICaregiverService caregiverService,  APIResponse response)
 		{
 			_caregiverService = caregiverService;
 			_response = response;
+			_log = log;
 		}
 		
 		
