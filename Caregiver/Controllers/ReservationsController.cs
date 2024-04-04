@@ -121,7 +121,8 @@ namespace Caregiver.Controllers
                     PricePerDay = reservation.Caregiver.PricePerDay,
                     JobTitle = reservation.Caregiver.JobTitle,
                     Age = reservation.Patient.Age,
-                    Location = reservation.Patient.Location
+                    Location = reservation.Patient.Location,
+                         City = reservation.Caregiver.City.ToString(),
                 };
 
                 return Ok(dto);
@@ -172,8 +173,8 @@ namespace Caregiver.Controllers
                 PricePerDay = reservation.Caregiver.PricePerDay,
                 JobTitle = reservation.Caregiver.JobTitle,
                 Age = reservation.Patient.Age,
-                Location = reservation.Patient.Location
-
+                Location = reservation.Patient.Location,
+                City = reservation.Caregiver.City.ToString(),
             };
 
             return Ok(dto);
