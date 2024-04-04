@@ -116,13 +116,13 @@ namespace Caregiver.Controllers
 			try
 			{
 
-				string decodedToken = HttpUtility.UrlDecode(model.Token);
-				string decodedEmail = Uri.UnescapeDataString(model.Email);
+				//string decodedToken = HttpUtility.UrlDecode(model.Token);
+				//string decodedEmail = Uri.UnescapeDataString(model.Email);
 
-				//string email = HttpContext.Request.Query["email"];
-				//string token = HttpContext.Request.Query["token"];
+				////string email = HttpContext.Request.Query["email"];
+				////string token = HttpContext.Request.Query["token"];
 
-				var result = await _userService.UpdateForgottenPassword(decodedEmail, decodedToken, model.NewPassword);
+				var result = await _userService.UpdateForgottenPassword(model.Email, model.Token, model.NewPassword);
 				if (result == "success")
 				{
 					_response.StatusCode = System.Net.HttpStatusCode.OK;
@@ -136,6 +136,39 @@ namespace Caregiver.Controllers
 				_response.IsSuccess = false;
 				_response.ErrorMessages = new List<string> { e.Message };
 
+			}
+			return _response;
+
+		}
+
+
+		[HttpPut("ChangePassword")]
+		public async Task<APIResponse> ChangePasswprd([FromBody] EditPasswordDTO dto)
+		{
+				try
+				{
+
+				var result = await  _userService.ChangePassword(dto);
+					if (result.IsSuccess == true)
+					{
+						_response.StatusCode = System.Net.HttpStatusCode.OK;
+						_response.Result = result.Message;
+						_response.IsSuccess = true;
+						return _response;
+					}
+				if (result.IsSuccess == false)
+				{
+					_response.StatusCode = System.Net.HttpStatusCode.NotFound;
+					_response.Result = result.Message;
+					_response.IsSuccess = false;
+					return _response;
+				}
+			}
+				catch (Exception e)
+				{
+					_response.IsSuccess = false;
+					_response.ErrorMessages = new List<string> { e.Message };
+				_response.StatusCode = System.Net.HttpStatusCode.BadRequest;
 			}
 			return _response;
 

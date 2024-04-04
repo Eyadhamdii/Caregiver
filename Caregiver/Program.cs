@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using Stripe;
 using System.Security.Claims;
 using System.Text;
@@ -93,15 +94,26 @@ namespace Caregiver
 				options.AddPolicy("RegularUser", policy =>
 					policy
 					.RequireClaim(ClaimTypes.Role, "PatientUser"));
+
+				options.AddPolicy("Admin", policy =>
+					policy
+					.RequireClaim(ClaimTypes.Role, "Admin"));
 			});
+
+
+			Log.Logger = new LoggerConfiguration().MinimumLevel.Information().WriteTo.File("log/CaregiverLogs.txt", rollingInterval: RollingInterval.Day).CreateLogger();
+			builder.Host.UseSerilog();
+
+
 			//automapper 
 			builder.Services.AddAutoMapper(typeof(MappingConfiguration));
 			//generic repo
 
 			builder.Services.AddScoped<IGenericRepo<CaregiverUser>, GenericRepo<CaregiverUser>>();
 			builder.Services.AddScoped<IGenericRepo<PatientUser>, GenericRepo<PatientUser>>();
+            builder.Services.AddScoped<IGenericRepo<Dependant>, GenericRepo<Dependant>>();
 
-			builder.Services.AddScoped<ICaregiverService, CaregiverService>();
+            builder.Services.AddScoped<ICaregiverService, CaregiverService>();
 			builder.Services.AddScoped<ICustomerService, CustomerServices>();
 
 			builder.Services.AddScoped<IAdminService,AdminService>();

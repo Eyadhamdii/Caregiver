@@ -44,6 +44,54 @@ namespace Caregiver.Repositories.Repository
 			_signInManager = signInManager;
 		}
 
+
+		public async Task<UserManagerResponse> ChangePassword(EditPasswordDTO model)
+		{
+			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
+			var user = await _userManager.FindByIdAsync(loggedInUserId);
+				if (user == null)
+				{
+				return new UserManagerResponse
+				{
+					Message = "Can't find the user",
+					IsSuccess = false	
+
+				};
+					
+				}
+			bool isValid = await _userManager.CheckPasswordAsync(user, model.OldPassword);
+			if (isValid == false)
+			{
+				return new UserManagerResponse
+				{
+					Message = "The old password is incorrect",
+					IsSuccess = false
+
+				};
+			}
+
+
+
+			var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+			if (result.Succeeded)
+			{
+				return new UserManagerResponse
+				{
+					Message = " success Updated ",
+					IsSuccess = true
+				};
+		}
+
+			return new UserManagerResponse
+			{
+				IsSuccess = false,
+				Message = "Can't update"
+
+			};
+}
+
+
 		public async Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO)
 		{
 			
