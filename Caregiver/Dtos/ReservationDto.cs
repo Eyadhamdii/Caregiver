@@ -31,7 +31,7 @@ namespace Caregiver.Dtos
         public int PricePerDay { get; set; }
         public string Country { get; set; } = string.Empty;
 
-        public City City { get; set; }
+        public string City { get; set; }
         public DateOnly Birthdate { get; set; }
 
         public double TotalPriceWithfees { get; set; }
