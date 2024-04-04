@@ -122,8 +122,11 @@ namespace Caregiver.Repositories.Repository
 
 					ID = user.Id,
 					Email = user.Email,
-					Type = user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)
+					Type = user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1),
+					IsActived = user.IsDeleted
 					//get type => get the class type . 
+					
+
 				}
 			};
 			return loginResDTO;
@@ -274,42 +277,42 @@ namespace Caregiver.Repositories.Repository
 
 		public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model , HttpRequest Request)
 		{
-			//if (!_allowedExt.Contains (Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
+			if (!_allowedExt.Contains(Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
 
-			//	return new UserManagerResponse
-			//	{
-			//		IsSuccess = false,
-			//		Message = "return only valid ext"
-			//	};
+				return new UserManagerResponse
+				{
+					IsSuccess = false,
+					Message = "return only valid ext"
+				};
 
-			//#region Storing The Image
-			////Random + Extension 
-			//var extension = Path.GetExtension(model.UploadPhoto.FileName);
-			//var newFileName = $"{Guid.NewGuid()}{extension}";
+			#region Storing The Image
+			//Random + Extension 
+			var extension = Path.GetExtension(model.UploadPhoto.FileName);
+			var newFileName = $"{Guid.NewGuid()}{extension}";
 
-			//var imagesDirectory = Path.Combine(Environment.CurrentDirectory, "Images");
+			var imagesDirectory = Path.Combine(Environment.CurrentDirectory, "Images");
 
-			//if (!Directory.Exists(imagesDirectory))
-			//{
-			//	Directory.CreateDirectory(imagesDirectory);
-			//}
+			if (!Directory.Exists(imagesDirectory))
+			{
+				Directory.CreateDirectory(imagesDirectory);
+			}
 
-			//// Combine the directory path with the file name
-			//var fullFilePath = Path.Combine(imagesDirectory, newFileName);
+			// Combine the directory path with the file name
+			var fullFilePath = Path.Combine(imagesDirectory, newFileName);
 
-			//// Save the file to the specified path
-			//using (var stream = new FileStream(fullFilePath, FileMode.Create))
-			//{
-			//	await model.UploadPhoto.CopyToAsync(stream);
-			//}
+			// Save the file to the specified path
+			using (var stream = new FileStream(fullFilePath, FileMode.Create))
+			{
+				await model.UploadPhoto.CopyToAsync(stream);
+			}
 
-			//// Generate the URL for the saved file
-			//#endregion
+			// Generate the URL for the saved file
+			#endregion
 
-			//#region Generating Url
-			//var photoUrl = $"{Request.Scheme}://{Request.Host}/Images/{newFileName}";
+			#region Generating Url
+			var photoUrl = $"{Request.Scheme}://{Request.Host}/Images/{newFileName}";
 
-			//#endregion
+			#endregion
 
 			using var datastream = new MemoryStream();
 
