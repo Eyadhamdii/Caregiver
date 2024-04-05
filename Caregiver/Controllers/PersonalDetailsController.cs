@@ -14,12 +14,12 @@ namespace Caregiver.Controllers
     {
 
         private readonly IUserRepo _userService;
-        private readonly IEmailRepo _emailService;
+        private readonly IEmailService _emailService;
         private readonly APIResponse _response;
         private readonly ICustomerService _customerService;
         
 
-        public PersonalDetailsController(IUserRepo userService, IEmailRepo emailService, APIResponse response, ICustomerService customerService)
+        public PersonalDetailsController(IUserRepo userService, IEmailService emailService, APIResponse response, ICustomerService customerService)
         {
             _userService = userService;
             _emailService = emailService;

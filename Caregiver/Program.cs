@@ -20,7 +20,7 @@ using System.Text;
 
 namespace Caregiver
 {
-	public class Program
+    public class Program
 	{
 		public static void Main(string[] args)
 		{
@@ -126,7 +126,7 @@ namespace Caregiver
 			
 
 			builder.Services.AddControllers();
-			builder.Services.AddTransient<IEmailRepo, EmailRepo>();
+			builder.Services.AddTransient<IEmailService, EmailService>();
             builder.Services.AddTransient<IReservationsRepo, ReservationsRepo>();
 
             builder.Services.AddScoped<TokenService>();

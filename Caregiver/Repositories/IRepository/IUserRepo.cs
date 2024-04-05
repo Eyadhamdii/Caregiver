@@ -22,6 +22,7 @@ namespace Caregiver.Repositories.IRepository
 
 		Task<UserManagerResponse> LogoutAsync();
 
+		Task<string> ContactUs(ContactUsDTO dto);
 
 
 
