@@ -48,8 +48,15 @@ namespace Caregiver.Services.Service
 			IEnumerable<CaregiverUser> caregivers = await _careGenericRepo.GetAllAsync(a => a.JobTitle == Role && a.IsDeleted == false  && a.IsAccepted == true && a.IsDeletedByAdmin == false && a.IsFormCompleted == true);
 				if(caregivers != null)
 				{
-					return _mapper.Map<List<CaregiverCardDTO>>(caregivers);
+				 var caregiverMap = _mapper.Map<List<CaregiverCardDTO>>(caregivers);
+				foreach (var caregiverDto in caregiverMap)
+				{
+					var image = _careGenericRepo.GetImageBytesForCaregiver(caregiverDto.Id);
+					caregiverDto.Photo = Convert.ToBase64String(image);
 				}
+				return caregiverMap;
+
+			}
 			return null;
 			
 		}
