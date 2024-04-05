@@ -396,7 +396,7 @@ namespace Caregiver.Repositories.Repository
 				caregiverUser.JobTitle = model.JobTitle.ToString();
 				caregiverUser.PricePerDay = model.PricePerDay;
 				caregiverUser.YearsOfExperience = model.YearsOfExperience;
-				
+				caregiverUser.CareerLevel = model.CareerLevel.ToString();
 				
 				//caregiverUser.IsFormCompleted = true;
 				var result = await _userManager.UpdateAsync(caregiverUser);
