@@ -122,8 +122,11 @@ namespace Caregiver.Repositories.Repository
 
 					ID = user.Id,
 					Email = user.Email,
-					Type = user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1)
+					Type = user.GetType().ToString().Substring(user.GetType().ToString().LastIndexOf('.') + 1),
+					IsActived = user.IsDeleted
 					//get type => get the class type . 
+					
+
 				}
 			};
 			return loginResDTO;
@@ -271,45 +274,44 @@ namespace Caregiver.Repositories.Repository
 			};
 		}
 
-
-		public async Task<UserManagerResponse> FormCaregiverAsync([FromForm] FormCaregiverDTO model , HttpRequest Request)
+		public async Task<UserManagerResponse> FilesCaregiverAsync([FromForm]FilesCaregiverDTO model, HttpRequest Request)
 		{
-			//if (!_allowedExt.Contains (Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
+			if (!_allowedExt.Contains(Path.GetExtension(model.UploadPhoto.FileName).ToLower()))
 
-			//	return new UserManagerResponse
-			//	{
-			//		IsSuccess = false,
-			//		Message = "return only valid ext"
-			//	};
+				return new UserManagerResponse
+				{
+					IsSuccess = false,
+					Message = "return only valid ext"
+				};
 
-			//#region Storing The Image
-			////Random + Extension 
-			//var extension = Path.GetExtension(model.UploadPhoto.FileName);
-			//var newFileName = $"{Guid.NewGuid()}{extension}";
+			#region Storing The Image
+			//Random + Extension 
+			var extension = Path.GetExtension(model.UploadPhoto.FileName);
+			var newFileName = $"{Guid.NewGuid()}{extension}";
 
-			//var imagesDirectory = Path.Combine(Environment.CurrentDirectory, "Images");
+			var imagesDirectory = Path.Combine(Environment.CurrentDirectory, "Images");
 
-			//if (!Directory.Exists(imagesDirectory))
-			//{
-			//	Directory.CreateDirectory(imagesDirectory);
-			//}
+			if (!Directory.Exists(imagesDirectory))
+			{
+				Directory.CreateDirectory(imagesDirectory);
+			}
 
-			//// Combine the directory path with the file name
-			//var fullFilePath = Path.Combine(imagesDirectory, newFileName);
+			// Combine the directory path with the file name
+			var fullFilePath = Path.Combine(imagesDirectory, newFileName);
 
-			//// Save the file to the specified path
-			//using (var stream = new FileStream(fullFilePath, FileMode.Create))
-			//{
-			//	await model.UploadPhoto.CopyToAsync(stream);
-			//}
+			// Save the file to the specified path
+			using (var stream = new FileStream(fullFilePath, FileMode.Create))
+			{
+				await model.UploadPhoto.CopyToAsync(stream);
+			}
 
-			//// Generate the URL for the saved file
-			//#endregion
+			// Generate the URL for the saved file
+			#endregion
 
-			//#region Generating Url
-			//var photoUrl = $"{Request.Scheme}://{Request.Host}/Images/{newFileName}";
+			#region Generating Url
+			var photoUrl = $"{Request.Scheme}://{Request.Host}/Images/{newFileName}";
 
-			//#endregion
+			#endregion
 
 			using var datastream = new MemoryStream();
 
@@ -331,16 +333,12 @@ namespace Caregiver.Repositories.Repository
 			var user = await _userManager.FindByIdAsync(loggedInUserId);
 			if (user != null && user is CaregiverUser caregiverUser)
 			{
-				caregiverUser.City = model.City.ToString();
-				caregiverUser.Country = model.Country;
-				caregiverUser.JobTitle = model.JobTitle.ToString();
-				caregiverUser.PricePerDay = model.PricePerDay;
-				caregiverUser.YearsOfExperience = model.YearsOfExperience;
 				caregiverUser.Resume = datastream.ToArray();
 				caregiverUser.CriminalRecords = datastream1.ToArray();
 				caregiverUser.Photo = datastream2.ToArray();
-				
-				
+
+
+
 				caregiverUser.IsFormCompleted = true;
 				var result = await _userManager.UpdateAsync(caregiverUser);
 				string StringToken = await Handlers.GenerateToken(_userManager, secretKey, user);
@@ -353,7 +351,64 @@ namespace Caregiver.Repositories.Repository
 						IsSuccess = true,
 						//Message = "Additional data updated successfully.",
 						Message = StringToken,
-						//URL = photoUrl		
+						URL = photoUrl
+					};
+				}
+				else
+				{
+					// Update failed, return error response
+					return new UserManagerResponse
+					{
+						IsSuccess = false,
+						Message = "Failed to update additional data.",
+						Errors = result.Errors.Select(e => e.Description)
+					};
+				}
+			}
+			else
+			{
+				// User not found, return error response
+				return new UserManagerResponse
+				{
+					IsSuccess = false,
+					Message = "User not found."
+				};
+
+			}
+
+		}
+
+		public async Task<UserManagerResponse> FormCaregiverAsync([FromBody] FormCaregiverDTO model)
+		{
+			
+
+			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
+			if (model == null)
+				throw new NullReferenceException("Register Model is null");
+
+			var user = await _userManager.FindByIdAsync(loggedInUserId);
+			if (user != null && user is CaregiverUser caregiverUser)
+			{
+				caregiverUser.City = model.City.ToString();
+				caregiverUser.Country = model.Country;
+				caregiverUser.JobTitle = model.JobTitle.ToString();
+				caregiverUser.PricePerDay = model.PricePerDay;
+				caregiverUser.YearsOfExperience = model.YearsOfExperience;
+				
+				
+				//caregiverUser.IsFormCompleted = true;
+				var result = await _userManager.UpdateAsync(caregiverUser);
+				string StringToken = await Handlers.GenerateToken(_userManager, secretKey, user);
+
+				if (result.Succeeded)
+				{
+					// Update successful, return success response
+					return new UserManagerResponse
+					{
+						IsSuccess = true,
+						//Message = "Additional data updated successfully.",
+						Message = StringToken,
 					};
 				}
 				else
@@ -535,6 +590,8 @@ namespace Caregiver.Repositories.Repository
 				Message = $"User {loggedInUserId} logged out successfully."
 			};
 		}
+
+
 	}
 
 }

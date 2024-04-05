@@ -1,4 +1,5 @@
 ﻿using Caregiver.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Caregiver.Repositories.IRepository
 {
@@ -11,7 +12,9 @@ namespace Caregiver.Repositories.IRepository
 
 		Task<UserManagerResponse> RegisterCaregiverAsync(RegisterCaregiverDTO model);
 
-		Task<UserManagerResponse> FormCaregiverAsync(FormCaregiverDTO model , HttpRequest Request);
+		Task<UserManagerResponse> FormCaregiverAsync(FormCaregiverDTO model );
+		Task<UserManagerResponse> FilesCaregiverAsync(FilesCaregiverDTO model, HttpRequest Request);
+
 
 		Task<LoginResDTO> LoginAsync(LoginReqDTO loginReqDTO);
 
