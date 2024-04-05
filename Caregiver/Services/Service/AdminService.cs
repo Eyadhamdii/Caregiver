@@ -13,12 +13,15 @@ namespace Caregiver.Services.Service
 		private readonly IGenericRepo<CaregiverUser> _careGenericRepo;
 		private readonly IMapper _mapper;
 		private readonly IAdminRepo _adminRepo;
+		private readonly ISmsServicecs _smsServicecs;
 
-		public AdminService(IGenericRepo<CaregiverUser> careGenericRepo, IMapper mapper, IAdminRepo adminRepo)
+		public AdminService(IGenericRepo<CaregiverUser> careGenericRepo, IMapper mapper, IAdminRepo adminRepo, ISmsServicecs smsServicecs)
 		{
 			_careGenericRepo = careGenericRepo;
 			_mapper = mapper;
 			_adminRepo = adminRepo;
+			_smsServicecs = smsServicecs;
+
 		}
 
 		//get all caregivers which deleted and active and admin delete them 
@@ -90,6 +93,7 @@ namespace Caregiver.Services.Service
 			var result = await _adminRepo.AcceptRequest(caregiver);
 			if (result != null)
 			{
+				//var caregiverSms = _smsServicecs.sendMessage("+201096669249", $"Dear {caregiver.FirstName}, Your Have been accepted in Caregiver website as a {caregiver.JobTitle}!, Welcome ");
 				return result;
 			};
 			return null;
