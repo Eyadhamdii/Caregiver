@@ -20,7 +20,6 @@ namespace Caregiver.Repositories.Repository
 				email.To.Add(MailboxAddress.Parse(emailAddress));
 				email.Subject = header;
 
-				//string resetUrl = $"http://localhost:5248/api/Auth/UpdatePassword?email={Uri.EscapeDataString(emailAddress)}&token={Uri.EscapeDataString(token)}";
 
 				email.Body = new TextPart(TextFormat.Html) { Text =body};
 
