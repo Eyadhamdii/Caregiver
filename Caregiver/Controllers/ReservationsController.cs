@@ -24,12 +24,12 @@ namespace Caregiver.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         //  private readonly ICaregiverRepo _dbCaregiver;
         private readonly IGenericRepo<CaregiverUser> _dbCaregiver;
-        private readonly IEmailRepo _IEmailRepo;
+        private readonly IEmailService _IEmailRepo;
         private readonly ISmsServicecs _smsServicecs;
         private readonly IConfiguration _configuration;
 
 
-        public ReservationsController(IConfiguration configuration, ApplicationDBContext context, IReservationsRepo _reservationsRepo, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, /*ICaregiverRepo dbCaregiver*/   IGenericRepo<CaregiverUser> dbCaregiver, IEmailRepo iEmailRepo, ISmsServicecs smsServicecs)
+        public ReservationsController(IConfiguration configuration, ApplicationDBContext context, IReservationsRepo _reservationsRepo, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, /*ICaregiverRepo dbCaregiver*/   IGenericRepo<CaregiverUser> dbCaregiver, IEmailService iEmailRepo, ISmsServicecs smsServicecs)
         {
             reservationsRepo = _reservationsRepo;
             _context = context;

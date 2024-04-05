@@ -1,21 +1,22 @@
 ﻿using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
+using Caregiver.Services.IService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Web;
 
 namespace Caregiver.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class AuthController : ControllerBase
 	{
 		private readonly IUserRepo _userService;
-		private readonly IEmailRepo _emailService;
+		private readonly IEmailService _emailService;
 		private readonly APIResponse _response;
 
-		public AuthController(IUserRepo userService, IEmailRepo emailService, APIResponse response)
+		public AuthController(IUserRepo userService, IEmailService emailService, APIResponse response)
 		{
 			_userService = userService;
 			_emailService = emailService;
@@ -198,6 +199,21 @@ namespace Caregiver.Controllers
 			
 			// Handle the case where the username is null or empty
 			return BadRequest("Invalid username for logout."); // Statu
+		}
+
+		[HttpPost("ContactUs")]
+		public async Task<IActionResult> contactUs(ContactUsDTO dto)
+		{
+			try { 
+			var result = await _userService.ContactUs(dto);
+			if (result == "Success") { 
+					return Ok("Email sent"); 
+} return BadRequest("Failed");
+				
+			} catch(Exception e)
+			{
+				return BadRequest(e.Message);
+			}
 		}
 	}
 }

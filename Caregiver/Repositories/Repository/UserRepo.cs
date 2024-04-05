@@ -13,10 +13,11 @@ using System.Text;
 using Caregiver.Helpers;
 using static Caregiver.Enums.Enums;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Caregiver.Services.IService;
 
 namespace Caregiver.Repositories.Repository
 {
-	public class UserRepo : IUserRepo
+    public class UserRepo : IUserRepo
 	{
 		private UserManager<User> _userManager;
 		private readonly string secretKey;
@@ -24,7 +25,7 @@ namespace Caregiver.Repositories.Repository
 		private readonly IMapper _mapper;
 		private readonly IHttpContextAccessor _httpContextAccessor;
 		private new List<string> _allowedExt = new List<string> { ".jpg", ".png", ".pdf", ".jpeg" };
-		private readonly IEmailRepo _emailService;
+		private readonly IEmailService _emailService;
 		private readonly IDistributedCache _cache;
 		private readonly SignInManager<User> _signInManager;
 
@@ -32,7 +33,7 @@ namespace Caregiver.Repositories.Repository
 
 
 
-        public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailRepo emailService, IDistributedCache cache, SignInManager<User> signInManager)
+        public UserRepo(UserManager<User> userManager, ApplicationDBContext db, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService emailService, IDistributedCache cache, SignInManager<User> signInManager)
         {
 			_db = db;
 			_userManager = userManager;
@@ -145,7 +146,7 @@ namespace Caregiver.Repositories.Repository
 			//{
 				string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-				string resetUrl = $"http://localhost:5248/api/Auth/UpdatePassword?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
+				string resetUrl = $"http://localhost:4200/updatePassword?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
 				var message = $"<h3> Click on the link and will direct you to the page to enter a new password</h3>  <a href=\"{resetUrl}\">Click Here</a>";
 				string header = "Your Reset Password Link";
 				var result = await _emailService.SendEmail(message, header, email);
@@ -395,7 +396,7 @@ namespace Caregiver.Repositories.Repository
 				caregiverUser.JobTitle = model.JobTitle.ToString();
 				caregiverUser.PricePerDay = model.PricePerDay;
 				caregiverUser.YearsOfExperience = model.YearsOfExperience;
-				
+				caregiverUser.CareerLevel = model.CareerLevel.ToString();
 				
 				//caregiverUser.IsFormCompleted = true;
 				var result = await _userManager.UpdateAsync(caregiverUser);
@@ -591,6 +592,13 @@ namespace Caregiver.Repositories.Repository
 			};
 		}
 
+
+		public async Task<string> ContactUs(ContactUsDTO dto)
+		{
+			string body = $"<h2> Email From:{dto.FirstName} {dto.LastName} \n Email: {dto.Email} \n  Reservation No: {dto.OrderId} \n  Message: {dto.Message} </h2> ";
+			return  await _emailService.SendEmail(body, "Contact Us mail", "caregiverteam23@gmail.com");
+
+		}
 
 	}
 
