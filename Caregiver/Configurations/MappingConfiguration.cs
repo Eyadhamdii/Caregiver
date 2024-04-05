@@ -30,7 +30,9 @@ namespace Caregiver.Configurations
 		   .ForMember(dest => dest.OngoingOrders, opt => opt.MapFrom(src => src.Reservations.Count(a => a.Status == "OnProgress")))
 		   .ForMember(dest => dest.CanceledOrders, opt => opt.MapFrom(src => src.Reservations.Count(a => a.Status == "Cancelled")))
 		   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => DetermineStatus(src)))
-			   .ForMember(dest => dest.JoinedDate, opt => opt.MapFrom(src => src.JoinedDate.ToString("MM/dd/yyyy")));
+		   .ForMember(dest => dest.JoinedDate, opt => opt.MapFrom(src => src.JoinedDate.ToString("MM/dd/yyyy")))
+	.ForMember(dest => dest.Photo, opt =>
+		opt.MapFrom(src => src.Photo != null && src.Photo.Length > 0 ? Convert.ToBase64String(src.Photo) : null));
 
 
 
