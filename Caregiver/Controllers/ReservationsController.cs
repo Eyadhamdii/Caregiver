@@ -94,7 +94,40 @@ namespace Caregiver.Controllers
             {
                 return NotFound();
             }
-            else
+			if (reservation.DependentId != null)
+			{
+				var d = new ReservationDto
+				{
+					PatientId = reservation.DependentId.ToString(),
+					CaregiverFirstName = reservation.Caregiver.FirstName,
+					CaregiverLastName = reservation.Caregiver.LastName,
+					PatientFirstName = reservation.Dependant.FirstName,
+					PatientLastName = reservation.Dependant.LastName,
+					CaregiverEmailAddress = reservation.Caregiver.Email,
+					CaregiverPhoneNumber = reservation.Caregiver.PhoneNumber,
+					PatientEmailAddress = reservation.Dependant.EmailAddress,
+					PatientPhoneNumber = reservation.Dependant.PhoneNumber,
+					StartDate = reservation.StartDate,
+					EndDate = reservation.EndDate,
+					Photo = reservation.Caregiver.Photo,
+					Country = reservation.Caregiver.Country,
+					OrderId = reservation.OrderId,
+					CaregiverGender = reservation.Caregiver.Gender,
+					PatientGender = reservation.Dependant.Gender,
+					Status = reservation.Status.ToString(),
+					TotalPrice = reservation.TotalPrice,
+					TotalPriceWithfees = reservation.TotalPriceWithfees,
+					Fees = reservation.Fees,
+					PricePerDay = reservation.Caregiver.PricePerDay,
+					JobTitle = reservation.Caregiver.JobTitle,
+					Age = reservation.Dependant.Age,
+					Location = reservation.Dependant.Location,
+					City = reservation.Caregiver.City.ToString(),
+
+				};
+				return Ok(d);
+			}
+			else
             {
                 var dto = new ReservationDto
                 {
@@ -210,6 +243,7 @@ namespace Caregiver.Controllers
                 TotalPriceWithfees = calculatedValue + (calculatedValue * 0.1),
                 Fees = calculatedValue * 0.1,
                 LastStatusUpdate = DateTime.Now,
+                DependentId = dto.DependentId
              
 
             };

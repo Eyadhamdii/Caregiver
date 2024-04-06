@@ -36,9 +36,9 @@ namespace Caregiver.Models
 
         public string PaymentStatus { get; set; }
 
-		[ForeignKey("Dependant")]
-		public int DependentId { get; set; }
-		public Dependant Dependant { get; set; }
+        [ForeignKey("Dependant")]
+        public int? DependentId { get; set; }
+		public Dependant? Dependant { get; set; }
 
 
 	}

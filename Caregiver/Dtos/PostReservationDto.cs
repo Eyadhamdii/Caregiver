@@ -14,7 +14,9 @@ namespace Caregiver.Dtos
         //
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-     
+
+        public int DependentId { get; set; }
+
         //[JsonIgnore]
         //public ReservationStatus Status { get; set; }
         //[JsonIgnore]
