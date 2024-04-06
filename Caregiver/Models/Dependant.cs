@@ -21,7 +21,5 @@ namespace Caregiver.Models
         public string PatientId { get; set; }
         public PatientUser Patient { get; set; }
 
-        //chage
-        public  int ReservationNo { get; set; }
     }
 }
