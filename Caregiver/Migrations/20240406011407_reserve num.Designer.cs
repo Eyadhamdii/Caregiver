@@ -4,6 +4,7 @@ using Caregiver.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Caregiver.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240406011407_reserve num")]
+    partial class reservenum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,7 +69,7 @@ namespace Caregiver.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Reservations", (string)null);
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("Caregiver.Models.Dependant", b =>
@@ -111,7 +114,7 @@ namespace Caregiver.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Dependants", (string)null);
+                    b.ToTable("Dependants");
                 });
 
             modelBuilder.Entity("Caregiver.Models.ReservationDates", b =>
@@ -127,7 +130,7 @@ namespace Caregiver.Migrations
 
                     b.HasKey("OrderId", "ReservationDate");
 
-                    b.ToTable("ReservationDates", (string)null);
+                    b.ToTable("ReservationDates");
                 });
 
             modelBuilder.Entity("Caregiver.Models.User", b =>
