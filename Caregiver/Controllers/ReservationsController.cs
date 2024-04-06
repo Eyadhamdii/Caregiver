@@ -192,6 +192,7 @@ namespace Caregiver.Controllers
             string reservationStatus = ReservationStatus.OnProgress.ToString();
             var calculatedValue = CalculateTotalPrice(pricePerDay, dto.EndDate, dto.StartDate);
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+            var user = await _userManager.FindByIdAsync(loggedInUserId);
 
 
             if (caregiver == null || loggedInUserId == null)
@@ -219,13 +220,18 @@ namespace Caregiver.Controllers
             await _IEmailRepo.SendEmail($"Dear {caregiver.FirstName}, Please take a moment to verify the reservation that have been sent to you and confirm them as soon as possible.", "New reservation request!", caregiver.Email);
 
             // Patient
-            await _IEmailRepo.SendEmail($"Dear {caregiver.FirstName}, Thank you for choosing our caregiver services. We appreciate your patience, and we will make it a priority to contact you promptly.", "Your Caregiver Reservation request is sent!", caregiver.Email);
+            await _IEmailRepo.SendEmail($"Dear {user.FirstName}, Thank you for choosing our caregiver services. We appreciate your patience, and we will make it a priority to contact you promptly.", "Your Caregiver Reservation request is sent!", user.Email);
             #endregion
 
             #region Send SMS
-            //var result = _smsServicecs.sendMessage("+201096669249", "Test Test");
-            //if(!string.IsNullOrEmpty(result.ErrorMessage))
-            //    return BadRequest(result.ErrorMessage);
+      
+            var PatientSms = _smsServicecs.sendMessage($"+2{user.PhoneNumber}", $"Dear {user.FirstName}, Thank you for choosing our caregiver services. We appreciate your patience, and we will make it a priority to contact you promptly.");
+            // Caregiver
+            var CaregiverSms = _smsServicecs.sendMessage($"+2{caregiver.PhoneNumber}", $"Dear {caregiver.FirstName}, Please take a moment to verify the reservation that have been sent to you and confirm them as soon as possible.");
+            var Sms = PatientSms ?? CaregiverSms;
+
+            if (!string.IsNullOrEmpty(Sms.ErrorMessage))
+                return BadRequest(Sms.ErrorMessage);
             #endregion
 
             await reservationsRepo.AddReservarion(caregiverPatientReservation);
@@ -249,7 +255,7 @@ namespace Caregiver.Controllers
                 reservation.Status = dto.Status.ToString();
                 #region Email section
                 // Patient
-                await _IEmailRepo.SendEmail($"Dear {reservation.Patient.FirstName},  Thank you for choosing our services and reserving a nurse. We regret to inform you that the nurse you requested is currently \r\nunavailable to fulfill your request. We understand the importance of your healthcare needs and apologize for any inconvenience caused. We are committed to providing you with the best care possible and would be happy to assist you in finding an alternative solution or recommending another qualified healthcare professional.", "Oopsie Daisies! Your  Reservation Adventure Takes a Twist - Let's Explore Plan B!", reservation.Patient.Email);
+                await _IEmailRepo.SendEmail($"Dear {reservation.Patient.FirstName},  We would like to inform you that your reservation is currently pending and requires payment to be confirmed. To secure your reservation, we kindly request that you make the payment as soon as possible.", "Payment Needed to Finalize Your Reservation", reservation.Patient.Email);
                 #endregion
                 #region Send SMS
                 // Patient
@@ -257,6 +263,14 @@ namespace Caregiver.Controllers
 
                 //if (!string.IsNullOrEmpty(PatientSms.ErrorMessage))
                 //    return BadRequest(PatientSms.ErrorMessage);
+                #endregion
+
+                #region Send SMS
+
+                var PatientSms = _smsServicecs.sendMessage($"+2{reservation.Patient.PhoneNumber}", $"Dear {reservation.Patient.FirstName}, We would like to inform you that your reservation is currently pending and requires payment to be confirmed. To secure your reservation, we kindly request that you make the payment as soon as possible.");
+
+                if (!string.IsNullOrEmpty(PatientSms.ErrorMessage))
+                    return BadRequest(PatientSms.ErrorMessage);
                 #endregion
 
             }
@@ -270,10 +284,10 @@ namespace Caregiver.Controllers
                 #endregion
                 #region Send SMS
                 // Patient
-                //var PatientSms = _smsServicecs.sendMessage("+201096669249", $"Dear {reservation.Patient.FirstName}, Thank you for choosing our services and reserving a nurse. We regret to inform you that the nurse you requested is currently \r\nunavailable to fulfill your request. We understand the importance of your healthcare needs and apologize for any inconvenience caused. We are committed to providing you with the best care possible and would be happy to assist you in finding an alternative solution or recommending another qualified healthcare professional.");
+                var PatientSms = _smsServicecs.sendMessage($"+2{reservation.Patient.PhoneNumber}", $"Dear {reservation.Patient.FirstName}, Thank you for choosing our services and reserving a nurse. We regret to inform you that the nurse you requested is currently \r\nunavailable to fulfill your request. We understand the importance of your healthcare needs and apologize for any inconvenience caused. We are committed to providing you with the best care possible and would be happy to assist you in finding an alternative solution or recommending another qualified healthcare professional.");
 
-                //if (!string.IsNullOrEmpty(PatientSms.ErrorMessage))
-                //    return BadRequest(PatientSms.ErrorMessage);
+                if (!string.IsNullOrEmpty(PatientSms.ErrorMessage))
+                   return BadRequest(PatientSms.ErrorMessage);
                 #endregion
             }
             else if (dto.Status == ReservationStatus.Cancelled)
@@ -368,7 +382,7 @@ namespace Caregiver.Controllers
                     reservation.Status = reservationStatus;
                     AddDatesToDatabase(reservation);
 
-                    /*
+                    
                     #region Email section
                     // Caregiver
                     await _IEmailRepo.SendEmail($"Dear {reservation.Caregiver.FirstName}, Thank you for choosing our caregiver services. We are excited to confirm your reservation", "Your Caregiver Reservation is Confirmed!", reservation.Caregiver.Email);
@@ -379,10 +393,10 @@ namespace Caregiver.Controllers
 
                     #region Send SMS
                     // Patient
-                    var PatientSms = _smsServicecs.sendMessage("+201096669249", $"Dear {reservation.Patient.FirstName}, Your Caregiver Reservation is Confirmed!, Thank you for choosing our caregiver services. We are excited to confirm your reservation");
+                    var PatientSms = _smsServicecs.sendMessage($"+2{reservation.Patient.PhoneNumber}", $"Dear {reservation.Patient.FirstName}, Your Caregiver Reservation is Confirmed!, Thank you for choosing our caregiver services. We are excited to confirm your reservation");
 
                     // Caregiver
-                    var CaregiverSms = _smsServicecs.sendMessage("+201096669249", $"Dear {reservation.Caregiver.FirstName}, You confirmed your reservation!, Thank you for choosing our caregiver services. We are excited to confirm your reservation");
+                    var CaregiverSms = _smsServicecs.sendMessage($"+2{reservation.Caregiver.PhoneNumber}", $"Dear {reservation.Caregiver.FirstName}, You confirmed your reservation!, Thank you for choosing our caregiver services. We are excited to confirm your reservation");
                     var Sms = PatientSms ?? CaregiverSms;
 
                     if (!string.IsNullOrEmpty(Sms.ErrorMessage))
@@ -390,7 +404,7 @@ namespace Caregiver.Controllers
 
 
                     #endregion
-                    */
+                    
 
                 }
             }
