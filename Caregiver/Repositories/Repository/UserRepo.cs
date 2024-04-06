@@ -505,25 +505,99 @@ namespace Caregiver.Repositories.Repository
 		//         }
 		//     }
 
+		//public async Task<UserManagerResponse> PersonalDetailsAsync(PersonalDetailsDTO model)
+		//{
+		//	//var loggedInUserId = "777ab200-3f98-4f4c-a0f6-83d892a5b9bd";
+		//	var loggedInUserId =  _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+
+		//	if (model == null)
+		//		throw new NullReferenceException("Please Fill The Form");
+
+		//          var user = await _userManager.FindByIdAsync(loggedInUserId);
+		//          if (user != null && user is PatientUser patientUser && model.ReservationType == Enum.Parse<ReservationType>("Me"))
+		//          {
+		//              patientUser.FirstName = model.FirstName;
+		//              patientUser.LastName = model.LastName;
+		//              patientUser.Age = model.Age;
+		//              patientUser.Gender = model.Gender.ToString();
+		//              patientUser.Email = model.EmailAddress;
+		//              patientUser.Location = model.Location;
+		//              patientUser.PhoneNumber = model.PhoneNumber;
+		//              patientUser.ReservationNotes = model.ReservationNotes;
+
+		//		var result = await _userManager.UpdateAsync(patientUser);
+
+		//		if (result.Succeeded)
+		//		{
+		//			// Update successful, return success response
+		//			return new UserManagerResponse
+		//			{
+		//				IsSuccess = true,
+		//				Message = "Additional data updated successfully."
+		//			};
+		//		}
+		//		else
+		//		{
+		//			// Update failed, return error response
+		//			return new UserManagerResponse
+		//			{
+		//				IsSuccess = false,
+		//				Message = "Failed to update additional data.",
+		//				Errors = result.Errors.Select(e => e.Description)
+		//			};
+		//		}
+		//	}
+		//	else
+		//	{
+		//		// ReservationType is not "Me" or user is not found, add logic for Dependant here
+
+		//		var relevant = new Dependant
+		//		{
+		//			PatientId = loggedInUserId,
+		//			FirstName = model.FirstName,
+		//			LastName = model.LastName,
+		//			PhoneNumber = model.PhoneNumber,
+		//			Age = model.Age,
+		//			Location = model.Location,
+		//			EmailAddress = model.EmailAddress,
+		//			Gender = model.Gender.ToString(),
+		//			ReservationNotes = model.ReservationNotes
+		//		};
+		//		await _db.Dependants.AddAsync(relevant);
+		//		_db.SaveChanges();
+		//		// Now you should add code to handle saving Dependant to your data store
+
+		//		// For example, if you have a repository method to save a Dependant:
+		//		// await _dependantRepository.AddAsync(relevant);
+
+		//		// Return appropriate response
+		//		return new UserManagerResponse
+		//		{
+		//			IsSuccess = true,
+		//			Message = "Dependant details added successfully."
+		//		};
+		//	}
+		//}
+
 		public async Task<UserManagerResponse> PersonalDetailsAsync(PersonalDetailsDTO model)
 		{
 			//var loggedInUserId = "777ab200-3f98-4f4c-a0f6-83d892a5b9bd";
-			var loggedInUserId =  _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+			var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
 			if (model == null)
 				throw new NullReferenceException("Please Fill The Form");
 
-            var user = await _userManager.FindByIdAsync(loggedInUserId);
-            if (user != null && user is PatientUser patientUser && model.ReservationType == Enum.Parse<ReservationType>("Me"))
-            {
-                patientUser.FirstName = model.FirstName;
-                patientUser.LastName = model.LastName;
-                patientUser.Age = model.Age;
-                patientUser.Gender = model.Gender.ToString();
-                patientUser.Email = model.EmailAddress;
-                patientUser.Location = model.Location;
-                patientUser.PhoneNumber = model.PhoneNumber;
-                patientUser.ReservationNotes = model.ReservationNotes;
+			var user = await _userManager.FindByIdAsync(loggedInUserId);
+			if (user != null && user is PatientUser patientUser && model.ReservationType == Enum.Parse<ReservationType>("Me"))
+			{
+				patientUser.FirstName = model.FirstName;
+				patientUser.LastName = model.LastName;
+				patientUser.Age = model.Age;
+				patientUser.Gender = model.Gender.ToString();
+				patientUser.Email = model.EmailAddress;
+				patientUser.Location = model.Location;
+				patientUser.PhoneNumber = model.PhoneNumber;
+				patientUser.ReservationNotes = model.ReservationNotes;
 
 				var result = await _userManager.UpdateAsync(patientUser);
 
@@ -561,7 +635,9 @@ namespace Caregiver.Repositories.Repository
 					Location = model.Location,
 					EmailAddress = model.EmailAddress,
 					Gender = model.Gender.ToString(),
-					ReservationNotes = model.ReservationNotes
+					ReservationNotes = model.ReservationNotes,
+					ReservationNo = model.ReservationNo
+					
 				};
 				await _db.Dependants.AddAsync(relevant);
 				_db.SaveChanges();
@@ -578,6 +654,12 @@ namespace Caregiver.Repositories.Repository
 				};
 			}
 		}
+
+
+
+
+
+
 
 		public async Task<UserManagerResponse> LogoutAsync()
 		{
