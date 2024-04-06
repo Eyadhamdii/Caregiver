@@ -21,5 +21,6 @@ namespace Caregiver.Models
         public string PatientId { get; set; }
         public PatientUser Patient { get; set; }
 
+        public CaregiverPatientReservation caregiverPatientReservation { get; set; }
     }
 }

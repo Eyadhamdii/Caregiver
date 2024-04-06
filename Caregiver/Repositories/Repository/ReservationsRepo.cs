@@ -132,7 +132,12 @@ namespace Caregiver.Repositories.Repository
         public async Task<CaregiverPatientReservation> GetCaregiverReservationById(int id)
         {
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
-            return await db.Reservations.Include(m => m.Caregiver).Include(m => m.Patient).Where(r => r.CaregiverId == loggedInUserId).FirstOrDefaultAsync(g => g.OrderId == id);
+            var reserve = await db.Reservations.Where(m=>m.OrderId == id).FirstOrDefaultAsync();
+            if (reserve != null && reserve.DependentId != 0) 
+            { 
+                return await db.Reservations.Include(m => m.Caregiver).Where(m => m.OrderId == id && m.CaregiverId == loggedInUserId).Include(a=>a.Dependant).FirstOrDefaultAsync(a=>a.DependentId == reserve.DependentId);
+			}
+			return await db.Reservations.Include(m => m.Caregiver).Include(m => m.Patient).Where(r => r.CaregiverId == loggedInUserId).FirstOrDefaultAsync(g => g.OrderId == id);
         }
 
         public async Task<CaregiverPatientReservation> GetReservationById(int id)
