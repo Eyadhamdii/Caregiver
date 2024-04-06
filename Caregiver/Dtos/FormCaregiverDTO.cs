@@ -25,7 +25,6 @@ namespace Caregiver.Dtos
 		[Required]
 
 		public City JobLocationLookingFor { get; set; }
-		[Required]
 
 		public int PricePerHour { get; set; }
 		[Required]
