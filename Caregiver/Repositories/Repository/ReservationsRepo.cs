@@ -215,6 +215,7 @@ namespace Caregiver.Repositories.Repository
 
             return await db.Reservations.Include(m => m.Caregiver).Include(m => m.Patient).Where(r => r.Status == "Confirmed").Select(source => new TransactionsDto
             {
+                FirstName = source.Patient.FirstName,
                 LastStatusUpdate = source.LastStatusUpdate,
                 Status=source.Status,
                 PatientId=source.PatientId,

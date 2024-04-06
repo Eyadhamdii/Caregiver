@@ -3,6 +3,8 @@
     public class TransactionsDto
     {
         public string PatientId { get; set; }
+
+        public  string  FirstName  { get; set; }
         public DateTime LastStatusUpdate { get; set; }
 
         public string Status { get; set; }
