@@ -26,14 +26,14 @@ namespace Caregiver.Repositories.Repository
         //to admin 
         public async Task<IEnumerable<ReservationDto>> GetAll()
         {
-           
+
             return await db.Reservations.Include(m => m.Caregiver).Include(m => m.Patient).Select(source => new ReservationDto
             {
                 CaregiverFirstName = source.Caregiver.FirstName,
                 CaregiverLastName = source.Caregiver.LastName,
                 CaregiverEmailAddress = source.Caregiver.Email,
                 Photo = source.Caregiver.Photo,
-               CaregiverPhoneNumber = source.Caregiver.PhoneNumber,
+                CaregiverPhoneNumber = source.Caregiver.PhoneNumber,
                 OrderId = source.OrderId,
                 Status = source.Status,
                 CaregiverGender = source.Caregiver.Gender,
@@ -42,36 +42,36 @@ namespace Caregiver.Repositories.Repository
                 TotalPriceWithfees = source.TotalPriceWithfees,
                 Fees = source.Fees,
                 StartDate = source.StartDate,
-                EndDate=source.EndDate,
+                EndDate = source.EndDate,
                 PatientId = source.PatientId,
                 PricePerDay = source.Caregiver.PricePerDay,
-				PatientFirstName = source.Patient.FirstName,
-				PatientLastName = source.Patient.LastName,
-				PatientPhoneNumber = source.Patient.PhoneNumber,
+                PatientFirstName = source.Patient.FirstName,
+                PatientLastName = source.Patient.LastName,
+                PatientPhoneNumber = source.Patient.PhoneNumber,
                 JobTitle = source.Caregiver.JobTitle,
                 PatientEmailAddress = source.Patient.Email
-			}).ToListAsync();
+            }).ToListAsync();
         }
 
         public async Task<IEnumerable<ReservationDto>> GetPatientAllReservations()
         {
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
-            
 
-            return  await db.Reservations.Include(p=>p.Caregiver).Include(p=> p.Patient).Where(r => r.PatientId == loggedInUserId).Select(source => new ReservationDto
+
+            return await db.Reservations.Include(p => p.Caregiver).Include(p => p.Patient).Where(r => r.PatientId == loggedInUserId).Select(source => new ReservationDto
             {
                 CaregiverFirstName = source.Caregiver.FirstName,
                 CaregiverLastName = source.Caregiver.LastName,
                 CaregiverEmailAddress = source.Caregiver.Email,
                 Photo = source.Caregiver.Photo,
-                CaregiverPhoneNumber= source.Caregiver.PhoneNumber,
-                OrderId=source.OrderId,
+                CaregiverPhoneNumber = source.Caregiver.PhoneNumber,
+                OrderId = source.OrderId,
                 Status = source.Status,
                 CaregiverGender = source.Caregiver.Gender,
                 PatientGender = source.Caregiver.Gender,
-                TotalPrice =source.TotalPrice,
+                TotalPrice = source.TotalPrice,
                 StartDate = source.StartDate,
-                PatientId= source.PatientId,
+                PatientId = source.PatientId,
                 TotalPriceWithfees = source.TotalPriceWithfees,
                 Fees = source.Fees,
                 EndDate = source.EndDate,
@@ -79,11 +79,11 @@ namespace Caregiver.Repositories.Repository
                 PatientFirstName = source.Patient.FirstName,
                 PatientLastName = source.Patient.LastName,
                 PatientPhoneNumber = source.Patient.PhoneNumber,
-				PatientEmailAddress = source.Patient.Email
+                PatientEmailAddress = source.Patient.Email
 
 
-			}).ToListAsync();
-           
+            }).ToListAsync();
+
         }
 
 
@@ -100,7 +100,7 @@ namespace Caregiver.Repositories.Repository
         {
             var loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
 
-            return await db.Reservations.Include(p => p.Caregiver).Include(p=> p.Patient).Where(r => r.CaregiverId == loggedInUserId).Select(source => new ReservationDto
+            return await db.Reservations.Include(p => p.Caregiver).Include(p => p.Patient).Where(r => r.CaregiverId == loggedInUserId).Select(source => new ReservationDto
             {
                 CaregiverFirstName = source.Caregiver.FirstName,
                 CaregiverLastName = source.Caregiver.LastName,
@@ -119,13 +119,13 @@ namespace Caregiver.Repositories.Repository
                 EndDate = source.EndDate,
                 PricePerDay = source.Caregiver.PricePerDay,
                 JobTitle = source.Caregiver.JobTitle,
-				PatientFirstName = source.Patient.FirstName,
-				PatientLastName = source.Patient.LastName,
-				PatientPhoneNumber = source.Patient.PhoneNumber,
-				PatientEmailAddress = source.Patient.Email
+                PatientFirstName = source.Patient.FirstName,
+                PatientLastName = source.Patient.LastName,
+                PatientPhoneNumber = source.Patient.PhoneNumber,
+                PatientEmailAddress = source.Patient.Email
 
 
-			}).ToListAsync();
+            }).ToListAsync();
 
         }
 
@@ -140,22 +140,22 @@ namespace Caregiver.Repositories.Repository
             return await db.Reservations.Include(m => m.Caregiver).Include(m => m.Patient).FirstOrDefaultAsync(g => g.OrderId == id);
         }
 
-        public Task SendEmailAsync(string email, string subject, string message)
-        {
-            var client = new SmtpClient("smtp.gmail.com", 587)
-            {
-                EnableSsl = true,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("caregiverteam23@gmail.com", "jrzg jygk lbkv reqg")
-            };
+        //public Task SendEmailAsync(string email, string subject, string message)
+        //{
+        //    var client = new SmtpClient("smtp.gmail.com", 587)
+        //    {
+        //        EnableSsl = true,
+        //        UseDefaultCredentials = false,
+        //        Credentials = new NetworkCredential("caregiverteam23@gmail.com", "jrzg jygk lbkv reqg")
+        //    };
 
-            return client.SendMailAsync(
-                new MailMessage(from: "caregiverteam23@gmail.com",
-                                to: email,
-                                subject,
-                                message
-                                ));
-        }
+        //    return client.SendMailAsync(
+        //        new MailMessage(from: "caregiverteam23@gmail.com",
+        //                        to: email,
+        //                        subject,
+        //                        message
+        //                        ));
+        //}
 
         public async Task<CaregiverPatientReservation> AddReservarion(CaregiverPatientReservation CaregiverPatientReservation)
         {
@@ -205,8 +205,21 @@ namespace Caregiver.Repositories.Repository
         {
             return await db.ReservationDates.Where(r => r.CaregiverId == id).Select(source => new ReservationsDateDto
             {
-               ReservationDate = source.ReservationDate,CaregiverId= source.CaregiverId
+                ReservationDate = source.ReservationDate,
+                CaregiverId = source.CaregiverId
             }).ToListAsync(); ;
+        }
+
+        public async Task<IEnumerable<TransactionsDto>> GetAllTransactions()
+        {
+
+            return await db.Reservations.Include(m => m.Caregiver).Include(m => m.Patient).Where(r => r.Status == "Confirmed").Select(source => new TransactionsDto
+            {
+                LastStatusUpdate = source.LastStatusUpdate,
+                Status=source.Status,
+                PatientId=source.PatientId,
+                TotalPriceWithfees=source.TotalPriceWithfees,
+            }).ToListAsync();
         }
     }
 }

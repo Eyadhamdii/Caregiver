@@ -210,6 +210,7 @@ namespace Caregiver.Controllers
                 TotalPriceWithfees = calculatedValue + (calculatedValue * 0.1),
                 Fees = calculatedValue * 0.1,
                 LastStatusUpdate = DateTime.Now,
+             
 
             };
 
@@ -402,6 +403,19 @@ namespace Caregiver.Controllers
 
         }
 
+        #region Get all transactions
+        [HttpGet("transactions")]
+        public async Task<IActionResult> GetAllTransactionsReservations()
+        {
+            var reservations = await reservationsRepo.GetAllTransactions();
+            if (reservations == null) return BadRequest();
+
+            return Ok(reservations);
+        }
+        #endregion
+
+
+
         #region  get Reservations Date
         [HttpGet("ReservationsDates")]
         public async Task<IActionResult> GetAllCaregiverReservationDates(String id)
@@ -416,7 +430,7 @@ namespace Caregiver.Controllers
             return Ok(reservations);
             #endregion
 
-          
+       
         }
         #region in case i needed  this 
         // var pricrPerDay = _context.Caregivers.Select(a => a.PricePerDay).FirstOrDefaultAsync(a => dto.CaregiverId == dto.CaregiverId);

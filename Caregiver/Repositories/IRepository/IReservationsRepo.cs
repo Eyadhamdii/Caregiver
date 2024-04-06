@@ -28,7 +28,7 @@ namespace Caregiver.Repositories.IRepository
 
         Task<IEnumerable<ReservationDates>> DeleteReservationStatus(int id);
 
-        Task SendEmailAsync(string email, string subject, string message);
-
+        // Task SendEmailAsync(string email, string subject, string message);
+        Task<IEnumerable<TransactionsDto>> GetAllTransactions();
     }
 }
