@@ -4,6 +4,7 @@ using Caregiver.Dtos;
 using Caregiver.Models;
 using Caregiver.Repositories.IRepository;
 using Caregiver.Services.IService;
+using Microsoft.AspNetCore.Identity;
 
 namespace Caregiver.Services.Service
 {
@@ -12,14 +13,19 @@ namespace Caregiver.Services.Service
 		private readonly IGenericRepo<PatientUser> _customerGenericRepo;
         private readonly IGenericRepo<Dependant> _DependantGenericRepo;
         private readonly IMapper _mapper;
+		private readonly IHttpContextAccessor _httpContextAccessor;
+		private UserManager<User> _userManager;
 
-		public CustomerServices(IGenericRepo<PatientUser> genericRepo, IMapper mapper, IGenericRepo<Dependant> DependantGenericRepo)
+
+
+		public CustomerServices(IGenericRepo<PatientUser> genericRepo, IMapper mapper, IGenericRepo<Dependant> DependantGenericRepo, IHttpContextAccessor httpContextAccessor , UserManager<User> userManager)
 		{
 			_customerGenericRepo = genericRepo;
 			_mapper = mapper;
 			_DependantGenericRepo = DependantGenericRepo;
-
-        }
+			_httpContextAccessor = httpContextAccessor;
+			_userManager = userManager;
+		}
 		public async Task<IEnumerable<GetCustomerDTO>> GetAllCurrentCustomer()
 		{
 			//services
@@ -49,9 +55,9 @@ namespace Caregiver.Services.Service
         public async Task<DependantDetailsDTO> GetDependantDetails()
         {
             //services
-            string loggedInUserId = "2d7b16c3-2090-43c2-862e-b89feb588d47";
-            // _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
-            Dependant patients = await _DependantGenericRepo.GetAsync(a => a.PatientId == loggedInUserId);
+            //string loggedInUserId = "2d7b16c3-2090-43c2-862e-b89feb588d47";
+			string loggedInUserId = _userManager.GetUserId(_httpContextAccessor.HttpContext.User);
+			Dependant patients = await _DependantGenericRepo.GetAsync(a => a.PatientId == loggedInUserId);
 			
             //services
             if (patients != null)
